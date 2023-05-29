@@ -12,28 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cab0c24c48f8faf4c91c97f82375a0d0, type: 3}
   m_Name: Movement Style
   m_EditorClassIdentifier: 
-  gravityStrength: -53.2
-  gravityScale: 5.4230375
+  gravityStrength: -52
+  gravityScale: 5.3007135
   fallGravityMult: 2
-  maxFallSpeed: 18
+  maxFallSpeed: 20.88
   fastFallGravityMult: 1
   maxFastFallSpeed: 20
-  runMaxSpeed: 12
-  runAcceleration: 12
+  runMaxSpeed: 9.5
+  runAcceleration: 9.5
   runAccelAmount: 50
-  runDecceleration: 10
-  runDeccelAmount: 41.666668
+  runDecceleration: 9.5
+  runDeccelAmount: 50
   accelInAir: 1
   deccelInAir: 1
   doConserveMomentum: 0
-  jumpHeight: 6.65
+  jumpHeight: 6.5
   jumpTimeToApex: 0.5
-  jumpForce: 26.6
+  jumpForce: 26
   jumpCutGravityMult: 3.5
   jumpHangGravityMult: 1
-  jumpHangTimeThreshold: 2.22
-  jumpHangAccelerationMult: 2.1
-  jumpHangMaxSpeedMult: 2.41
+  jumpHangTimeThreshold: 0
+  jumpHangAccelerationMult: 1
+  jumpHangMaxSpeedMult: 1
   wallJumpForce: {x: 8.5, y: 20}
   wallJumpRunLerp: 0.075
   wallJumpTime: 0.3
