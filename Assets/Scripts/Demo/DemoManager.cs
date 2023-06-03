@@ -39,7 +39,6 @@ public class DemoManager : MonoBehaviour
         _cam.orthographicSize = data.camSize;
         _cam.backgroundColor = data.backgroundColor;
         levels[_currentTilemapIndex].color = data.foregroundColor;
-
         _currentForegroundColor = data.foregroundColor;
     }
 
