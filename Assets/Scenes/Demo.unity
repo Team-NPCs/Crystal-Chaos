@@ -339,6 +339,7 @@ GameObject:
   - component: {fileID: 336071578}
   - component: {fileID: 336071577}
   - component: {fileID: 336071576}
+  - component: {fileID: 336071580}
   - component: {fileID: 336071579}
   m_Layer: 0
   m_Name: Main Camera
@@ -425,9 +426,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fe95c556be977c4fbf8b0740619bc9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FollowSpeed: 6
-  yOffset: 3
-  target: {fileID: 2107377069}
+  FollowSpeed: 2
+  yOffset: 1
+  playerTarget: {fileID: 8264485714333725561, guid: b107f42452cd88241982a62213a4f295, type: 3}
+--- !u!114 &336071580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 336071575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3667505511
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &425258556
 GameObject:
   m_ObjectHideFlags: 0
@@ -35781,11 +35798,6 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
---- !u!4 &2107377069 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8264485714333725561, guid: b107f42452cd88241982a62213a4f295, type: 3}
-  m_PrefabInstance: {fileID: 8264485713622005460}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8264485713622005460
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -35793,6 +35805,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7160257339226906162, guid: b107f42452cd88241982a62213a4f295, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3872865881
+      objectReference: {fileID: 0}
     - target: {fileID: 8264485714269666944, guid: b107f42452cd88241982a62213a4f295, type: 3}
       propertyPath: m_camera
       value: 
@@ -35842,12 +35858,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8264485714333725563, guid: b107f42452cd88241982a62213a4f295, type: 3}
+      propertyPath: m_Distance
+      value: 0.490408
+      objectReference: {fileID: 0}
+    - target: {fileID: 8264485714333725563, guid: b107f42452cd88241982a62213a4f295, type: 3}
       propertyPath: m_ConnectedRigidBody
       value: 
       objectReference: {fileID: 1877164978}
     - target: {fileID: 8264485714333725565, guid: b107f42452cd88241982a62213a4f295, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 8264485714333725565, guid: b107f42452cd88241982a62213a4f295, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b107f42452cd88241982a62213a4f295, type: 3}
