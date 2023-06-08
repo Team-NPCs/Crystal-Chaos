@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5759d6a660e3ac14dbd9a801bf9d7627, type: 3}
-  m_Name: Celeste Style
+  m_Name: Crystal Chaos Style
   m_EditorClassIdentifier: 
   gravityStrength: -77.77777
   gravityScale: 7.9284167
@@ -37,13 +37,13 @@ MonoBehaviour:
   wallJumpForce: {x: 15, y: 25}
   wallJumpRunLerp: 0.5
   wallJumpTime: 0.15
-  doTurnOnWallJump: 0
+  doTurnOnWallJump: 1
   airJump: 1
   slideSpeed: -15
   slideAccel: 3
   coyoteTime: 0.1
   jumpInputBufferTime: 0.1
-  dashAmount: 5
+  dashAmount: 0
   dashSpeed: 20
   dashSleepTime: 0.05
   dashAttackTime: 0.15
