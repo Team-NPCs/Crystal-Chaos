@@ -2,15 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum CrystalType
-{
-    Fire,
-    Water,
-    Earth,
-    Air,
-    Void
-}
-
 public class CrystalBall : MonoBehaviour
 {
     private CrystalType crystalType;
@@ -29,17 +20,20 @@ public class CrystalBall : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            gameObject.SetActive(false);
-            Invoke("RespawnCrystal", respawnTime);
-            /*
             PlayerInventory inventory = other.GetComponent<PlayerInventory>();
             if (inventory != null)
             {
-                inventory.AddCrystal(crystalType);
-                gameObject.SetActive(false);
-                Invoke("RespawnCrystal", respawnTime);
+                // Check if the inventory is already full or if the crystal ball can get picked up.
+                if (inventory.AddCrystal(crystalType) == true) 
+                {
+                    gameObject.SetActive(false);
+                    Invoke("RespawnCrystal", respawnTime);
+                }
             }
-            */
+            else 
+            {
+                Debug.Log("Can not find players inventory.");
+            }
         }
     }
 
