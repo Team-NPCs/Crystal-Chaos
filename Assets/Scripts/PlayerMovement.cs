@@ -1,6 +1,6 @@
 /*
 	Created by @DawnosaurDev at youtube.com/c/DawnosaurStudios
-	Thanks so much for checking this out and I hope you find it helpful! 
+	Thanks so much for checking this out and I hope you find it helpful!
 	If you have any further queries, questions or feedback feel free to reach out on my twitter or leave a comment on youtube :D
 
 	Feel free to use this in your own games, and I'd love to see anything you make!
@@ -16,22 +16,22 @@ public class PlayerMovement : NetworkBehaviour
     //just paste in all the parameters, though you will need to manuly change all references in this script
     public PlayerData Data;
 
-    public void OnStartLocalPlayer()
-    {
-        Camera.main.GetComponent<CameraFollow>().setTarget(gameObject.transform);
-    }
-
     #region COMPONENTS
+
     public Rigidbody2D RB { get; private set; }
+
     //Script to handle all player animations, all references can be safely removed if you're importing into your own project.
     public PlayerAnimator AnimHandler { get; private set; }
-    #endregion
+
+    #endregion COMPONENTS
 
     #region STATE PARAMETERS
+
     //Variables control the various actions the player can perform at any time.
     //These are fields which can are public allowing for other sctipts to read them
     //but can only be privately written to.
     public bool IsFacingRight { get; private set; }
+
     public bool IsJumping { get; private set; }
     public bool IsWallJumping { get; private set; }
     public bool IsDashing { get; private set; }
@@ -39,16 +39,19 @@ public class PlayerMovement : NetworkBehaviour
 
     //Timers (also all fields, could be private and a method returning a bool could be used)
     public float LastOnGroundTime { get; private set; }
+
     public float LastOnWallTime { get; private set; }
     public float LastOnWallRightTime { get; private set; }
     public float LastOnWallLeftTime { get; private set; }
 
     //Jump
     private bool _isJumpCut;
+
     private bool _isJumpFalling;
 
     //Wall Jump
     private float _wallJumpStartTime;
+
     private int _lastWallJumpDir;
 
     //Double Jump
@@ -56,35 +59,45 @@ public class PlayerMovement : NetworkBehaviour
 
     //Dash
     private int _dashesLeft;
+
     private bool _dashRefilling;
     private Vector2 _lastDashDir;
     private bool _isDashAttacking;
 
-    #endregion
+    #endregion STATE PARAMETERS
 
     #region INPUT PARAMETERS
+
     private Vector2 _moveInput;
 
     public float LastPressedJumpTime { get; private set; }
     public float LastPressedDashTime { get; private set; }
-    #endregion
+
+    #endregion INPUT PARAMETERS
 
     #region CHECK PARAMETERS
+
     //Set all of these up in the inspector
     [Header("Checks")]
     [SerializeField] private Transform _groundCheckPoint;
+
     //Size of groundCheck depends on the size of your character generally you want them slightly small than width (for ground) and height (for the wall check)
     [SerializeField] private Vector2 _groundCheckSize = new Vector2(0.49f, 0.03f);
+
     [Space(5)]
     [SerializeField] private Transform _frontWallCheckPoint;
+
     [SerializeField] private Transform _backWallCheckPoint;
     [SerializeField] private Vector2 _wallCheckSize = new Vector2(0.5f, 1f);
-    #endregion
+
+    #endregion CHECK PARAMETERS
 
     #region LAYERS & TAGS
+
     [Header("Layers & Tags")]
     [SerializeField] private LayerMask _groundLayer;
-    #endregion
+
+    #endregion LAYERS & TAGS
 
     private void Awake()
     {
@@ -96,14 +109,14 @@ public class PlayerMovement : NetworkBehaviour
     {
         SetGravityScale(Data.gravityScale);
         IsFacingRight = true;
+        Camera.main.GetComponent<CameraFollow>().setTarget(NetworkManager.LocalClient.PlayerObject.transform);
     }
 
     private void Update()
     {
 
-        // if (!IsOwner)  return;
-
         #region TIMERS
+
         LastOnGroundTime -= Time.deltaTime;
         LastOnWallTime -= Time.deltaTime;
         LastOnWallRightTime -= Time.deltaTime;
@@ -111,9 +124,11 @@ public class PlayerMovement : NetworkBehaviour
 
         LastPressedJumpTime -= Time.deltaTime;
         LastPressedDashTime -= Time.deltaTime;
-        #endregion
+
+        #endregion TIMERS
 
         #region INPUT HANDLER
+
         _moveInput.x = Input.GetAxisRaw("Horizontal");
         _moveInput.y = Input.GetAxisRaw("Vertical");
 
@@ -129,9 +144,11 @@ public class PlayerMovement : NetworkBehaviour
         {
             OnDashInput();
         }
-        #endregion
+
+        #endregion INPUT HANDLER
 
         #region COLLISION CHECKS
+
         if (!IsDashing && !IsJumping)
         {
             //Ground Check
@@ -158,9 +175,11 @@ public class PlayerMovement : NetworkBehaviour
             //Two checks needed for both left and right walls since whenever the play turns the wall checkPoints swap sides
             LastOnWallTime = Mathf.Max(LastOnWallLeftTime, LastOnWallRightTime);
         }
-        #endregion
+
+        #endregion COLLISION CHECKS
 
         #region JUMP CHECKS
+
         if (IsJumping && RB.velocity.y < 0)
         {
             IsJumping = false;
@@ -195,7 +214,6 @@ public class PlayerMovement : NetworkBehaviour
                 Jump();
 
                 AnimHandler.startedJumping = true;
-
             }
             //WALL JUMP
             else if (CanWallJump() && LastPressedJumpTime > 0)
@@ -225,9 +243,11 @@ public class PlayerMovement : NetworkBehaviour
                 AnimHandler.startedJumping = true;
             }
         }
-        #endregion
+
+        #endregion JUMP CHECKS
 
         #region DASH CHECKS
+
         if (CanDash() && LastPressedDashTime > 0)
         {
             //Freeze game for split second. Adds juiciness and a bit of forgiveness over directional input
@@ -239,8 +259,6 @@ public class PlayerMovement : NetworkBehaviour
             else
                 _lastDashDir = IsFacingRight ? Vector2.right : Vector2.left;
 
-
-
             IsDashing = true;
             IsJumping = false;
             IsWallJumping = false;
@@ -248,16 +266,20 @@ public class PlayerMovement : NetworkBehaviour
 
             StartCoroutine(nameof(StartDash), _lastDashDir);
         }
-        #endregion
+
+        #endregion DASH CHECKS
 
         #region SLIDE CHECKS
+
         if (CanSlide() && ((LastOnWallLeftTime > 0 && _moveInput.x < 0) || (LastOnWallRightTime > 0 && _moveInput.x > 0)))
             IsSliding = true;
         else
             IsSliding = false;
-        #endregion
+
+        #endregion SLIDE CHECKS
 
         #region GRAVITY
+
         if (!_isDashAttacking)
         {
             //Higher gravity if we've released the jump input or are falling
@@ -300,7 +322,8 @@ public class PlayerMovement : NetworkBehaviour
             //No gravity when dashing (returns to normal once initial dashAttack phase over)
             SetGravityScale(0);
         }
-        #endregion
+
+        #endregion GRAVITY
     }
 
     private void FixedUpdate()
@@ -324,6 +347,7 @@ public class PlayerMovement : NetworkBehaviour
     }
 
     #region INPUT CALLBACKS
+
     //Methods which whandle input detected in Update()
     public void OnJumpInput()
     {
@@ -340,9 +364,11 @@ public class PlayerMovement : NetworkBehaviour
     {
         LastPressedDashTime = Data.dashInputBufferTime;
     }
-    #endregion
+
+    #endregion INPUT CALLBACKS
 
     #region GENERAL METHODS
+
     public void SetGravityScale(float scale)
     {
         RB.gravityScale = scale;
@@ -359,13 +385,16 @@ public class PlayerMovement : NetworkBehaviour
     private IEnumerator PerformSleep(float duration)
     {
         Time.timeScale = 0;
-        yield return new WaitForSecondsRealtime(duration); //Must be Realtime since timeScale with be 0 
+        yield return new WaitForSecondsRealtime(duration); //Must be Realtime since timeScale with be 0
         Time.timeScale = 1;
     }
-    #endregion
+
+    #endregion GENERAL METHODS
 
     //MOVEMENT METHODS
+
     #region RUN METHODS
+
     private void Run(float lerpAmount)
     {
         //Calculate the direction we want to move in and our desired velocity
@@ -374,26 +403,31 @@ public class PlayerMovement : NetworkBehaviour
         targetSpeed = Mathf.Lerp(RB.velocity.x, targetSpeed, lerpAmount);
 
         #region Calculate AccelRate
+
         float accelRate;
 
-        //Gets an acceleration value based on if we are accelerating (includes turning) 
+        //Gets an acceleration value based on if we are accelerating (includes turning)
         //or trying to decelerate (stop). As well as applying a multiplier if we're air borne.
         if (LastOnGroundTime > 0)
             accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? Data.runAccelAmount : Data.runDeccelAmount;
         else
             accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? Data.runAccelAmount * Data.accelInAir : Data.runDeccelAmount * Data.deccelInAir;
-        #endregion
+
+        #endregion Calculate AccelRate
 
         #region Add Bonus Jump Apex Acceleration
+
         //Increase are acceleration and maxSpeed when at the apex of their jump, makes the jump feel a bit more bouncy, responsive and natural
         if ((IsJumping || IsWallJumping || _isJumpFalling) && Mathf.Abs(RB.velocity.y) < Data.jumpHangTimeThreshold)
         {
             accelRate *= Data.jumpHangAccelerationMult;
             targetSpeed *= Data.jumpHangMaxSpeedMult;
         }
-        #endregion
+
+        #endregion Add Bonus Jump Apex Acceleration
 
         #region Conserve Momentum
+
         //We won't slow the player down if they are moving in their desired direction but at a greater speed than their maxSpeed
         if (Data.doConserveMomentum && Mathf.Abs(RB.velocity.x) > Mathf.Abs(targetSpeed) && Mathf.Sign(RB.velocity.x) == Mathf.Sign(targetSpeed) && Mathf.Abs(targetSpeed) > 0.01f && LastOnGroundTime < 0)
         {
@@ -401,7 +435,8 @@ public class PlayerMovement : NetworkBehaviour
             //You could experiment with allowing for the player to slightly increae their speed whilst in this "state"
             accelRate = 0;
         }
-        #endregion
+
+        #endregion Conserve Momentum
 
         //Calculate difference between current velocity and desired velocity
         float speedDif = targetSpeed - RB.velocity.x;
@@ -421,16 +456,18 @@ public class PlayerMovement : NetworkBehaviour
 
     private void Turn()
     {
-        //stores scale and flips the player along the x axis, 
+        //stores scale and flips the player along the x axis,
         Vector3 scale = transform.localScale;
         scale.x *= -1;
         transform.localScale = scale;
 
         IsFacingRight = !IsFacingRight;
     }
-    #endregion
+
+    #endregion RUN METHODS
 
     #region JUMP METHODS
+
     private void Jump()
     {
         //Ensures we can't call Jump multiple times from one press
@@ -438,15 +475,17 @@ public class PlayerMovement : NetworkBehaviour
         LastOnGroundTime = 0;
 
         #region Perform Jump
+
         //We increase the force applied if we are falling
-        //This means we'll always feel like we jump the same amount 
+        //This means we'll always feel like we jump the same amount
         //(setting the player's Y velocity to 0 beforehand will likely work the same, but I find this more elegant :D)
         float force = Data.jumpForce;
         if (RB.velocity.y < 0)
             force -= RB.velocity.y;
 
         RB.AddForce(Vector2.up * force, ForceMode2D.Impulse);
-        #endregion
+
+        #endregion Perform Jump
     }
 
     private void WallJump(int dir)
@@ -458,6 +497,7 @@ public class PlayerMovement : NetworkBehaviour
         LastOnWallLeftTime = 0;
 
         #region Perform Wall Jump
+
         Vector2 force = new Vector2(Data.wallJumpForce.x, Data.wallJumpForce.y);
         force.x *= dir; //apply force in opposite direction of wall
 
@@ -470,11 +510,14 @@ public class PlayerMovement : NetworkBehaviour
         //Unlike in the run we want to use the Impulse mode.
         //The default mode will apply are force instantly ignoring masss
         RB.AddForce(force, ForceMode2D.Impulse);
-        #endregion
+
+        #endregion Perform Wall Jump
     }
-    #endregion
+
+    #endregion JUMP METHODS
 
     #region DASH METHODS
+
     //Dash Coroutine
     private IEnumerator StartDash(Vector2 dir)
     {
@@ -495,7 +538,7 @@ public class PlayerMovement : NetworkBehaviour
         while (Time.time - startTime <= Data.dashAttackTime)
         {
             RB.velocity = dir.normalized * Data.dashSpeed;
-            //Pauses the loop until the next frame, creating something of a Update loop. 
+            //Pauses the loop until the next frame, creating something of a Update loop.
             //This is a cleaner implementation opposed to multiple timers and this coroutine approach is actually what is used in Celeste :D
             yield return null;
         }
@@ -526,9 +569,11 @@ public class PlayerMovement : NetworkBehaviour
         _dashRefilling = false;
         _dashesLeft = Mathf.Min(Data.dashAmount, _dashesLeft + 1);
     }
-    #endregion
+
+    #endregion DASH METHODS
 
     #region OTHER MOVEMENT METHODS
+
     private void Slide()
     {
         //Works the same as the Run but only in the y-axis
@@ -541,10 +586,11 @@ public class PlayerMovement : NetworkBehaviour
 
         RB.AddForce(movement * Vector2.up);
     }
-    #endregion
 
+    #endregion OTHER MOVEMENT METHODS
 
     #region CHECK METHODS
+
     public void CheckDirectionToFace(bool isMovingRight)
     {
         if (isMovingRight != IsFacingRight)
@@ -589,10 +635,11 @@ public class PlayerMovement : NetworkBehaviour
         else
             return false;
     }
-    #endregion
 
+    #endregion CHECK METHODS
 
     #region EDITOR METHODS
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.green;
@@ -601,7 +648,8 @@ public class PlayerMovement : NetworkBehaviour
         Gizmos.DrawWireCube(_frontWallCheckPoint.position, _wallCheckSize);
         Gizmos.DrawWireCube(_backWallCheckPoint.position, _wallCheckSize);
     }
-    #endregion
+
+    #endregion EDITOR METHODS
 }
 
 // created by Dawnosaur :D
