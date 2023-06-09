@@ -14,7 +14,6 @@ public class DemoManager : MonoBehaviour
 
     private int _currentPlayerTypeIndex;
     private int _currentTilemapIndex;
-    private Color _currentForegroundColor;
 
     public SceneData SceneData;
 
@@ -37,10 +36,6 @@ public class DemoManager : MonoBehaviour
 
         //Update the camera and tilemap color according to the new data.
         _cam.orthographicSize = data.camSize;
-        _cam.backgroundColor = data.backgroundColor;
-        levels[_currentTilemapIndex].color = data.foregroundColor;
-
-        _currentForegroundColor = data.foregroundColor;
     }
 
     public void SwitchPlayerType(int index)
@@ -67,7 +62,6 @@ public class DemoManager : MonoBehaviour
         //Switch tilemap active and apply color.
         levels[_currentTilemapIndex].gameObject.SetActive(false);
         levels[index].gameObject.SetActive(true);
-        levels[index].color = _currentForegroundColor;
         levels[_currentTilemapIndex] = levels[index];
 
         _player.transform.position = spawnPoint.position;

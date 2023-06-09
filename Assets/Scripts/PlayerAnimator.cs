@@ -7,6 +7,7 @@ public class PlayerAnimator : MonoBehaviour
     private PlayerMovement mov;
     private Animator anim;
     private SpriteRenderer spriteRend;
+    private Color jump_land_color = new Color(1f, 1f, 0f, 1f);
 
     private DemoManager demoManager;
 
@@ -62,9 +63,9 @@ public class PlayerAnimator : MonoBehaviour
         CheckAnimationState();
 
         ParticleSystem.MainModule jumpPSettings = _jumpParticle.main;
-        jumpPSettings.startColor = new ParticleSystem.MinMaxGradient(demoManager.SceneData.foregroundColor);
+        jumpPSettings.startColor = new ParticleSystem.MinMaxGradient(jump_land_color);
         ParticleSystem.MainModule landPSettings = _landParticle.main;
-        landPSettings.startColor = new ParticleSystem.MinMaxGradient(demoManager.SceneData.foregroundColor);
+        landPSettings.startColor = new ParticleSystem.MinMaxGradient(jump_land_color);
     }
 
     private void CheckAnimationState()
