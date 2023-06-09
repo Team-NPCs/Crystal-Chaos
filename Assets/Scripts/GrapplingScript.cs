@@ -51,6 +51,11 @@ public class GrapplingScript : MonoBehaviour
     [HideInInspector] public Vector2 grapplePoint;
     [HideInInspector] public Vector2 grappleDistanceVector;
 
+    private void Awake()
+    {
+        m_camera = FindObjectOfType<Camera>();
+    }
+
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
