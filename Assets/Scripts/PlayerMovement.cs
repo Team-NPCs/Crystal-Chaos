@@ -1,6 +1,6 @@
 /*
 	Created by @DawnosaurDev at youtube.com/c/DawnosaurStudios
-	Thanks so much for checking this out and I hope you find it helpful! 
+	Thanks so much for checking this out and I hope you find it helpful!
 	If you have any further queries, questions or feedback feel free to reach out on my twitter or leave a comment on youtube :D
 
 	Feel free to use this in your own games, and I'd love to see anything you make!
@@ -35,6 +35,7 @@ public class PlayerMovement : MonoBehaviour {
     public float LastOnWallTime { get; private set; }
     public float LastOnWallRightTime { get; private set; }
     public float LastOnWallLeftTime { get; private set; }
+    public float LastRopeUsageTime { get; set; }
 
     //Jump
     private bool _isJumpCut;
@@ -98,6 +99,9 @@ public class PlayerMovement : MonoBehaviour {
 
         LastPressedJumpTime -= Time.deltaTime;
         LastPressedDashTime -= Time.deltaTime;
+
+        LastRopeUsageTime += Time.deltaTime;
+        Debug.Log("LastRopeUsageTime:" + LastRopeUsageTime);
         #endregion
 
         #region INPUT HANDLER
@@ -317,7 +321,7 @@ public class PlayerMovement : MonoBehaviour {
 
     private IEnumerator PerformSleep(float duration) {
         Time.timeScale = 0;
-        yield return new WaitForSecondsRealtime(duration); //Must be Realtime since timeScale with be 0 
+        yield return new WaitForSecondsRealtime(duration); //Must be Realtime since timeScale with be 0
         Time.timeScale = 1;
     }
     #endregion
@@ -333,7 +337,7 @@ public class PlayerMovement : MonoBehaviour {
         #region Calculate AccelRate
         float accelRate;
 
-        //Gets an acceleration value based on if we are accelerating (includes turning) 
+        //Gets an acceleration value based on if we are accelerating (includes turning)
         //or trying to decelerate (stop). As well as applying a multiplier if we're air borne.
         if (LastOnGroundTime > 0)
             accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? Data.runAccelAmount : Data.runDeccelAmount;
@@ -375,7 +379,7 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void Turn() {
-        //stores scale and flips the player along the x axis, 
+        //stores scale and flips the player along the x axis,
         Vector3 scale = transform.localScale;
         scale.x *= -1;
         transform.localScale = scale;
@@ -392,7 +396,7 @@ public class PlayerMovement : MonoBehaviour {
 
         #region Perform Jump
         //We increase the force applied if we are falling
-        //This means we'll always feel like we jump the same amount 
+        //This means we'll always feel like we jump the same amount
         //(setting the player's Y velocity to 0 beforehand will likely work the same, but I find this more elegant :D)
         float force = Data.jumpForce;
         if (RB.velocity.y < 0)
@@ -445,7 +449,7 @@ public class PlayerMovement : MonoBehaviour {
         //We keep the player's velocity at the dash speed during the "attack" phase (in celeste the first 0.15s)
         while (Time.time - startTime <= Data.dashAttackTime) {
             RB.velocity = dir.normalized * Data.dashSpeed;
-            //Pauses the loop until the next frame, creating something of a Update loop. 
+            //Pauses the loop until the next frame, creating something of a Update loop.
             //This is a cleaner implementation opposed to multiple timers and this coroutine approach is actually what is used in Celeste :D
             yield return null;
         }
