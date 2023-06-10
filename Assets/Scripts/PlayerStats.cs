@@ -5,6 +5,8 @@ using UnityEngine;
 public class PlayerStats : MonoBehaviour
 {
     public float initialSpeed = 5f;
+    public float fastSpeed = 10f;
+    private int numberOfSpeedPotionsInUse = 0;
     public int initialHealth = 100;
     public int maxHealth = 100;
 
@@ -31,17 +33,42 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
+    public void ActivateFastSpeed ()
+    {
+        numberOfSpeedPotionsInUse += 1;
+        speed = fastSpeed;
+    }
+
+    public void DeactivateFastSpeed ()
+    {
+        numberOfSpeedPotionsInUse -= 1;
+        if (numberOfSpeedPotionsInUse == 0) {
+            ResetSpeed ();
+        }
+        else if (numberOfSpeedPotionsInUse < 0) {
+            Debug.Log("Programming error using numberOfSpeedPotionsInUse.");
+        }
+    }
+
     public void ResetSpeed ()
     {
         speed = initialSpeed;
     }
 
-    public void IncreaseHealth(int amount)
+    public bool IncreaseHealth(int amount)
     {
-        health += amount;
-        if (health > maxHealth)
-        {
-            health = maxHealth;
+        // We use a bool function to return false if the players health is already full,
+        // so the potion gets not picked up.
+        if (health >= maxHealth) {
+            return false;
+        }
+        else {
+            health += amount;
+            if (health > maxHealth)
+            {
+                health = maxHealth;
+            }
+            return true;
         }
     }
 
