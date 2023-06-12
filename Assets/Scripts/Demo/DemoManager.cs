@@ -26,8 +26,8 @@ public class DemoManager : MonoBehaviour
     private void Start()
     {
         SetSceneData(SceneData);
-        SwitchLevel(0);
-        SwitchPlayerType(0);
+        // SwitchLevel(0);
+        // SwitchPlayerType(0);
     }
 
     public void SetSceneData(SceneData data)
@@ -38,52 +38,53 @@ public class DemoManager : MonoBehaviour
         _cam.orthographicSize = data.camSize;
     }
 
-    public void SwitchPlayerType(int index)
-    {
-        _player.Data = playerTypes[index];
-        _currentPlayerTypeIndex = index;
+    // public void SwitchPlayerType(int index)
+    // {
+    //     _player.Data = playerTypes[index];
+    //     _currentPlayerTypeIndex = index;
 
-        switch(index)
-        {
-            case 0:
-                nameText.text = "Celeste";
-                break;
-            case 1:
-                nameText.text = "Hollow Knight";
-                break;
-            case 2:
-                nameText.text = "Super Meat Boy";
-                break;
-        }
-    }
+    //     switch(index)
+    //     {
+    //         case 0:
+    //             nameText.text = "Celeste";
+    //             break;
+    //         case 1:
+    //             nameText.text = "Hollow Knight";
+    //             break;
+    //         case 2:
+    //             nameText.text = "Super Meat Boy";
+    //             break;
+    //     }
+    // }
 
-    public void SwitchLevel(int index)
-    {
-        //Switch tilemap active and apply color.
-        levels[_currentTilemapIndex].gameObject.SetActive(false);
-        levels[index].gameObject.SetActive(true);
-        levels[_currentTilemapIndex] = levels[index];
+    // public void SwitchLevel(int index)
+    // {
+    //     //Switch tilemap active and apply color.
+    //     levels[_currentTilemapIndex].gameObject.SetActive(false);
+    //     levels[index].gameObject.SetActive(true);
+    //     levels[index].color = _currentForegroundColor;
+    //     levels[_currentTilemapIndex] = levels[index];
 
-        _player.transform.position = spawnPoint.position;
+    //     _player.transform.position = spawnPoint.position;
 
-        _currentTilemapIndex = index;
-    }
-    
+    //     _currentTilemapIndex = index;
+    // }
+
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            //Switch to next level. Uses "?" to indicate that if the expression in the brackets before is true
-            //then 0 will be passed throuh else it will increse by 1.
-            SwitchLevel((_currentTilemapIndex == levels.Length - 1) ? 0 : _currentTilemapIndex + 1);
-        }
+        // if(Input.GetKeyDown(KeyCode.Alpha1))
+        // {
+        //     //Switch to next level. Uses "?" to indicate that if the expression in the brackets before is true
+        //     //then 0 will be passed throuh else it will increse by 1.
+        //     SwitchLevel((_currentTilemapIndex == levels.Length - 1) ? 0 : _currentTilemapIndex + 1);
+        // }
 
-        if(Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            //Switch to next level. Uses "?" to indicate that if the expression in the brackets before is true
-            //then 0 will be passed throuh else it will increse by 1.
-            SwitchPlayerType((_currentPlayerTypeIndex == playerTypes.Length - 1) ? 0 : _currentPlayerTypeIndex + 1);
-        }
+        // if(Input.GetKeyDown(KeyCode.Alpha2))
+        // {
+        //     //Switch to next level. Uses "?" to indicate that if the expression in the brackets before is true
+        //     //then 0 will be passed throuh else it will increse by 1.
+        //     SwitchPlayerType((_currentPlayerTypeIndex == playerTypes.Length - 1) ? 0 : _currentPlayerTypeIndex + 1);
+        // }
     }
 }

@@ -43,6 +43,7 @@ public class PlayerMovement : NetworkBehaviour
     public float LastOnWallTime { get; private set; }
     public float LastOnWallRightTime { get; private set; }
     public float LastOnWallLeftTime { get; private set; }
+    public float LastRopeUsageTime { get; set; }
 
     //Jump
     private bool _isJumpCut;
@@ -124,6 +125,8 @@ public class PlayerMovement : NetworkBehaviour
 
         LastPressedJumpTime -= Time.deltaTime;
         LastPressedDashTime -= Time.deltaTime;
+
+        LastRopeUsageTime -= Time.deltaTime;
 
         #endregion TIMERS
 
