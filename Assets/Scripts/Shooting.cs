@@ -9,7 +9,7 @@ public class Shooting : MonoBehaviour
     private PlayerMovement player;
     public GameObject bullet;
     public Transform bulletTransform;
-    public bool canFire;
+    private bool canFire;
     private float timer;
     public float timeBetweenFiring;
     // Start is called before the first frame update
@@ -29,23 +29,23 @@ public class Shooting : MonoBehaviour
         if (player.IsFacingRight)
         {
             transform.rotation = Quaternion.Euler(0, 0, rotZ);
-        } 
+        }
         else
         {
             transform.rotation = Quaternion.Euler(0, 0, rotZ + 180);
         }
 
-        if(!canFire)
+        if (!canFire)
         {
             timer += Time.deltaTime;
-            if(timer > timeBetweenFiring)
+            if (timer > timeBetweenFiring)
             {
                 canFire = true;
                 timer = 0;
             }
         }
 
-        if(Input.GetMouseButton(0) && canFire)
+        if (Input.GetMouseButton(0) && canFire)
         {
             canFire = false;
             Instantiate(bullet, bulletTransform.position, Quaternion.identity);
