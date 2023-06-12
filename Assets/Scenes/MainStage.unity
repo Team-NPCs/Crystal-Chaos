@@ -120601,6 +120601,10 @@ PrefabInstance:
       propertyPath: timeBetweenFiringWater
       value: 0.25
       objectReference: {fileID: 0}
+    - target: {fileID: 8264485713529954623, guid: b107f42452cd88241982a62213a4f295, type: 3}
+      propertyPath: m_TagString
+      value: ShootingPoint
+      objectReference: {fileID: 0}
     - target: {fileID: 8264485714269666944, guid: b107f42452cd88241982a62213a4f295, type: 3}
       propertyPath: m_camera
       value: 

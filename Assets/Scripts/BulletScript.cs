@@ -19,8 +19,10 @@ public class BulletScript : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        force = shooting.bulletForce;
+        shooting = GameObject.FindGameObjectWithTag("ShootingPoint").GetComponent<Shooting>();
         mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+        force = shooting.bulletForce;
+        // Debug.Log(shooting.bulletForce);
         rb = GetComponent<Rigidbody2D>();
 
         mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);

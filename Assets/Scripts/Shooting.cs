@@ -19,7 +19,7 @@ public class Shooting : MonoBehaviour {
     public float timeBetweenFiringWater, bulletForceWater;
     public float timeBetweenFiringVoid, bulletForceVoid;
     private float timeBetweenFiring = 0.25f;
-    [HideInInspector] public float bulletForce;
+    [HideInInspector] public float bulletForce = 20;
     #endregion
 
 
