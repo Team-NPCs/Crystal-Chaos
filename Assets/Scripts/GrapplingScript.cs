@@ -81,7 +81,7 @@ public class GrapplingScript : MonoBehaviour {
             grappleRope.enabled = false;
             m_springJoint2D.enabled = false;
             m_rigidbody.gravityScale = 1;
-            player.LastRopeUsageTime = 0.0f;
+            player.LastRopeUsageTime = 0;
         }
         else {
             Vector3 mousePos = m_camera.ScreenToWorldPoint(Input.mousePosition);

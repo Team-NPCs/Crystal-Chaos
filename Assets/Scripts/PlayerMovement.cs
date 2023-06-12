@@ -100,8 +100,12 @@ public class PlayerMovement : MonoBehaviour {
         LastPressedJumpTime -= Time.deltaTime;
         LastPressedDashTime -= Time.deltaTime;
 
-        LastRopeUsageTime += Time.deltaTime;
-        Debug.Log("LastRopeUsageTime:" + LastRopeUsageTime);
+        LastRopeUsageTime -= Time.deltaTime;
+        // Debug.Log("LastOnGroundTime:" + LastOnGroundTime);
+        // Debug.Log("LastOnWallTime:" + LastOnWallTime);
+        // Debug.Log("LastPressedJumpTime:" + LastPressedJumpTime);
+        // Debug.Log("LastPressedDashTime:" + LastPressedDashTime);
+        // Debug.Log("LastRopeUsageTime:" + LastRopeUsageTime);
         #endregion
 
         #region INPUT HANDLER
