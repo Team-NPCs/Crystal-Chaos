@@ -1,11 +1,10 @@
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.Tilemaps;
 using TMPro;
+using UnityEngine;
+using UnityEngine.Tilemaps;
 
-public class DemoManager : MonoBehaviour
-{
+public class DemoManager : MonoBehaviour {
 
     public static DemoManager Instance { get; private set; }
 
@@ -13,6 +12,8 @@ public class DemoManager : MonoBehaviour
 
     private Camera _cam;
     private PlayerMovement _player;
+    private Shooting _shooting;
+    private GrapplingScript _grappling;
     [SerializeField] private PlayerData[] playerTypes;
     [SerializeField] private Tilemap[] levels;
     [SerializeField] private Transform spawnPoint;
@@ -22,8 +23,7 @@ public class DemoManager : MonoBehaviour
     private int _currentPlayerTypeIndex;
     private int _currentTilemapIndex;
 
-    private enum State
-    {
+    private enum State {
         WaitingToStart,
         CountDownToStart,
         GamePlaying,
@@ -37,37 +37,34 @@ public class DemoManager : MonoBehaviour
 
     public SceneData SceneData;
 
-    private void Awake()
-    {
+    private void Awake() {
         Instance = this;
         state = State.WaitingToStart;
         _cam = FindObjectOfType<Camera>();
         _player = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
+        _shooting = GameObject.FindWithTag("ShootingPoint").GetComponent<Shooting>();
+        _grappling = GameObject.FindWithTag("GrapplingGun").GetComponent<GrapplingScript>();
     }
 
-    private void Start()
-    {
+    private void Start() {
         SetSceneData(SceneData);
         SwitchLevel(0);
         SwitchPlayerType(0);
     }
 
-    public void SetSceneData(SceneData data)
-    {
+    public void SetSceneData(SceneData data) {
         SceneData = data;
 
         //Update the camera and tilemap color according to the new data.
         _cam.orthographicSize = data.camSize;
     }
 
-    public void SwitchPlayerType(int index)
-    {
+    public void SwitchPlayerType(int index) {
         _player.Data = playerTypes[index];
         _currentPlayerTypeIndex = index;
     }
 
-    public void SwitchLevel(int index)
-    {
+    public void SwitchLevel(int index) {
         //Switch tilemap active and apply color.
         levels[_currentTilemapIndex].gameObject.SetActive(false);
         levels[index].gameObject.SetActive(true);
@@ -78,30 +75,26 @@ public class DemoManager : MonoBehaviour
         _currentTilemapIndex = index;
     }
 
-    private void Update()
-    {
-        switch(state)
-        {
+    private void Update() {
+        DemoManager.Instance.isGamePlaying();
+        switch (state) {
             case State.WaitingToStart:
                 waitingToStartTimer -= Time.deltaTime;
-                if(waitingToStartTimer < 0f)
-                {
+                if (waitingToStartTimer < 0f) {
                     state = State.CountDownToStart;
                     OnStateChanged?.Invoke(this, System.EventArgs.Empty);
                 }
                 break;
             case State.CountDownToStart:
                 countdownToStartTimer -= Time.deltaTime;
-                if (countdownToStartTimer < 0f)
-                {
+                if (countdownToStartTimer < 0f) {
                     state = State.GamePlaying;
                     OnStateChanged?.Invoke(this, System.EventArgs.Empty);
                 }
                 break;
             case State.GamePlaying:
                 gamePlayingTimer -= Time.deltaTime;
-                if (gamePlayingTimer < 0f)
-                {
+                if (gamePlayingTimer < 0f) {
                     state = State.GameOver;
                     OnStateChanged?.Invoke(this, System.EventArgs.Empty);
                 }
@@ -111,23 +104,24 @@ public class DemoManager : MonoBehaviour
         }
     }
 
-    public bool isGamePlaying()
-    {
-        return state == State.GamePlaying;
+    public void isGamePlaying() {
+        if (state == State.GamePlaying) {
+            _player.enabled = _grappling.enabled = _shooting.enabled = true;
+        }
+        else {
+            _player.enabled = _grappling.enabled = _shooting.enabled = false;
+        }
     }
 
-    public bool isCountDownToStartActive()
-    {
+    public bool isCountDownToStartActive() {
         return state == State.CountDownToStart;
     }
 
-    public float getCountdownToStartTimer()
-    {
+    public float getCountdownToStartTimer() {
         return countdownToStartTimer;
     }
 
-    public float GetGamePlayingTimer()
-    {
+    public float GetGamePlayingTimer() {
         return gamePlayingTimer;
     }
 }

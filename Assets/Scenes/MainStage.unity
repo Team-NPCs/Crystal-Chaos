@@ -121081,6 +121081,10 @@ PrefabInstance:
       propertyPath: m_camera
       value: 
       objectReference: {fileID: 336071577}
+    - target: {fileID: 8264485714269666950, guid: b107f42452cd88241982a62213a4f295, type: 3}
+      propertyPath: m_TagString
+      value: GrapplingGun
+      objectReference: {fileID: 0}
     - target: {fileID: 8264485714269666951, guid: b107f42452cd88241982a62213a4f295, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1

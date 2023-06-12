@@ -18,7 +18,7 @@ public class Shooting : MonoBehaviour {
     public float timeBetweenFiringEarth, bulletForceEarth;
     public float timeBetweenFiringWater, bulletForceWater;
     public float timeBetweenFiringVoid, bulletForceVoid;
-    private float timeBetweenFiring = 0.25f;
+    public float timeBetweenFiring = 0.25f;
     [HideInInspector] public float bulletForce = 20;
     #endregion
 
@@ -31,56 +31,51 @@ public class Shooting : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (!DemoManager.Instance.isGamePlaying()) {
-            canFire = false;
+        switch (crystalType) {
+            case CrystalType.Fire:
+                timeBetweenFiring = timeBetweenFiringFire;
+                bulletForce = bulletForceFire;
+                break;
+            case CrystalType.Air:
+                timeBetweenFiring = timeBetweenFiringAir;
+                bulletForce = bulletForceAir;
+                break;
+            case CrystalType.Water:
+                timeBetweenFiring = timeBetweenFiringWater;
+                bulletForce = bulletForceWater;
+                break;
+            case CrystalType.Earth:
+                timeBetweenFiring = timeBetweenFiringEarth;
+                bulletForce = bulletForceEarth;
+                break;
+            case CrystalType.Void:
+                timeBetweenFiring = timeBetweenFiringVoid;
+                bulletForce = bulletForceVoid;
+                break;
+        }
+        mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 rotation = mousePos - transform.position;
+        float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
+
+        if (player.IsFacingRight) {
+            transform.rotation = Quaternion.Euler(0, 0, rotZ);
         }
         else {
-            switch (crystalType) {
-                case CrystalType.Fire:
-                    timeBetweenFiring = timeBetweenFiringFire;
-                    bulletForce = bulletForceFire;
-                    break;
-                case CrystalType.Air:
-                    timeBetweenFiring = timeBetweenFiringAir;
-                    bulletForce = bulletForceAir;
-                    break;
-                case CrystalType.Water:
-                    timeBetweenFiring = timeBetweenFiringWater;
-                    bulletForce = bulletForceWater;
-                    break;
-                case CrystalType.Earth:
-                    timeBetweenFiring = timeBetweenFiringEarth;
-                    bulletForce = bulletForceEarth;
-                    break;
-                case CrystalType.Void:
-                    timeBetweenFiring = timeBetweenFiringVoid;
-                    bulletForce = bulletForceVoid;
-                    break;
+            transform.rotation = Quaternion.Euler(0, 0, rotZ + 180);
+        }
 
+        if (!canFire) {
+            timer += Time.deltaTime;
+            if (timer > timeBetweenFiring) {
+                canFire = true;
+                timer = 0;
             }
-            mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
-            Vector3 rotation = mousePos - transform.position;
-            float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
+        }
 
-            if (player.IsFacingRight) {
-                transform.rotation = Quaternion.Euler(0, 0, rotZ);
-            }
-            else {
-                transform.rotation = Quaternion.Euler(0, 0, rotZ + 180);
-            }
-
-            if (!canFire) {
-                timer += Time.deltaTime;
-                if (timer > timeBetweenFiring) {
-                    canFire = true;
-                    timer = 0;
-                }
-
-                if (Input.GetMouseButton(0) && canFire) {
-                    canFire = false;
-                    Instantiate(bullet, bulletTransform.position, Quaternion.identity);
-                }
-            }
+        if (Input.GetMouseButton(0) && canFire) {
+            Debug.Log("SHOOT!");
+            canFire = false;
+            Instantiate(bullet, bulletTransform.position, Quaternion.identity);
         }
     }
 }
