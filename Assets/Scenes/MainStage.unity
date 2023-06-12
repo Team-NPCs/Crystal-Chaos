@@ -558,7 +558,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FollowSpeed: 6
   yOffset: 3
-  playerTarget: {fileID: 0}
+  playerTarget: {fileID: 2107377085}
 --- !u!1 &425258556
 GameObject:
   m_ObjectHideFlags: 0
@@ -120480,6 +120480,11 @@ MonoBehaviour:
   fastSpeed: 10
   initialHealth: 60
   maxHealth: 100
+--- !u!4 &2107377085 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8264485714333725561, guid: b107f42452cd88241982a62213a4f295, type: 3}
+  m_PrefabInstance: {fileID: 8264485713622005460}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &159955194468899881
 PrefabInstance:
   m_ObjectHideFlags: 0
