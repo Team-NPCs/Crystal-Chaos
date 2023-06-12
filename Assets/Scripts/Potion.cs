@@ -12,11 +12,11 @@ public class Potion : MonoBehaviour
     public float movementSpawnProbability = 0.4f;
     public float respawnTimePotion = 5.0f;
 
-    private SpriteRenderer potionRenderer;
+    private Animator potionAnimator;
 
     private void Start()
     {
-        potionRenderer = GetComponent<SpriteRenderer>();
+        potionAnimator = GetComponent<Animator>();
         GeneratePotionType();
         UpdatePotionColor();
     }
@@ -83,15 +83,15 @@ public class Potion : MonoBehaviour
 
     private void UpdatePotionColor()
     {
-        // Assign the appropriate material based on the crystal type
         switch (potionType)
         {
             case PotionType.Health:
-                potionRenderer.color = Color.red; 
-                //potionRenderer.material = Resources.Load<Material>("PotionHeatlh");
+                //potionRenderer.color = Color.red; 
+                potionAnimator.Play("red_potion");
                 break;
             case PotionType.Movement:
-                potionRenderer.color = Color.blue;
+                //potionRenderer.color = Color.blue;
+                potionAnimator.Play("blue_potion");
                 //potionRenderer.material = Resources.Load<Material>("PotionMovement");
                 break;
         }
