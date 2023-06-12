@@ -120549,6 +120549,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7160257339226906162, guid: b107f42452cd88241982a62213a4f295, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3872865881
+      objectReference: {fileID: 0}
     - target: {fileID: 8264485713472396380, guid: b107f42452cd88241982a62213a4f295, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1
@@ -120556,6 +120560,46 @@ PrefabInstance:
     - target: {fileID: 8264485713529954616, guid: b107f42452cd88241982a62213a4f295, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8264485713529954617, guid: b107f42452cd88241982a62213a4f295, type: 3}
+      propertyPath: bulletForceAir
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8264485713529954617, guid: b107f42452cd88241982a62213a4f295, type: 3}
+      propertyPath: bulletForceFire
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 8264485713529954617, guid: b107f42452cd88241982a62213a4f295, type: 3}
+      propertyPath: bulletForceVoid
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 8264485713529954617, guid: b107f42452cd88241982a62213a4f295, type: 3}
+      propertyPath: bulletForceEarth
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 8264485713529954617, guid: b107f42452cd88241982a62213a4f295, type: 3}
+      propertyPath: bulletForceWater
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 8264485713529954617, guid: b107f42452cd88241982a62213a4f295, type: 3}
+      propertyPath: timeBetweenFiringAir
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8264485713529954617, guid: b107f42452cd88241982a62213a4f295, type: 3}
+      propertyPath: timeBetweenFiringFire
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8264485713529954617, guid: b107f42452cd88241982a62213a4f295, type: 3}
+      propertyPath: timeBetweenFiringVoid
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 8264485713529954617, guid: b107f42452cd88241982a62213a4f295, type: 3}
+      propertyPath: timeBetweenFiringEarth
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 8264485713529954617, guid: b107f42452cd88241982a62213a4f295, type: 3}
+      propertyPath: timeBetweenFiringWater
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 8264485714269666944, guid: b107f42452cd88241982a62213a4f295, type: 3}
       propertyPath: m_camera
