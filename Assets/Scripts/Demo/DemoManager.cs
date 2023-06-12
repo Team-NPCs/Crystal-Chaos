@@ -14,10 +14,7 @@ public class DemoManager : MonoBehaviour {
     private PlayerMovement _player;
     private Shooting _shooting;
     private GrapplingScript _grappling;
-    [SerializeField] private PlayerData[] playerTypes;
-    [SerializeField] private Tilemap[] levels;
     [SerializeField] private Transform spawnPoint;
-
     [SerializeField] private TextMeshProUGUI nameText;
 
     private int _currentPlayerTypeIndex;
@@ -48,8 +45,6 @@ public class DemoManager : MonoBehaviour {
 
     private void Start() {
         SetSceneData(SceneData);
-        SwitchLevel(0);
-        SwitchPlayerType(0);
     }
 
     public void SetSceneData(SceneData data) {
@@ -59,21 +54,6 @@ public class DemoManager : MonoBehaviour {
         _cam.orthographicSize = data.camSize;
     }
 
-    public void SwitchPlayerType(int index) {
-        _player.Data = playerTypes[index];
-        _currentPlayerTypeIndex = index;
-    }
-
-    public void SwitchLevel(int index) {
-        //Switch tilemap active and apply color.
-        levels[_currentTilemapIndex].gameObject.SetActive(false);
-        levels[index].gameObject.SetActive(true);
-        levels[_currentTilemapIndex] = levels[index];
-
-        _player.transform.position = spawnPoint.position;
-
-        _currentTilemapIndex = index;
-    }
 
     private void Update() {
         DemoManager.Instance.isGamePlaying();
