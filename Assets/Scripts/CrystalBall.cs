@@ -5,7 +5,7 @@ using UnityEngine;
 public class CrystalBall : MonoBehaviour
 {
     private CrystalType crystalType;
-    public float respawnTimeCrystalBall = 5f;
+    private float respawnTime = 5f;
 
     private SpriteRenderer crystalRenderer;
 
@@ -27,7 +27,7 @@ public class CrystalBall : MonoBehaviour
                 if (inventory.AddCrystal(crystalType) == true) 
                 {
                     gameObject.SetActive(false);
-                    Invoke("RespawnCrystal", respawnTimeCrystalBall);
+                    Invoke("RespawnCrystal", respawnTime);
                 }
             }
             else 

@@ -9,7 +9,7 @@ public class Shooting : MonoBehaviour
     private PlayerMovement player;
     public GameObject bullet;
     public Transform bulletTransform;
-    private bool canFire;
+    public bool canFire;
     private float timer;
     public float timeBetweenFiring;
     // Start is called before the first frame update
@@ -22,33 +22,40 @@ public class Shooting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
-        Vector3 rotation = mousePos - transform.position;
-        float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
-
-        if (player.IsFacingRight)
+        if (!DemoManager.Instance.isGamePlaying())
         {
-            transform.rotation = Quaternion.Euler(0, 0, rotZ);
+            canFire = false;
         }
         else
         {
-            transform.rotation = Quaternion.Euler(0, 0, rotZ + 180);
-        }
+            mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 rotation = mousePos - transform.position;
+            float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
 
-        if (!canFire)
-        {
-            timer += Time.deltaTime;
-            if (timer > timeBetweenFiring)
+            if (player.IsFacingRight)
             {
-                canFire = true;
-                timer = 0;
+                transform.rotation = Quaternion.Euler(0, 0, rotZ);
             }
-        }
+            else
+            {
+                transform.rotation = Quaternion.Euler(0, 0, rotZ + 180);
+            }
 
-        if (Input.GetMouseButton(0) && canFire)
-        {
-            canFire = false;
-            Instantiate(bullet, bulletTransform.position, Quaternion.identity);
+            if (!canFire)
+            {
+                timer += Time.deltaTime;
+                if (timer > timeBetweenFiring)
+                {
+                    canFire = true;
+                    timer = 0;
+                }
+            }
+
+            if (Input.GetMouseButton(0) && canFire)
+            {
+                canFire = false;
+                Instantiate(bullet, bulletTransform.position, Quaternion.identity);
+            }
         }
     }
 }

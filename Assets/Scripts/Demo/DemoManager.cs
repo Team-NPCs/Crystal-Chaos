@@ -1,9 +1,16 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.Tilemaps;
 using TMPro;
 
 public class DemoManager : MonoBehaviour
 {
+
+    public static DemoManager Instance { get; private set; }
+
+    public event System.EventHandler OnStateChanged;
+
     private Camera _cam;
     private PlayerMovement _player;
     [SerializeField] private PlayerData[] playerTypes;
@@ -15,10 +22,25 @@ public class DemoManager : MonoBehaviour
     private int _currentPlayerTypeIndex;
     private int _currentTilemapIndex;
 
+    private enum State
+    {
+        WaitingToStart,
+        CountDownToStart,
+        GamePlaying,
+        GameOver
+    }
+
+    private State state;
+    private float waitingToStartTimer = 1f;
+    private float countdownToStartTimer = 3f;
+    private float gamePlayingTimer = 120f;
+
     public SceneData SceneData;
 
     private void Awake()
     {
+        Instance = this;
+        state = State.WaitingToStart;
         _cam = FindObjectOfType<Camera>();
         _player = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
     }
@@ -42,19 +64,6 @@ public class DemoManager : MonoBehaviour
     {
         _player.Data = playerTypes[index];
         _currentPlayerTypeIndex = index;
-
-        switch(index)
-        {
-            case 0:
-                nameText.text = "Celeste";
-                break;
-            case 1:
-                nameText.text = "Hollow Knight";
-                break;
-            case 2:
-                nameText.text = "Super Meat Boy";
-                break;
-        }
     }
 
     public void SwitchLevel(int index)
@@ -68,22 +77,58 @@ public class DemoManager : MonoBehaviour
 
         _currentTilemapIndex = index;
     }
-    
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Alpha1))
+        switch(state)
         {
-            //Switch to next level. Uses "?" to indicate that if the expression in the brackets before is true
-            //then 0 will be passed throuh else it will increse by 1.
-            SwitchLevel((_currentTilemapIndex == levels.Length - 1) ? 0 : _currentTilemapIndex + 1);
-        }
-
-        if(Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            //Switch to next level. Uses "?" to indicate that if the expression in the brackets before is true
-            //then 0 will be passed throuh else it will increse by 1.
-            SwitchPlayerType((_currentPlayerTypeIndex == playerTypes.Length - 1) ? 0 : _currentPlayerTypeIndex + 1);
+            case State.WaitingToStart:
+                waitingToStartTimer -= Time.deltaTime;
+                if(waitingToStartTimer < 0f)
+                {
+                    state = State.CountDownToStart;
+                    OnStateChanged?.Invoke(this, System.EventArgs.Empty);
+                }
+                break;
+            case State.CountDownToStart:
+                countdownToStartTimer -= Time.deltaTime;
+                if (countdownToStartTimer < 0f)
+                {
+                    state = State.GamePlaying;
+                    OnStateChanged?.Invoke(this, System.EventArgs.Empty);
+                }
+                break;
+            case State.GamePlaying:
+                gamePlayingTimer -= Time.deltaTime;
+                if (gamePlayingTimer < 0f)
+                {
+                    state = State.GameOver;
+                    OnStateChanged?.Invoke(this, System.EventArgs.Empty);
+                }
+                break;
+            case State.GameOver:
+                break;
         }
     }
+
+    public bool isGamePlaying()
+    {
+        return state == State.GamePlaying;
+    }
+
+    public bool isCountDownToStartActive()
+    {
+        return state == State.CountDownToStart;
+    }
+
+    public float getCountdownToStartTimer()
+    {
+        return countdownToStartTimer;
+    }
+
+    public float GetGamePlayingTimer()
+    {
+        return gamePlayingTimer;
+    }
 }
+
