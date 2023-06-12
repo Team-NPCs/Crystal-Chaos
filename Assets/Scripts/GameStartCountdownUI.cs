@@ -4,37 +4,30 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class GameStartCountdownUI : MonoBehaviour
-{
+public class GameStartCountdownUI : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI countDownText;
 
-    private void Start()
-    {
+    private void Start() {
         DemoManager.Instance.OnStateChanged += DemoManager_OnStateChanged;
 
         Hide();
     }
 
-    private void DemoManager_OnStateChanged(object sender, EventArgs e)
-    {
-        if(DemoManager.Instance.isCountDownToStartActive())
-        {
+    private void DemoManager_OnStateChanged(object sender, EventArgs e) {
+        if (DemoManager.Instance.isCountDownToStartActive()) {
             Show();
-        } else
-        {
+        }
+        else {
             Hide();
         }
     }
-    private void Update()
-    {
+    private void Update() {
         countDownText.text = Math.Ceiling(DemoManager.Instance.getCountdownToStartTimer()).ToString();
     }
-    private void Show()
-    {
+    private void Show() {
         gameObject.SetActive(true);
     }
-    private void Hide()
-    {
+    private void Hide() {
         gameObject.SetActive(false);
     }
 }

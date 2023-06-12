@@ -1,7 +1,6 @@
 using UnityEngine;
 
-public enum CrystalType
-{
+public enum CrystalType {
     Fire,
     Water,
     Earth,

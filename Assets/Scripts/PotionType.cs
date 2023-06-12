@@ -1,7 +1,6 @@
 using UnityEngine;
 
-public enum PotionType
-{
+public enum PotionType {
     Health,
     Movement
 }

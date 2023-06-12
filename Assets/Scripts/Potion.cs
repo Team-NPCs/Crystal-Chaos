@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Potion : MonoBehaviour
-{
+public class Potion : MonoBehaviour {
     public PotionType potionType;
     public int healthIncreaseAmount = 40;
     public float speedIncreaseAmount = 2.5f;
@@ -14,24 +13,19 @@ public class Potion : MonoBehaviour
 
     private Animator potionAnimator;
 
-    private void Start()
-    {
+    private void Start() {
         potionAnimator = GetComponent<Animator>();
         GeneratePotionType();
         UpdatePotionColor();
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
+    private void OnTriggerEnter2D(Collider2D other) {
+        if (other.CompareTag("Player")) {
             PlayerStats playerStats = other.GetComponent<PlayerStats>();
-            if (playerStats != null)
-            {
+            if (playerStats != null) {
                 // Apply potion effects based on type
                 bool getsPickedUp = false;
-                switch (potionType)
-                {
+                switch (potionType) {
                     case PotionType.Health:
                         // Check if the health potion can get used by the player.
                         getsPickedUp = playerStats.IncreaseHealth(healthIncreaseAmount);
@@ -46,47 +40,39 @@ public class Potion : MonoBehaviour
                     Invoke("RespawnPotion", respawnTimePotion);
                 }
             }
-            else 
-            {
+            else {
                 Debug.Log("Can not find players stats.");
             }
         }
     }
 
-    private System.Collections.IEnumerator ActivateSpeedBoost(PlayerStats playerStats)
-    {
+    private System.Collections.IEnumerator ActivateSpeedBoost(PlayerStats playerStats) {
         playerStats.ActivateFastSpeed();
         yield return new WaitForSeconds(speedIncreaseDuration);
         playerStats.DeactivateFastSpeed();
     }
 
-    private void RespawnPotion()
-    {
+    private void RespawnPotion() {
         gameObject.SetActive(true);
         GeneratePotionType();
         UpdatePotionColor();
     }
 
-    private void GeneratePotionType()
-    {
+    private void GeneratePotionType() {
         float totalSpawnProbability = healthSpawnProbability + movementSpawnProbability;
         float randomValue = Random.value * totalSpawnProbability;
-        if (randomValue <= healthSpawnProbability)
-        {
+        if (randomValue <= healthSpawnProbability) {
             potionType = PotionType.Health;
         }
-        else
-        {
+        else {
             potionType = PotionType.Movement;
         }
     }
 
-    private void UpdatePotionColor()
-    {
-        switch (potionType)
-        {
+    private void UpdatePotionColor() {
+        switch (potionType) {
             case PotionType.Health:
-                //potionRenderer.color = Color.red; 
+                //potionRenderer.color = Color.red;
                 potionAnimator.Play("red_potion");
                 break;
             case PotionType.Movement:

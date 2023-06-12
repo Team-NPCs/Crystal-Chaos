@@ -4,8 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class MainMenuUI : MonoBehaviour
-{
+public class MainMenuUI : MonoBehaviour {
     [SerializeField] private Button playButton;
     [SerializeField] private Button howToPlayButton;
     [SerializeField] private Button settingsButton;
@@ -14,8 +13,7 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private HowToPlayUI howToPlay;
 
 
-    private void Awake()
-    {
+    private void Awake() {
         playButton.onClick.AddListener(() => {
             Loader.Load(Loader.Scene.MainStage);
         });

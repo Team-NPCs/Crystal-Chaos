@@ -2,82 +2,66 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CrystalBall : MonoBehaviour
-{
+public class CrystalBall : MonoBehaviour {
     private CrystalType crystalType;
     private float respawnTime = 5f;
 
     private SpriteRenderer crystalRenderer;
 
-    private void Start()
-    {
+    private void Start() {
         crystalRenderer = GetComponent<SpriteRenderer>();
         GenerateCrystalType();
         UpdateCrystalColor();
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
+    private void OnTriggerEnter2D(Collider2D other) {
+        if (other.CompareTag("Player")) {
             PlayerInventory inventory = other.GetComponent<PlayerInventory>();
-            if (inventory != null)
-            {
+            if (inventory != null) {
                 // Check if the inventory is already full or if the crystal ball can get picked up.
-                if (inventory.AddCrystal(crystalType) == true) 
-                {
+                if (inventory.AddCrystal(crystalType) == true) {
                     gameObject.SetActive(false);
                     Invoke("RespawnCrystal", respawnTime);
                 }
             }
-            else 
-            {
+            else {
                 Debug.Log("Can not find players inventory.");
             }
         }
     }
 
-    private void RespawnCrystal()
-    {
+    private void RespawnCrystal() {
         gameObject.SetActive(true);
         GenerateCrystalType();
         UpdateCrystalColor();
     }
 
-    private void GenerateCrystalType()
-    {
+    private void GenerateCrystalType() {
         float randomValue = Random.value;
-         // 23 % chance for fire, water, earth, air. remaining 8% for void.
+        // 23 % chance for fire, water, earth, air. remaining 8% for void.
         float chance_normal_types = 0.23f;
-        if (randomValue < 1 * chance_normal_types) 
-        {
+        if (randomValue < 1 * chance_normal_types) {
             crystalType = CrystalType.Fire;
         }
-        else if (randomValue < 2 * chance_normal_types)
-        {
+        else if (randomValue < 2 * chance_normal_types) {
             crystalType = CrystalType.Water;
         }
-        else if (randomValue < 3 * chance_normal_types)
-        {
+        else if (randomValue < 3 * chance_normal_types) {
             crystalType = CrystalType.Earth;
         }
-        else if (randomValue < 4 * chance_normal_types)
-        {
-            crystalType = CrystalType.Air; 
+        else if (randomValue < 4 * chance_normal_types) {
+            crystalType = CrystalType.Air;
         }
-        else
-        {
+        else {
             crystalType = CrystalType.Void;
         }
     }
 
-    private void UpdateCrystalColor()
-    {
+    private void UpdateCrystalColor() {
         // Assign the appropriate material based on the crystal type
-        switch (crystalType)
-        {
+        switch (crystalType) {
             case CrystalType.Fire:
-                crystalRenderer.color = Color.red; 
+                crystalRenderer.color = Color.red;
                 //crystalRenderer.material = Resources.Load<Material>("CrystalFire");
                 break;
             case CrystalType.Water:

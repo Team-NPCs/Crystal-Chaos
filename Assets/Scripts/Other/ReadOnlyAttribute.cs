@@ -1,9 +1,8 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
+using UnityEngine;
 
-public class ReadOnlyAttribute : PropertyAttribute
-{
-   
+public class ReadOnlyAttribute : PropertyAttribute {
+
 }
 
 /// <summary>
@@ -11,14 +10,12 @@ public class ReadOnlyAttribute : PropertyAttribute
 /// Small but useful script, to make your inspectors look pretty and useful :D
 /// </summary>
 [CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
-public class ReadOnlyPropertyDrawer : PropertyDrawer
-{
-	public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-	{
-		GUI.enabled = false;
-		EditorGUI.PropertyField(position, property, label);
-		GUI.enabled = true;
-	}
+public class ReadOnlyPropertyDrawer : PropertyDrawer {
+    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
+        GUI.enabled = false;
+        EditorGUI.PropertyField(position, property, label);
+        GUI.enabled = true;
+    }
 }
 
 // Learn More with this Tutorial: https://youtu.be/r3nwTGLHygI
