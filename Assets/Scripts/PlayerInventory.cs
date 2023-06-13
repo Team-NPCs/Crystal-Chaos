@@ -5,11 +5,52 @@ using UnityEngine;
 public class PlayerInventory : MonoBehaviour {
     // Maximum number of crystal balls per type.
     public int maxCrystalBallsPerType = 3; 
+    public float scrollSensitivity = 0.1f;
 
-    private CrystalType currentEquippedCrystalType = CrystalType._NONE;
+    public CrystalType currentEquippedCrystalType = CrystalType._NONE;
     private Dictionary<CrystalType, List<CrystalBall>> collectedCrystals = new Dictionary<CrystalType, List<CrystalBall>>();
     private Dictionary<CrystalType, bool> isInCoolDownCrystals = new Dictionary<CrystalType, bool>();
 
+
+
+    private void Update() {
+        // Check if the mouse scroll was used. Change the crystal ball based on this.
+        float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+        if (scrollInput > this.scrollSensitivity)
+        {
+            // Mouse scroll wheel scrolled up.
+            Debug.Log("Scrolled Up");
+            this.SwitchCrystalOneStep(false);
+        }
+        else if (scrollInput < 0f)
+        {
+            // Mouse scroll wheel scrolled down.
+            Debug.Log("Scrolled Down");
+            this.SwitchCrystalOneStep();
+        }
+        // Check if the number keys were pressed. 1 for fire, 2 for water, 3 for earth, 4 for air, 5 for void.
+        if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)) {
+            Debug.Log("Pressed Key 1.");
+            this.SwitchCrystalTo(CrystalType.Fire);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2)) {
+            Debug.Log("Pressed Key 2.");
+            this.SwitchCrystalTo(CrystalType.Water);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3)) {
+            Debug.Log("Pressed Key 3.");
+            this.SwitchCrystalTo(CrystalType.Earth);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.Keypad4)) {
+            Debug.Log("Pressed Key 4.");
+            this.SwitchCrystalTo(CrystalType.Air);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha5) || Input.GetKeyDown(KeyCode.Keypad5)) {
+            Debug.Log("Pressed Key 5.");
+            this.SwitchCrystalTo(CrystalType.Void);
+        }
+    }
+    
     // A function that adds the crystal ball to the inventory. If the max. number of crystal balls of a
     // specific type is already reached, the crystal ball will not be added.
     // The returned bool variable tells the crystal ball if it got picked up or not.
@@ -36,7 +77,7 @@ public class PlayerInventory : MonoBehaviour {
         // If we did not had any crystal balls at all before, then equip the new one.
         if (this.currentEquippedCrystalType == CrystalType._NONE) {
             Debug.Log("We had no crystal balls before. Now we equipped one.");
-            this.SwitchCrystalOneStep();
+            this.SwitchCrystalTo(crystalType);
         }
         return true;
     }
@@ -124,7 +165,17 @@ public class PlayerInventory : MonoBehaviour {
         }
         else {
             // Equip it.
+            Debug.Log("New crystal ball type:" + nextCrystalType.ToString());
             this.currentEquippedCrystalType = nextCrystalType;
+        }
+    }
+
+    // This function switches the equipped crystal ball to the specified type. Note that this only will work if the 
+    // type is really within the inventory. If not, the old type is kept.
+    public void SwitchCrystalTo (CrystalType crystal_type) {
+        if (this.HasCrystalBall(crystal_type)) {
+            Debug.Log("Equipped crystal ball type " + crystal_type.ToString());
+            this.currentEquippedCrystalType = crystal_type;
         }
     }
 
@@ -148,7 +199,7 @@ public class PlayerInventory : MonoBehaviour {
                 if (directionForward == true) { return CrystalType.Fire; }
                 else { return CrystalType.Air; }
             default:
-                Debug.Log("Unimplemented crystalTypeToComeFrom in getNextCrystalType.");
+                Debug.Log("Unimplemented OR _NONE crystalTypeToComeFrom in getNextCrystalType.");
                 return CrystalType._NONE;
         }
     }
