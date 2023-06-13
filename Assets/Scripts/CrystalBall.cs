@@ -2,84 +2,130 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CrystalBall : MonoBehaviour {
+public class CrystalBall {
+    // What properties does a crystal ball have (including their attacks).
     private CrystalType crystalType;
-    private float respawnTime = 5f;
+    private int numberOfUsagesNormalAttack;
+    public float cooldownTimeNormalAttack;
+    private bool usedStrongAttack;
+    private int damageNormalAttackBody;
+    private int damageNormalAttackHead;
+    // Define here the general settings for each crystal ball type.
+    // FIRE.
+    public int numberOfUsagesNormalAttackFire = 12;
+    public float cooldownTimeNormalAttackFire = 0.5f;
+    public int damageNormalAttackBodyFire = 10;
+    public int damageNormalAttackHeadFire = 20;
+    // WATER.
+    public int numberOfUsagesNormalAttackWater = 20;
+    public float cooldownTimeNormalAttackWater = 0.2f;
+    public int damageNormalAttackBodyWater = 5;
+    public int damageNormalAttackHeadWater = 10;
+    // EARTH.
+    public int numberOfUsagesNormalAttackEarth = 5;
+    public float cooldownTimeNormalAttackEarth = 2.0f;
+    public int damageNormalAttackBodyEarth = 10;
+    public int damageNormalAttackHeadEarth = 10;
+    // AIR.
+    public int numberOfUsagesNormalAttackAir = 3;
+    public float cooldownTimeNormalAttackAir = 3.0f;
+    public int damageNormalAttackBodyAir = 40;
+    public int damageNormalAttackHeadAir = 100;
+    // VOID.
+    public int numberOfUsagesNormalAttackVoid = 15;
+    public float cooldownTimeNormalAttackVoid = 0.2f;
+    public int damageNormalAttackBodyVoid = 12;
+    public int damageNormalAttackHeadVoid = 24;
 
-    private SpriteRenderer crystalRenderer;
-
-    private void Start() {
-        crystalRenderer = GetComponent<SpriteRenderer>();
-        GenerateCrystalType();
-        UpdateCrystalColor();
+    // The constructor. When a crystal ball is generated in the inventory we need to know
+    // what kind of crystal ball it is.
+    public CrystalBall(CrystalType crystalType)
+    {
+        this.crystalType = crystalType;
+        this.usedStrongAttack = false;
+        this.InitializeProperties();
     }
 
-    private void OnTriggerEnter2D(Collider2D other) {
-        if (other.CompareTag("Player")) {
-            PlayerInventory inventory = other.GetComponent<PlayerInventory>();
-            if (inventory != null) {
-                // Check if the inventory is already full or if the crystal ball can get picked up.
-                if (inventory.AddCrystal(crystalType) == true) {
-                    gameObject.SetActive(false);
-                    Invoke("RespawnCrystal", respawnTime);
-                }
-            }
-            else {
-                Debug.Log("Can not find players inventory.");
-            }
-        }
-    }
-
-    private void RespawnCrystal() {
-        gameObject.SetActive(true);
-        GenerateCrystalType();
-        UpdateCrystalColor();
-    }
-
-    private void GenerateCrystalType() {
-        float randomValue = Random.value;
-        // 23 % chance for fire, water, earth, air. remaining 8% for void.
-        float chance_normal_types = 0.23f;
-        if (randomValue < 1 * chance_normal_types) {
-            crystalType = CrystalType.Fire;
-        }
-        else if (randomValue < 2 * chance_normal_types) {
-            crystalType = CrystalType.Water;
-        }
-        else if (randomValue < 3 * chance_normal_types) {
-            crystalType = CrystalType.Earth;
-        }
-        else if (randomValue < 4 * chance_normal_types) {
-            crystalType = CrystalType.Air;
-        }
-        else {
-            crystalType = CrystalType.Void;
-        }
-    }
-
-    private void UpdateCrystalColor() {
-        // Assign the appropriate material based on the crystal type
-        switch (crystalType) {
+    // This function assign to the current object the initial values
+    // depending on its crystal ball type.
+    private void InitializeProperties ()
+    {
+        switch (this.crystalType) {
             case CrystalType.Fire:
-                crystalRenderer.color = Color.red;
-                //crystalRenderer.material = Resources.Load<Material>("CrystalFire");
+                this.numberOfUsagesNormalAttack = numberOfUsagesNormalAttackFire;
+                this.cooldownTimeNormalAttack = cooldownTimeNormalAttackFire;
+                this.damageNormalAttackBody = damageNormalAttackBodyFire;
+                this.damageNormalAttackHead = damageNormalAttackHeadFire;
                 break;
             case CrystalType.Water:
-                crystalRenderer.color = Color.blue;
-                //crystalRenderer.material = Resources.Load<Material>("CrystalWater");
+                this.numberOfUsagesNormalAttack = numberOfUsagesNormalAttackWater;
+                this.cooldownTimeNormalAttack = cooldownTimeNormalAttackWater;
+                this.damageNormalAttackBody = damageNormalAttackBodyWater;
+                this.damageNormalAttackHead = damageNormalAttackHeadWater;
                 break;
             case CrystalType.Earth:
-                crystalRenderer.color = Color.gray;
-                //crystalRenderer.material = Resources.Load<Material>("CrystalEarth");
+                this.numberOfUsagesNormalAttack = numberOfUsagesNormalAttackEarth;
+                this.cooldownTimeNormalAttack = cooldownTimeNormalAttackEarth;
+                this.damageNormalAttackBody = damageNormalAttackBodyEarth;
+                this.damageNormalAttackHead = damageNormalAttackHeadEarth;
                 break;
             case CrystalType.Air:
-                crystalRenderer.color = Color.magenta;
-                //crystalRenderer.material = Resources.Load<Material>("CrystalAir");
+                this.numberOfUsagesNormalAttack = numberOfUsagesNormalAttackAir;
+                this.cooldownTimeNormalAttack = cooldownTimeNormalAttackAir;
+                this.damageNormalAttackBody = damageNormalAttackBodyAir;
+                this.damageNormalAttackHead = damageNormalAttackHeadAir;
                 break;
             case CrystalType.Void:
-                crystalRenderer.color = Color.black;
-                //crystalRenderer.material = Resources.Load<Material>("CrystalVoid");
+                this.numberOfUsagesNormalAttack = numberOfUsagesNormalAttackVoid;
+                this.cooldownTimeNormalAttack = cooldownTimeNormalAttackVoid;
+                this.damageNormalAttackBody = damageNormalAttackBodyVoid;
+                this.damageNormalAttackHead = damageNormalAttackHeadVoid;
+                break;
+            default:
+                Debug.Log("Unknown Crystal Ball Type in CrystalBall.cs");
                 break;
         }
+    }
+
+    // This function is called when the crystal ball is equipped and the user wants to 
+    // attack with a normal attack.
+    public void UseCrystalBallNormalAttack ()
+    {
+        // Note that the cooldown time has to be managed from the inventory itself,
+        // since this class does not inherit from monobehavior and therefore does not
+        // have the possibility to use the invoke function.
+
+        // Spawn the attack.
+
+        // Decrease the ammunition.
+        this.numberOfUsagesNormalAttack--;
+    }
+
+    public void UseCrystalBallStrongAttack ()
+    {   
+        // Spawn the strong attack.
+        
+        // Then let the inventory see that the crystal ball is not usable anymore.
+        this.usedStrongAttack = true;
+    }
+
+    // This function has to be called from the inventory after every attack to check if the
+    // crystal ball ran out of ammo and if the crystal ball has to be removed from the inventory.
+    public bool IsStillUsable ()
+    {
+        // We have two cases. Either the ammo of the normal attack ran out or the strong attack was used.
+        if ((this.numberOfUsagesNormalAttack <= 0) || (this.usedStrongAttack == true)) {
+            return false;
+        }
+        else {
+            // The crystal ball still has ammunition.
+            return true;
+        }
+    }
+
+    // Returns the current number of available ammunition.
+    public int GetNumberOfAmmunition ()
+    {
+        return this.numberOfUsagesNormalAttack;
     }
 }

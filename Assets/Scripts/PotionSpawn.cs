@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Potion : MonoBehaviour {
+public class PotionSpawn : MonoBehaviour {
     public PotionType potionType;
     public int healthIncreaseAmount = 40;
     public float speedIncreaseAmount = 2.5f;
