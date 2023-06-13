@@ -2,12 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CrystalBall : MonoBehaviour {
+public class CrystalBall {
     // What properties does a crystal ball have (including their attacks).
     private CrystalType crystalType;
     private int numberOfUsagesNormalAttack;
-    private float cooldownTimeNormalAttack;
-    private bool isInCooldown;
+    public float cooldownTimeNormalAttack;
     private bool usedStrongAttack;
     private int damageNormalAttackBody;
     private int damageNormalAttackHead;
@@ -43,7 +42,6 @@ public class CrystalBall : MonoBehaviour {
     public CrystalBall(CrystalType crystalType)
     {
         this.crystalType = crystalType;
-        this.isInCooldown = false;
         this.usedStrongAttack = false;
         this.InitializeProperties();
     }
@@ -93,33 +91,22 @@ public class CrystalBall : MonoBehaviour {
     // attack with a normal attack.
     public void UseCrystalBallNormalAttack ()
     {
-        // Check if it is still in cooldown.
-        if (this.isInCooldown == true) {
-            return;
-        }
-        // If not, then spawn the attack.
+        // Note that the cooldown time has to be managed from the inventory itself,
+        // since this class does not inherit from monobehavior and therefore does not
+        // have the possibility to use the invoke function.
+
+        // Spawn the attack.
 
         // Decrease the ammunition.
         this.numberOfUsagesNormalAttack--;
-        // Set the cooldown time.
-        this.isInCooldown = true;
-        Invoke("ResetCoolDown", this.cooldownTimeNormalAttack);
     }
 
-    //
     public void UseCrystalBallStrongAttack ()
-    {
-        // Do we also check here for cooldown or does this only apply to the normal attack?
-        
+    {   
         // Spawn the strong attack.
         
         // Then let the inventory see that the crystal ball is not usable anymore.
         this.usedStrongAttack = true;
-    }
-
-    private void ResetCoolDown () 
-    {
-        this.isInCooldown = false;
     }
 
     // This function has to be called from the inventory after every attack to check if the
