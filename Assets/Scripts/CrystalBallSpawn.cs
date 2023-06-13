@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CrystalBall : MonoBehaviour {
+public class CrystalBallSpawn : MonoBehaviour {
     private CrystalType crystalType;
     private float respawnTime = 5f;
 
