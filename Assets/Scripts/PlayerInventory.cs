@@ -83,27 +83,43 @@ public class PlayerInventory : MonoBehaviour {
     }
 
     // The player wants to use a normal attack with the currently equipped crystal ball.
-    public void UseCrystalBallNormalAttack ()
+    public bool UseCrystalBallNormalAttack ()
     {
         // Just to be sure.
         if (this.HasCrystalBall(this.currentEquippedCrystalType) == false) {
             Debug.Log("The players equipped crystal ball type has no entries in the inventory. (or inventory is empty.)");
-            return;
+            return false;
         }
         // Check if the crystal ball is in cooldown.
         if (this.isInCoolDownCrystals[this.currentEquippedCrystalType] == true) {
             Debug.Log("Cannot spawn the attack since it is still in cooldown.");
-            return;
+            return false;
         }
         // Ok we can use the crystal ball. We always use the first one in the inventory.
         this.collectedCrystals[this.currentEquippedCrystalType][0].UseCrystalBallNormalAttack();
         // Set the cooldown.
         this.isInCoolDownCrystals[this.currentEquippedCrystalType] = true;
         // Reset the cooldown in the defined number of seconds.
-        // Create a lambda expression that calls the function with parameters
-        System.Action LambdaFunctionCoolDownReset = () => this.ResetCooldown(this.currentEquippedCrystalType);
-        // Invoke the lambda expression after a delay of the cooldown time of the crystal ball type.
-        Invoke("LambdaFunctionCoolDownReset", this.collectedCrystals[this.currentEquippedCrystalType][0].cooldownTimeNormalAttack);
+        switch (this.currentEquippedCrystalType) {
+            case CrystalType.Fire:
+                Invoke("ResetCoolDownFire", this.collectedCrystals[this.currentEquippedCrystalType][0].cooldownTimeNormalAttack);
+                break;
+            case CrystalType.Water:
+                Invoke("ResetCoolDownWater", this.collectedCrystals[this.currentEquippedCrystalType][0].cooldownTimeNormalAttack);
+                break;
+            case CrystalType.Earth:
+                Invoke("ResetCoolDownEarth", this.collectedCrystals[this.currentEquippedCrystalType][0].cooldownTimeNormalAttack);
+                break;
+            case CrystalType.Air:
+                Invoke("ResetCoolDownAir", this.collectedCrystals[this.currentEquippedCrystalType][0].cooldownTimeNormalAttack);
+                break;
+            case CrystalType.Void:
+                Invoke("ResetCoolDownVoid", this.collectedCrystals[this.currentEquippedCrystalType][0].cooldownTimeNormalAttack);
+                break;
+            default:
+                Debug.Log("Unsupported crystal type in UseNormalAttack.");
+                break;
+        }
         // Check if the crystal ball needs to get destroyed.
         if (this.collectedCrystals[this.currentEquippedCrystalType][0].IsStillUsable() == false) {
             // Crystal balls ammunition ran out. Destroy it.
@@ -125,11 +141,29 @@ public class PlayerInventory : MonoBehaviour {
                 Debug.Log("Destroyed crystal ball since it ran out of ammo but the player has still crystal balls of the same type.");
             }
         }
+        return true;
     }
 
     // This function resets the cooldown.
     private void ResetCooldown (CrystalType crystal_type) {
         this.isInCoolDownCrystals[crystal_type] = false;
+    }
+    // We need some helper functions since the invoke call does not allow functions with parameters.
+    // Unfortunatly lambda functions did not work.
+    private void ResetCoolDownFire () {
+        this.isInCoolDownCrystals[CrystalType.Fire] = false;
+    }
+    private void ResetCoolDownWater () {
+        this.isInCoolDownCrystals[CrystalType.Water] = false;
+    }
+    private void ResetCoolDownEarth () {
+        this.isInCoolDownCrystals[CrystalType.Earth] = false;
+    }
+    private void ResetCoolDownAir () {
+        this.isInCoolDownCrystals[CrystalType.Air] = false;
+    }
+    private void ResetCoolDownVoid () {
+        this.isInCoolDownCrystals[CrystalType.Void] = false;
     }
 
 
