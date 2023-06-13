@@ -5,5 +5,6 @@ public enum CrystalType {
     Water,
     Earth,
     Air,
-    Void
+    Void,
+    _NONE
 }
