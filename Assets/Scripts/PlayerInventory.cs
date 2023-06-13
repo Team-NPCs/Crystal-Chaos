@@ -12,6 +12,30 @@ public class PlayerInventory : MonoBehaviour {
     private Dictionary<CrystalType, bool> isInCoolDownCrystals = new Dictionary<CrystalType, bool>();
 
 
+    private void Start() {
+        // At start we assign a random crystal ball.
+        CrystalType crystalType;
+        float randomValue = Random.value;
+        // 23 % chance for fire, water, earth, air. remaining 8% for void.
+        float chanceNormalTypes = 0.23f;
+        if (randomValue < 1 * chanceNormalTypes) {
+            crystalType = CrystalType.Fire;
+        }
+        else if (randomValue < 2 * chanceNormalTypes) {
+            crystalType = CrystalType.Water;
+        }
+        else if (randomValue < 3 * chanceNormalTypes) {
+            crystalType = CrystalType.Earth;
+        }
+        else if (randomValue < 4 * chanceNormalTypes) {
+            crystalType = CrystalType.Air;
+        }
+        else {
+            crystalType = CrystalType.Void;
+        }
+        // Add it to the inventory.
+        this.AddCrystal(crystalType);
+    }
 
     private void Update() {
         // Check if the mouse scroll was used. Change the crystal ball based on this.

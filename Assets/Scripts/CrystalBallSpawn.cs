@@ -39,17 +39,17 @@ public class CrystalBallSpawn : MonoBehaviour {
     private void GenerateCrystalType() {
         float randomValue = Random.value;
         // 23 % chance for fire, water, earth, air. remaining 8% for void.
-        float chance_normal_types = 0.23f;
-        if (randomValue < 1 * chance_normal_types) {
+        float chanceNormalTypes = 0.23f;
+        if (randomValue < 1 * chanceNormalTypes) {
             crystalType = CrystalType.Fire;
         }
-        else if (randomValue < 2 * chance_normal_types) {
+        else if (randomValue < 2 * chanceNormalTypes) {
             crystalType = CrystalType.Water;
         }
-        else if (randomValue < 3 * chance_normal_types) {
+        else if (randomValue < 3 * chanceNormalTypes) {
             crystalType = CrystalType.Earth;
         }
-        else if (randomValue < 4 * chance_normal_types) {
+        else if (randomValue < 4 * chanceNormalTypes) {
             crystalType = CrystalType.Air;
         }
         else {
