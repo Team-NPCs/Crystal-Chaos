@@ -14,6 +14,8 @@ public class PlayerMovement : NetworkBehaviour {
     //Scriptable object which holds all the player's movement parameters. If you don't want to use it
     //just paste in all the parameters, though you will need to manuly change all references in this script
     public PlayerData Data;
+    // Get the players player stats. There the speed factor is set that can be increase using a movement potion.
+    PlayerStats playerStats;
 
     #region COMPONENTS
     public Rigidbody2D RB { get; private set; }
@@ -83,6 +85,7 @@ public class PlayerMovement : NetworkBehaviour {
     private void Awake() {
         RB = GetComponent<Rigidbody2D>();
         AnimHandler = GetComponent<PlayerAnimator>();
+        playerStats = GetComponent<PlayerStats>();
     }
 
     private void Start() {
@@ -328,8 +331,10 @@ public class PlayerMovement : NetworkBehaviour {
     //MOVEMENT METHODS
     #region RUN METHODS
     private void Run(float lerpAmount) {
+        // Multiply the runmaxspeed by the current speedFactor that can increase using a movement potion.
+        float _currentMaxSpeed = Data.runMaxSpeed * playerStats.speedFactor;
         //Calculate the direction we want to move in and our desired velocity
-        float targetSpeed = _moveInput.x * Data.runMaxSpeed;
+        float targetSpeed = _moveInput.x * _currentMaxSpeed;
         //We can reduce are control using Lerp() this smooths changes to are direction and speed
         targetSpeed = Mathf.Lerp(RB.velocity.x, targetSpeed, lerpAmount);
 
@@ -363,8 +368,7 @@ public class PlayerMovement : NetworkBehaviour {
 
         //Calculate difference between current velocity and desired velocity
         float speedDif = targetSpeed - RB.velocity.x;
-        //Calculate force along x-axis to apply to thr player
-
+        //Calculate force along x-axis to apply to the player
         float movement = speedDif * accelRate;
 
         //Convert this to a vector and apply to rigidbody

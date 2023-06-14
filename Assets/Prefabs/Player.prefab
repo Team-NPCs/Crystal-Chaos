@@ -1010,10 +1010,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c38bce13c167344edbcbadb3e7a5be96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialSpeed: 5
-  fastSpeed: 10
+  initialSpeedFactor: 1
+  fastSpeedFactor: 2
+  speedIncreaseDuration: 10
   initialHealth: 60
   maxHealth: 100
+  speedFactor: 0
+  health: 0
 --- !u!1 &8067859620752876239
 GameObject:
   m_ObjectHideFlags: 0
