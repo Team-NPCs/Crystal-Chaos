@@ -30,7 +30,7 @@ public class DemoManager : MonoBehaviour {
     private State state;
     private float waitingToStartTimer = 1f;
     private float countdownToStartTimer = 3f;
-    private float gamePlayingTimer = 10f;
+    private float gamePlayingTimer = 120f;
 
     public SceneData SceneData;
 
