@@ -14,7 +14,7 @@ public class DemoManager : MonoBehaviour {
     private PlayerMovement _player;
     private Shooting _shooting;
     private GrapplingScript _grappling;
-    [SerializeField] private Transform spawnPoint;
+    // [SerializeField] private Transform spawnPoint;
     [SerializeField] private TextMeshProUGUI nameText;
 
     private int _currentPlayerTypeIndex;
