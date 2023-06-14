@@ -5,8 +5,6 @@ using UnityEngine;
 public class PotionSpawn : MonoBehaviour {
     public PotionType potionType;
     public int healthIncreaseAmount = 40;
-    public float speedIncreaseAmount = 2.5f;
-    public float speedIncreaseDuration = 10f;
     public float healthSpawnProbability = 0.6f;
     public float movementSpawnProbability = 0.4f;
     public float respawnTimePotion = 5.0f;
@@ -31,7 +29,7 @@ public class PotionSpawn : MonoBehaviour {
                         getsPickedUp = playerStats.IncreaseHealth(healthIncreaseAmount);
                         break;
                     case PotionType.Movement:
-                        StartCoroutine(ActivateSpeedBoost(playerStats));
+                        ActivateSpeedBoost(playerStats);
                         getsPickedUp = true;
                         break;
                 }
@@ -46,10 +44,8 @@ public class PotionSpawn : MonoBehaviour {
         }
     }
 
-    private System.Collections.IEnumerator ActivateSpeedBoost(PlayerStats playerStats) {
+    private void ActivateSpeedBoost(PlayerStats playerStats) {
         playerStats.ActivateFastSpeed();
-        yield return new WaitForSeconds(speedIncreaseDuration);
-        playerStats.DeactivateFastSpeed();
     }
 
     private void RespawnPotion() {
