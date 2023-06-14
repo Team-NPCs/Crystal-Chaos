@@ -9,6 +9,8 @@ public class DemoManager : MonoBehaviour {
     public static DemoManager Instance { get; private set; }
 
     public event System.EventHandler OnStateChanged;
+    public event System.EventHandler OnGamePaused;
+    public event System.EventHandler OnGameUnPaused;
 
     private Camera _cam;
     private PlayerMovement _player;
@@ -16,6 +18,7 @@ public class DemoManager : MonoBehaviour {
     private GrapplingScript _grappling;
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private TextMeshProUGUI nameText;
+    private bool isPausedGame = false;
 
     private int _currentPlayerTypeIndex;
     private int _currentTilemapIndex;
@@ -30,7 +33,7 @@ public class DemoManager : MonoBehaviour {
     private State state;
     private float waitingToStartTimer = 1f;
     private float countdownToStartTimer = 3f;
-    private float gamePlayingTimer = 120f;
+    private float gamePlayingTimer = 10f;
 
     public SceneData SceneData;
 
@@ -74,6 +77,9 @@ public class DemoManager : MonoBehaviour {
                 break;
             case State.GamePlaying:
                 gamePlayingTimer -= Time.deltaTime;
+                if (Input.GetKeyDown(KeyCode.P)) {
+                    ToggleGamePaused();
+                }
                 if (gamePlayingTimer < 0f) {
                     state = State.GameOver;
                     OnStateChanged?.Invoke(this, System.EventArgs.Empty);
@@ -96,6 +102,9 @@ public class DemoManager : MonoBehaviour {
     public bool isCountDownToStartActive() {
         return state == State.CountDownToStart;
     }
+    public bool isGameOver() {
+        return state == State.GameOver;
+    }
 
     public float getCountdownToStartTimer() {
         return countdownToStartTimer;
@@ -103,6 +112,15 @@ public class DemoManager : MonoBehaviour {
 
     public float GetGamePlayingTimer() {
         return gamePlayingTimer;
+    }
+
+    private void ToggleGamePaused() {
+        isPausedGame = !isPausedGame;
+        if(isPausedGame) {
+            OnGamePaused?.Invoke(this, System.EventArgs.Empty);
+        } else {
+            OnGameUnPaused?.Invoke(this, System.EventArgs.Empty);
+        }
     }
 }
 

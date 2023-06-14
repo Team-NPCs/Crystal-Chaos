@@ -11,10 +11,12 @@ public class PlayerStats : MonoBehaviour {
 
     private float speed;
     private int health;
+    [SerializeField] private HealthBar bar;
 
     private void Start() {
         speed = initialSpeed;
         health = initialHealth;
+        bar.setHealth(health);
     }
 
     public void IncreaseSpeed(float amount) {
@@ -58,6 +60,7 @@ public class PlayerStats : MonoBehaviour {
             if (health > maxHealth) {
                 health = maxHealth;
             }
+            bar.setHealth(health);
             return true;
         }
     }
@@ -67,5 +70,6 @@ public class PlayerStats : MonoBehaviour {
         if (health < 0) {
             health = 0;
         }
+        bar.setHealth(health);
     }
 }
