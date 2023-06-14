@@ -13,20 +13,19 @@ MonoBehaviour:
   m_Name: Crystal Chaos Style
   m_EditorClassIdentifier: 
   gravityStrength: -77.77777
-  gravityScale: 7.9284167
+  gravityScale: 2.5925925
   fallGravityMult: 1.5
   maxFallSpeed: 25
   fastFallGravityMult: 2
   maxFastFallSpeed: 30
-  runMaxSpeed: 110
-  runMaxSpeedInitial: 11
+  runMaxSpeed: 11
   runAcceleration: 2.5
-  runAccelAmount: 9.469696
+  runAccelAmount: 11.363636
   runDecceleration: 5
-  runDeccelAmount: 18.939392
+  runDeccelAmount: 22.727272
   accelInAir: 0.65
   deccelInAir: 0.65
-  doConserveMomentum: 0
+  doConserveMomentum: 1
   jumpHeight: 3.5
   jumpTimeToApex: 0.3
   jumpForce: 23.333332

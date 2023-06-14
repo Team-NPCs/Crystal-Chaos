@@ -17,8 +17,7 @@ public class PlayerData : ScriptableObject {
     [Space(20)]
 
     [Header("Run")]
-    public float runMaxSpeed; //Target speed we want the player to reach. It can increase and decrease depending on the movement potion.
-    public float runMaxSpeedInitial; // Is the normal speed, it will be used to be multiplied by the potions factor.
+    public float runMaxSpeed; //Target speed we want the player to reach.
     public float runAcceleration; //The speed at which our player accelerates to max speed, can be set to runMaxSpeed for instant acceleration down to 0 for none at all
     [HideInInspector] public float runAccelAmount; //The actual force (multiplied with speedDiff) applied to the player.
     public float runDecceleration; //The speed at which our player decelerates from their current speed, can be set to runMaxSpeed for instant deceleration down to 0 for none at all
