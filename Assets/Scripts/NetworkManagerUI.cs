@@ -43,7 +43,7 @@ public class NetworkManagerUI : MonoBehaviour {
     }
 
     private void Start() {
-        ipAddress = "0.0.0.0";
+        ipAddress = "127.0.0.1";
         SetIpAddress(); // Set the Ip to the above address
         InvokeRepeating("assignPlayerController", 0.1f, 0.1f);
     }
@@ -52,7 +52,7 @@ public class NetworkManagerUI : MonoBehaviour {
     /* Gets the Ip Address of your connected network and
 	shows on the screen in order to let other players join
 	by inputing that Ip in the input field */
-    // ONLY FOR HOST SIDE 
+    // ONLY FOR HOST SIDE
     public string GetLocalIPAddress() {
         var host = Dns.GetHostEntry(Dns.GetHostName());
         foreach (var ip in host.AddressList) {
