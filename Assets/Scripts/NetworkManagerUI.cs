@@ -22,6 +22,9 @@ public class NetworkManagerUI : MonoBehaviour {
 
         clientBtn.onClick.AddListener(() => {
             NetworkManager.Singleton.StartClient();
+            _demoManager.SetActive(true);
+            _hud.SetActive(true);
+            gameObject.SetActive(false);
         });
     }
 
