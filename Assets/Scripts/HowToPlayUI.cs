@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class HowToPlayUI : MonoBehaviour {
     [SerializeField] private Button goToMenu;
+
     private void Awake() {
         goToMenu.onClick.AddListener(() => {
             Hide();

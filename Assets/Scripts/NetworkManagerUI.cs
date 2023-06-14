@@ -27,8 +27,8 @@ public class NetworkManagerUI : MonoBehaviour {
         hostBtn.onClick.AddListener(() => {
             NetworkManager.Singleton.StartHost();
             GetLocalIPAddress();
-            _demoManager.SetActive(true);
             _hud.SetActive(true);
+            _demoManager.SetActive(true);
             gameObject.SetActive(false);
         });
 

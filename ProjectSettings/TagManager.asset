@@ -6,6 +6,7 @@ TagManager:
   tags:
   - ShootingPoint
   - GrapplingGun
+  - HealthBar
   layers:
   - Default
   - TransparentFX

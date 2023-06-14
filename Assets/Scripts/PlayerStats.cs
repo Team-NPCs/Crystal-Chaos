@@ -11,12 +11,15 @@ public class PlayerStats : MonoBehaviour {
 
     public float speedFactor;
     public int health;
+    [SerializeField] private HealthBar bar;
 
     private int numberOfSpeedIncreasements = 0;
 
     private void Start() {
+        bar = GameObject.FindWithTag("HealthBar").GetComponent<HealthBar>();
         speedFactor = initialSpeedFactor;
         health = initialHealth;
+        bar.setHealth(health);
     }
 
     public void ActivateFastSpeed() {
@@ -53,6 +56,7 @@ public class PlayerStats : MonoBehaviour {
             if (health > maxHealth) {
                 health = maxHealth;
             }
+            bar.setHealth(health);
             return true;
         }
     }
@@ -62,5 +66,6 @@ public class PlayerStats : MonoBehaviour {
         if (health < 0) {
             health = 0;
         }
+        bar.setHealth(health);
     }
 }
