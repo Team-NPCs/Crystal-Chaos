@@ -3,43 +3,48 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerStats : MonoBehaviour {
-    public float initialSpeedFactor;
-    public float fastSpeedFactor;
-    public float speedIncreaseDuration;
-    public int initialHealth;
-    public int maxHealth;
+    public float initialSpeed = 5f;
+    public float fastSpeed = 10f;
+    private int numberOfSpeedPotionsInUse = 0;
+    public int initialHealth = 100;
+    public int maxHealth = 100;
 
-    public float speedFactor;
-    public int health;
-
-    private int numberOfSpeedIncreasements = 0;
+    private float speed;
+    private int health;
 
     private void Start() {
-        speedFactor = initialSpeedFactor;
+        speed = initialSpeed;
         health = initialHealth;
     }
 
+    public void IncreaseSpeed(float amount) {
+        speed += amount;
+    }
+
+    public void DecreaseSpeed(float amount) {
+        speed -= amount;
+        if (speed < 0f) {
+            speed = 0f;
+        }
+    }
+
     public void ActivateFastSpeed() {
-        numberOfSpeedIncreasements++;
-        speedFactor = fastSpeedFactor;
-        Invoke("DeactivateFastSpeed", speedIncreaseDuration);
-        Debug.Log("Increase speed. Number of increasements: " + numberOfSpeedIncreasements.ToString());
+        numberOfSpeedPotionsInUse += 1;
+        speed = fastSpeed;
     }
 
     public void DeactivateFastSpeed() {
-        numberOfSpeedIncreasements--;
-        Debug.Log("Decrease speed. Number of increasements: " + numberOfSpeedIncreasements.ToString());
-        if (numberOfSpeedIncreasements == 0) {
-            Debug.Log("Reset speed.");
+        numberOfSpeedPotionsInUse -= 1;
+        if (numberOfSpeedPotionsInUse == 0) {
             ResetSpeed();
         }
-        else if (numberOfSpeedIncreasements < 0) {
+        else if (numberOfSpeedPotionsInUse < 0) {
             Debug.Log("Programming error using numberOfSpeedPotionsInUse.");
         }
     }
 
     public void ResetSpeed() {
-        speedFactor = initialSpeedFactor;
+        speed = initialSpeed;
     }
 
     public bool IncreaseHealth(int amount) {

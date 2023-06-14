@@ -61,19 +61,24 @@ public class CrystalBallSpawn : MonoBehaviour {
         // Assign the appropriate material based on the crystal type
         switch (crystalType) {
             case CrystalType.Fire:
-                crystalRenderer.sprite = Resources.Load<Sprite>("CrystalBalls/crystal-ball-fire");
+                crystalRenderer.color = Color.red;
+                //crystalRenderer.material = Resources.Load<Material>("CrystalFire");
                 break;
             case CrystalType.Water:
-                crystalRenderer.sprite = Resources.Load<Sprite>("CrystalBalls/crystal-ball-water");
+                crystalRenderer.color = Color.blue;
+                //crystalRenderer.material = Resources.Load<Material>("CrystalWater");
                 break;
             case CrystalType.Earth:
-                crystalRenderer.sprite = Resources.Load<Sprite>("CrystalBalls/crystal-ball-earth");
+                crystalRenderer.color = Color.gray;
+                //crystalRenderer.material = Resources.Load<Material>("CrystalEarth");
                 break;
             case CrystalType.Air:
-                crystalRenderer.sprite = Resources.Load<Sprite>("CrystalBalls/crystal-ball-air");
+                crystalRenderer.color = Color.magenta;
+                //crystalRenderer.material = Resources.Load<Material>("CrystalAir");
                 break;
             case CrystalType.Void:
-                crystalRenderer.sprite = Resources.Load<Sprite>("CrystalBalls/crystal-ball-void");
+                crystalRenderer.color = Color.black;
+                //crystalRenderer.material = Resources.Load<Material>("CrystalVoid");
                 break;
         }
     }
