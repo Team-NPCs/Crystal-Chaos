@@ -330,9 +330,9 @@ public class PlayerMovement : MonoBehaviour {
     #region RUN METHODS
     private void Run(float lerpAmount) {
         // Multiply the runmaxspeed by the current speedFactor that can increase using a movement potion.
-        Data.runMaxSpeed = Data.runMaxSpeedInitial * playerStats.speedFactor;
+        float _currentMaxSpeed = Data.runMaxSpeed * playerStats.speedFactor;
         //Calculate the direction we want to move in and our desired velocity
-        float targetSpeed = _moveInput.x * Data.runMaxSpeed;
+        float targetSpeed = _moveInput.x * _currentMaxSpeed;
         //We can reduce are control using Lerp() this smooths changes to are direction and speed
         targetSpeed = Mathf.Lerp(RB.velocity.x, targetSpeed, lerpAmount);;
 
