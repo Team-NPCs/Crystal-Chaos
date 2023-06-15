@@ -128,4 +128,25 @@ public class CrystalBall {
     {
         return this.numberOfUsagesNormalAttack;
     }
+    public int GetNumberOfMaxAmmunition(CrystalType crystalType) {
+        int maxAmmunition = 0;
+        switch (this.crystalType) {
+            case CrystalType.Fire:
+                maxAmmunition = numberOfUsagesNormalAttackFire;
+                break;
+            case CrystalType.Water:
+                maxAmmunition = numberOfUsagesNormalAttackWater;
+                break;
+            case CrystalType.Earth:
+                maxAmmunition = numberOfUsagesNormalAttackEarth;
+                break;
+            case CrystalType.Air:
+                maxAmmunition = numberOfUsagesNormalAttackAir;
+                break;
+            case CrystalType.Void:
+                maxAmmunition = numberOfUsagesNormalAttackVoid;
+                break;
+        }
+        return maxAmmunition;
+    }
 }

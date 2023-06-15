@@ -92,7 +92,7 @@ public class PlayerInventory : MonoBehaviour {
             else {
                 // We can add it to the existing list.
                 this.collectedCrystals[crystalType].Add(new CrystalBall(crystalType));
-                inventoryUI.adjustInventory(crystalType, GetNumberOfAmmunition(crystalType), GetNumberOfCrystalBalls(crystalType));
+                inventoryUI.adjustInventory(crystalType, GetNumberOfAmmunition(crystalType), GetNumberOfMaxAmmunition(crystalType), GetNumberOfCrystalBalls(crystalType));
             }
         }
         else {
@@ -101,7 +101,7 @@ public class PlayerInventory : MonoBehaviour {
             this.collectedCrystals[crystalType].Add(new CrystalBall(crystalType));
             // Also add the cooldown time.
             this.isInCoolDownCrystals.Add(crystalType, false);
-            inventoryUI.adjustInventory(crystalType, GetNumberOfAmmunition(crystalType), GetNumberOfCrystalBalls(crystalType));
+            inventoryUI.adjustInventory(crystalType, GetNumberOfAmmunition(crystalType), GetNumberOfMaxAmmunition(crystalType), GetNumberOfCrystalBalls(crystalType));
         }
         // If we did not had any crystal balls at all before, then equip the new one.
         if (this.currentEquippedCrystalType == CrystalType._NONE) {
@@ -126,6 +126,7 @@ public class PlayerInventory : MonoBehaviour {
         }
         // Ok we can use the crystal ball. We always use the first one in the inventory.
         this.collectedCrystals[this.currentEquippedCrystalType][0].UseCrystalBallNormalAttack();
+        inventoryUI.adjustInventory(this.currentEquippedCrystalType, GetNumberOfAmmunition(this.currentEquippedCrystalType), GetNumberOfMaxAmmunition(this.currentEquippedCrystalType), GetNumberOfCrystalBalls(this.currentEquippedCrystalType));
         // Set the cooldown.
         this.isInCoolDownCrystals[this.currentEquippedCrystalType] = true;
         // Reset the cooldown in the defined number of seconds.
@@ -152,6 +153,7 @@ public class PlayerInventory : MonoBehaviour {
         // Check if the crystal ball needs to get destroyed.
         if (this.collectedCrystals[this.currentEquippedCrystalType][0].IsStillUsable() == false) {
             // Crystal balls ammunition ran out. Destroy it.
+            inventoryUI.adjustInventory(this.currentEquippedCrystalType, GetNumberOfAmmunition(this.currentEquippedCrystalType), GetNumberOfMaxAmmunition(this.currentEquippedCrystalType), GetNumberOfCrystalBalls(this.currentEquippedCrystalType));
             this.collectedCrystals[this.currentEquippedCrystalType].RemoveAt(0);
             // Check if there are still crystal balls of the same type. If not move to the next one.
             if (this.HasCrystalBall(this.currentEquippedCrystalType) == false) {
@@ -288,5 +290,12 @@ public class PlayerInventory : MonoBehaviour {
             return 0;
         }
         else return this.collectedCrystals[crystalType][0].GetNumberOfAmmunition();
+    }
+
+    public int GetNumberOfMaxAmmunition(CrystalType crystalType) {
+        if (this.collectedCrystals.ContainsKey(crystalType) == false) {
+            return 0;
+        }
+        else return this.collectedCrystals[crystalType][0].GetNumberOfMaxAmmunition(crystalType);
     }
 }

@@ -17,7 +17,14 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI airCrystalBall;
     [SerializeField] private TextMeshProUGUI voidCrystalBall;
 
-    public void adjustInventory(CrystalType crystalBall, int numberAmmunition, int numberCrystalBall) {
+    public void adjustInventory(CrystalType crystalBall, int numberAmmunition, int maxAmmunition, int numberCrystalBall) {
+        if(numberAmmunition == 0 && numberCrystalBall == 1) {
+            numberCrystalBall--;
+        }
+        if (numberAmmunition == 0 && numberCrystalBall > 1) {
+            numberAmmunition = maxAmmunition;
+            numberCrystalBall--;
+        }
         switch (crystalBall) {
             case CrystalType.Fire:
                 fireAmmunition.text = numberAmmunition.ToString();
