@@ -116,6 +116,7 @@ public class PlayerStats : NetworkBehaviour {
     }
 
     // Event handler for checking if the player is dead and has to respawn.
+    // Note that the respawn does not work for the client yet.
     private void CheckForDeath(int oldValue, int newValue)
     {
         if (IsLocalPlayer()) {
