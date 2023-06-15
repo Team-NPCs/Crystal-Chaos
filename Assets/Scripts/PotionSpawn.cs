@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PotionSpawn : MonoBehaviour {
+public class PotionSpawn : NetworkBehaviour {
     public PotionType potionType;
-    public int healthIncreaseAmount = 40;
+    public int healthIncreaseAmount = 10;
     public float healthSpawnProbability = 0.6f;
     public float movementSpawnProbability = 0.4f;
     public float respawnTimePotion = 5.0f;
@@ -13,8 +14,11 @@ public class PotionSpawn : MonoBehaviour {
 
     private void Start() {
         potionAnimator = GetComponent<Animator>();
-        GeneratePotionType();
-        UpdatePotionColor();
+        if (potionAnimator == null)
+        {
+            Debug.LogError("Potion Animator is not assigned to the PotionSpawn object.");
+        }
+        RespawnPotion();
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
@@ -35,7 +39,7 @@ public class PotionSpawn : MonoBehaviour {
                 }
                 if (getsPickedUp == true) {
                     gameObject.SetActive(false);
-                    Invoke("RespawnPotion", respawnTimePotion);
+                    Invoke(nameof(RespawnPotion), respawnTimePotion);
                 }
             }
             else {
@@ -50,7 +54,12 @@ public class PotionSpawn : MonoBehaviour {
 
     private void RespawnPotion() {
         gameObject.SetActive(true);
-        GeneratePotionType();
+        if (NetworkManager.Singleton.IsHost)
+        {
+            // Generate the potions type on the server.
+            GeneratePotionType();
+            RpcSetPotionTypeClientRpc(potionType);
+        }
         UpdatePotionColor();
     }
 
@@ -77,5 +86,11 @@ public class PotionSpawn : MonoBehaviour {
                 //potionRenderer.material = Resources.Load<Material>("PotionMovement");
                 break;
         }
+    }
+
+    [ClientRpc]
+    private void RpcSetPotionTypeClientRpc(PotionType type)
+    {
+        potionType = type;
     }
 }

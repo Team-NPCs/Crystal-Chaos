@@ -797,6 +797,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1886943293}
     m_Modifications:
+    - target: {fileID: -614547789723935035, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2849877564
+      objectReference: {fileID: 0}
     - target: {fileID: 159955194230682006, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
       propertyPath: m_Name
       value: Potion (5)
@@ -1026,6 +1030,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1886943293}
     m_Modifications:
+    - target: {fileID: -614547789723935035, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3271318260
+      objectReference: {fileID: 0}
     - target: {fileID: 159955194230682006, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
       propertyPath: m_Name
       value: Potion (3)
@@ -1326,6 +1334,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1886943293}
     m_Modifications:
+    - target: {fileID: -614547789723935035, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 4101228716
+      objectReference: {fileID: 0}
     - target: {fileID: 159955194230682006, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
       propertyPath: m_Name
       value: Potion (1)
@@ -1517,6 +1529,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1886943293}
     m_Modifications:
+    - target: {fileID: -614547789723935035, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1226373614
+      objectReference: {fileID: 0}
     - target: {fileID: 159955194230682006, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
       propertyPath: m_Name
       value: Potion (4)
@@ -1641,6 +1657,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1886943293}
     m_Modifications:
+    - target: {fileID: -614547789723935035, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 821756496
+      objectReference: {fileID: 0}
     - target: {fileID: 159955194230682006, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
       propertyPath: m_Name
       value: Potion (2)
@@ -120688,6 +120708,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1886943293}
     m_Modifications:
+    - target: {fileID: -614547789723935035, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 4050754104
+      objectReference: {fileID: 0}
     - target: {fileID: 159955194230682006, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
       propertyPath: m_Name
       value: Potion
