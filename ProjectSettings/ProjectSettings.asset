@@ -769,11 +769,11 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
-  cloudProjectId: 
+  cloudProjectId: 23d5523f-6abe-41ed-8426-a48aba0d71d1
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: 
-  organizationId: 
+  projectName: CrystalChaos
+  organizationId: rudejellyfish
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   playerDataPath: 

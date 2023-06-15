@@ -1,14 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Sockets;
+using System;
+using System.Threading.Tasks;
 using TMPro;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
+using Unity.Networking.Transport.Relay;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
+using Unity.Services.Relay;
+using Unity.Services.Relay.Models;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class NetworkManagerUI : MonoBehaviour {
+public class NetworkManagerUI : NetworkBehaviour {
 
     //private bool isDemoManagerActive = false;
     [SerializeField] private Button hostBtn;
@@ -16,73 +19,80 @@ public class NetworkManagerUI : MonoBehaviour {
     [SerializeField] private GameObject _hud;
     [SerializeField] private Button clientBtn;
 
-    [SerializeField] TextMeshProUGUI ipAddressText;
-    [SerializeField] TMP_InputField ip;
+    [SerializeField] TextMeshProUGUI joinCodeText;
+    [SerializeField] TMP_InputField joinCodeInputField;
 
-    [SerializeField] string ipAddress;
     [SerializeField] UnityTransport transport;
-
 
     private void Awake() {
         hostBtn.onClick.AddListener(() => {
-            NetworkManager.Singleton.StartHost();
-            GetLocalIPAddress();
-            _hud.SetActive(true);
-            _demoManager.SetActive(true);
-            gameObject.SetActive(false);
+            createRelay();
         });
 
         clientBtn.onClick.AddListener(() => {
-            ipAddress = ip.text;
-            SetIpAddress();
-            NetworkManager.Singleton.StartClient();
-            _demoManager.SetActive(true);
-            _hud.SetActive(true);
-            gameObject.SetActive(false);
+            JoinRelay(joinCodeInputField.text);
         });
     }
 
-    private void Start() {
-        ipAddress = "127.0.0.1";
-        SetIpAddress(); // Set the Ip to the above address.
+    private async void Start() {
+
+        await UnityServices.InitializeAsync();
+
+
+        AuthenticationService.Instance.SignedIn += () => {
+            Debug.Log("Signed in");
+        };
+
+        await AuthenticationService.Instance.SignInAnonymouslyAsync();
     }
 
+    private async void createRelay() {
 
-    /* Gets the Ip Address of your connected network and
-	shows on the screen in order to let other players join
-	by inputing that Ip in the input field */
-    // ONLY FOR HOST SIDE
-    public string GetLocalIPAddress() {
-        var host = Dns.GetHostEntry(Dns.GetHostName());
-        foreach (var ip in host.AddressList) {
-            if (ip.AddressFamily == AddressFamily.InterNetwork) {
-                ipAddressText.text = ip.ToString();
-                ipAddress = ip.ToString();
-                return ip.ToString();
-            }
+        try {
+            Allocation allocation = await RelayService.Instance.CreateAllocationAsync(1);
+
+            string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+
+            Debug.Log($"Join code: {joinCode}");
+
+            RelayServerData relayServerData = new RelayServerData(allocation, "dtls");
+
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
+
+            NetworkManager.Singleton.StartHost();
+
+            joinCodeText.text = joinCode;
+
+            _hud.SetActive(true);
+            _demoManager.SetActive(true);
+            gameObject.SetActive(false);
         }
-        throw new System.Exception("No network adapters with an IPv4 address in the system!");
-    }
-
-    /* Sets the Ip Address of the Connection Data in Unity Transport
-	to the Ip Address which was input in the Input Field */
-    // ONLY FOR CLIENT SIDE
-    public void SetIpAddress() {
-        transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
-        transport.ConnectionData.Address = ipAddress;
+        catch (RelayServiceException e) {
+            Debug.Log(e);
+        }
     }
 
 
+    private async void JoinRelay(string joinCode) {
+        try {
 
-    //private void Update() {
-    //    if (!isDemoManagerActive && true) {
-    //        _demoManager.SetActive(true);
-    //        _hud.SetActive(true);
-    //        gameObject.SetActive(false);
-    //        isDemoManagerActive = true;
-    //    }
-    //}
+            Debug.Log($"Joining relay with code: {joinCode}");
 
+            JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
 
+            RelayServerData relayServerData = new RelayServerData(joinAllocation, "dtls");
+
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
+
+            NetworkManager.Singleton.StartClient();
+
+            _demoManager.SetActive(true);
+            _hud.SetActive(true);
+            gameObject.SetActive(false);
+        }
+        catch (RelayServiceException e) {
+            Debug.Log(e);
+        }
+    }
 
 }
