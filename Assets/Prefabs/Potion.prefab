@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 159955194230682091}
   - component: {fileID: 159955194230682088}
   - component: {fileID: 97186986190176638}
-  - component: {fileID: -614547789723935035}
   m_Layer: 0
   m_Name: Potion
   m_TagString: Untagged
@@ -126,11 +125,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6deebbb6d075a4764af99fb6f724e863, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  potionType: 0
   healthIncreaseAmount: 10
   healthSpawnProbability: 0.6
   movementSpawnProbability: 0.4
   respawnTimePotion: 5
+  potionType: 0
 --- !u!95 &97186986190176638
 Animator:
   serializedVersion: 5
@@ -152,19 +151,3 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &-614547789723935035
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 159955194230682006}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 951099334
-  AlwaysReplicateAsRoot: 0
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1

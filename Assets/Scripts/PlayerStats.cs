@@ -119,6 +119,9 @@ public class PlayerStats : NetworkBehaviour {
     // Note that the respawn does not work for the client yet.
     private void CheckForDeath(int oldValue, int newValue)
     {
+        if (newValue <= 0) {
+            health.Value = maxHealth;
+        }
         if (IsLocalPlayer()) {
             if (newValue <= 0) {
                 // Respawn the player.
@@ -127,7 +130,6 @@ public class PlayerStats : NetworkBehaviour {
                 PlayerSpawn playerSpawn = GetComponent<PlayerSpawn>();
                 playerSpawn.Respawn();
                 // Reset the health.
-                health.Value = maxHealth;
             }
         }
     }

@@ -154,6 +154,11 @@ Transform:
   m_Father: {fileID: 538560688}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &40764563 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8978515177714171399, guid: 1b97b3194f99f4531bd10ee786d878bb, type: 3}
+  m_PrefabInstance: {fileID: 1648299503}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &85010008
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -682,6 +687,11 @@ Transform:
   m_Father: {fileID: 538560688}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &437665277 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 159955194230682006, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
+  m_PrefabInstance: {fileID: 892351701}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &497512527
 GameObject:
   m_ObjectHideFlags: 0
@@ -717,6 +727,16 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &529483597 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8978515177714171399, guid: 1b97b3194f99f4531bd10ee786d878bb, type: 3}
+  m_PrefabInstance: {fileID: 1720011083}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &533041696 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 159955194230682006, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
+  m_PrefabInstance: {fileID: 1684494486}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &538560687
 GameObject:
   m_ObjectHideFlags: 0
@@ -790,6 +810,21 @@ Transform:
   m_Father: {fileID: 538560688}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &739572411 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 159955194230682006, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
+  m_PrefabInstance: {fileID: 1434444678}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &822727276 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8978515177714171399, guid: 1b97b3194f99f4531bd10ee786d878bb, type: 3}
+  m_PrefabInstance: {fileID: 1971995413}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &882359792 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 159955194230682006, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
+  m_PrefabInstance: {fileID: 1346723411}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &892351701
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -797,10 +832,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1886943293}
     m_Modifications:
-    - target: {fileID: -614547789723935035, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
-      propertyPath: GlobalObjectIdHash
-      value: 2849877564
-      objectReference: {fileID: 0}
     - target: {fileID: 159955194230682006, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
       propertyPath: m_Name
       value: Potion (5)
@@ -856,6 +887,22 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 159955194230682089, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
   m_PrefabInstance: {fileID: 892351701}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &892351708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 437665277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3667863017
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &906880569
 GameObject:
   m_ObjectHideFlags: 0
@@ -1022,6 +1069,11 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &947421568 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8978515177714171399, guid: 1b97b3194f99f4531bd10ee786d878bb, type: 3}
+  m_PrefabInstance: {fileID: 119835597}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &973976486
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1029,10 +1081,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1886943293}
     m_Modifications:
-    - target: {fileID: -614547789723935035, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
-      propertyPath: GlobalObjectIdHash
-      value: 3271318260
-      objectReference: {fileID: 0}
     - target: {fileID: 159955194230682006, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
       propertyPath: m_Name
       value: Potion (3)
@@ -1088,6 +1136,27 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 159955194230682089, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
   m_PrefabInstance: {fileID: 973976486}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &983627222 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 159955194230682006, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
+  m_PrefabInstance: {fileID: 973976486}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &983627228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 983627222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2063691681
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &1043215350
 GameObject:
   m_ObjectHideFlags: 0
@@ -1203,11 +1272,48 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1071466747 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 159955194230682006, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
+  m_PrefabInstance: {fileID: 159955194468899881}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1071466753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1071466747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 6534138
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!4 &1106794558 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8978515177714171396, guid: 1b97b3194f99f4531bd10ee786d878bb, type: 3}
   m_PrefabInstance: {fileID: 1971995413}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1106794563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 822727276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 939509430
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1001 &1148116017
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1326,6 +1432,22 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8978515177714171396, guid: 1b97b3194f99f4531bd10ee786d878bb, type: 3}
   m_PrefabInstance: {fileID: 1720011083}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1158986785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 529483597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3685147849
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1001 &1346723411
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1333,10 +1455,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1886943293}
     m_Modifications:
-    - target: {fileID: -614547789723935035, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
-      propertyPath: GlobalObjectIdHash
-      value: 4101228716
-      objectReference: {fileID: 0}
     - target: {fileID: 159955194230682006, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
       propertyPath: m_Name
       value: Potion (1)
@@ -1392,6 +1510,22 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 159955194230682089, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
   m_PrefabInstance: {fileID: 1346723411}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1346723418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882359792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2144608038
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &1390781496
 GameObject:
   m_ObjectHideFlags: 0
@@ -1528,10 +1662,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1886943293}
     m_Modifications:
-    - target: {fileID: -614547789723935035, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
-      propertyPath: GlobalObjectIdHash
-      value: 1226373614
-      objectReference: {fileID: 0}
     - target: {fileID: 159955194230682006, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
       propertyPath: m_Name
       value: Potion (4)
@@ -1587,6 +1717,43 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 159955194230682089, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
   m_PrefabInstance: {fileID: 1434444678}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1434444685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 739572411}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 4240181375
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+--- !u!1 &1625980002 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8978515177714171399, guid: 1b97b3194f99f4531bd10ee786d878bb, type: 3}
+  m_PrefabInstance: {fileID: 103339195}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1625980007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1625980002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2316373378
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1001 &1648299503
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1649,6 +1816,22 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8978515177714171396, guid: 1b97b3194f99f4531bd10ee786d878bb, type: 3}
   m_PrefabInstance: {fileID: 1648299503}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1648299509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40764563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3738938509
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1001 &1684494486
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1656,10 +1839,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1886943293}
     m_Modifications:
-    - target: {fileID: -614547789723935035, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
-      propertyPath: GlobalObjectIdHash
-      value: 821756496
-      objectReference: {fileID: 0}
     - target: {fileID: 159955194230682006, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
       propertyPath: m_Name
       value: Potion (2)
@@ -1715,11 +1894,43 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 159955194230682089, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
   m_PrefabInstance: {fileID: 1684494486}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1684494493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 533041696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1902572064
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!4 &1716333053 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8978515177714171396, guid: 1b97b3194f99f4531bd10ee786d878bb, type: 3}
   m_PrefabInstance: {fileID: 119835597}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1716333058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 947421568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1557697854
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1001 &1720011083
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1777,6 +1988,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1b97b3194f99f4531bd10ee786d878bb, type: 3}
+--- !u!1 &1832361188 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8978515177714171399, guid: 1b97b3194f99f4531bd10ee786d878bb, type: 3}
+  m_PrefabInstance: {fileID: 8978515177270534194}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1832361193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1832361188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2340934472
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &1877164975
 GameObject:
   m_ObjectHideFlags: 0
@@ -120707,10 +120939,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1886943293}
     m_Modifications:
-    - target: {fileID: -614547789723935035, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
-      propertyPath: GlobalObjectIdHash
-      value: 4050754104
-      objectReference: {fileID: 0}
     - target: {fileID: 159955194230682006, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}
       propertyPath: m_Name
       value: Potion
