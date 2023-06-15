@@ -1017,6 +1017,7 @@ MonoBehaviour:
   maxHealth: 100
   speedFactor: 0
   health: 0
+  bar: {fileID: 0}
 --- !u!1 &8067859620752876239
 GameObject:
   m_ObjectHideFlags: 0
