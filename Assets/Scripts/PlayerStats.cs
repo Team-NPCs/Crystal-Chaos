@@ -11,6 +11,7 @@ public class PlayerStats : MonoBehaviour {
 
     public float speedFactor;
     public int health;
+    public int deathCount = 0;
     [SerializeField] private HealthBar bar;
 
     private int numberOfSpeedIncreasements = 0;
@@ -20,6 +21,13 @@ public class PlayerStats : MonoBehaviour {
         speedFactor = initialSpeedFactor;
         health = initialHealth;
         bar.setHealth(health);
+    }
+
+    void Update () {
+        if (Input.GetKeyDown(KeyCode.G)) {
+            Debug.Log("Pressed Key G.");
+            this.DecreaseHealth(20);
+        }
     }
 
     public void ActivateFastSpeed() {
@@ -65,6 +73,15 @@ public class PlayerStats : MonoBehaviour {
         health -= amount;
         if (health < 0) {
             health = 0;
+        }
+        if (health == 0) {
+            // Reset the health.
+            health = this.maxHealth;
+            // Respawn the player.
+            Debug.Log("Player was killed. Respawn.");
+            deathCount++;
+            PlayerSpawn playerSpawn = GetComponent<PlayerSpawn>();
+            playerSpawn.Respawn();
         }
         bar.setHealth(health);
     }
