@@ -12,6 +12,9 @@
 !.vscode/extensions.json
 !.vscode/*.code-snippets
 
+# NuGet
+.NuGet/**
+
 # Local History for Visual Studio Code
 .history/
 
