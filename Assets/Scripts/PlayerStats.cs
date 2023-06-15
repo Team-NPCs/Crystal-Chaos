@@ -23,8 +23,9 @@ public class PlayerStats : NetworkBehaviour {
     private void Start() {
         // Find and assign the local player's health bar.
         localPlayerHealthBar = GameObject.FindWithTag("HealthBar").GetComponent<HealthBar>();
-        // Add an event listener to the healthbar.
+        // Add the event listeners to the healthbar.
         health.OnValueChanged += UpdateHealthBar;
+        health.OnValueChanged += CheckForDeath;
         // Initialize the values.
         speedFactor.Value = initialSpeedFactor;
         health.Value = initialHealth;
@@ -33,10 +34,19 @@ public class PlayerStats : NetworkBehaviour {
     }
 
     void Update () {
-        if (Input.GetKeyDown(KeyCode.G)) {
-            Debug.Log("Pressed Key G.");
-            DecreaseHealth(20);
+        if (Input.GetKeyDown(KeyCode.G) && IsLocalPlayer()) {
+            DecreaseHealthServerRpc(gameObject.GetComponent<NetworkObject>().NetworkObjectId);
         }
+    }
+
+    // An example function that runs on the server that decreases the health of the player.
+    // We can not do it locally, the server has to do it for us.
+    [ServerRpc]
+    private void DecreaseHealthServerRpc(ulong targetPlayerNetworkObjectId) {
+        // Find the target player's NetworkObject using the network object ID and the player stats.
+        NetworkObject targetPlayerNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[targetPlayerNetworkObjectId];
+        PlayerStats targetPlayerStats = targetPlayerNetworkObject.GetComponent<PlayerStats>();
+        targetPlayerStats.DecreaseHealth(20);
     }
 
     public void ActivateFastSpeed() {
@@ -82,15 +92,6 @@ public class PlayerStats : NetworkBehaviour {
         if (health.Value < 0) {
             health.Value = 0;
         }
-        if (health.Value == 0) {
-            // Reset the health.
-            health.Value = maxHealth;
-            // Respawn the player.
-            Debug.Log("Player was killed. Respawn.");
-            deathCount.Value++;
-            PlayerSpawn playerSpawn = GetComponent<PlayerSpawn>();
-            playerSpawn.Respawn();
-        }
     }
 
     // Check if the player that this script is assigned to is the local player.
@@ -111,6 +112,22 @@ public class PlayerStats : NetworkBehaviour {
         if (IsLocalPlayer())
         {
             localPlayerHealthBar.setHealth(newValue);
+        }
+    }
+
+    // Event handler for checking if the player is dead and has to respawn.
+    private void CheckForDeath(int oldValue, int newValue)
+    {
+        if (IsLocalPlayer()) {
+            if (newValue <= 0) {
+                // Respawn the player.
+                Debug.Log("Player was killed. Respawn.");
+                deathCount.Value++;
+                PlayerSpawn playerSpawn = GetComponent<PlayerSpawn>();
+                playerSpawn.Respawn();
+                // Reset the health.
+                health.Value = maxHealth;
+            }
         }
     }
 }
