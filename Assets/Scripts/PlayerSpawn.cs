@@ -1,22 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Netcode;
 using UnityEngine;
 
 public class PlayerSpawn : MonoBehaviour
 {
-    [SerializeField] private float minDistance = 5f;
+    [SerializeField] private float minDistance = 10f;
 
     void Start()
     {
-        Debug.Log("Start.");
-        if (NetworkManager.Singleton.IsClient)
-        {
-            Debug.Log("Spawn.");
-            GameObject[] spawnPositions = GameObject.FindGameObjectsWithTag("Respawn");
-            Vector3 spawnPosition = FindValidSpawnPosition(spawnPositions);
-            transform.position = spawnPosition;
-        }
+        // Set the initial position.
+        Respawn();
+    }
+
+    public void Respawn ()
+    {
+        GameObject[] spawnPositions = GameObject.FindGameObjectsWithTag("Respawn");
+        Vector3 spawnPosition = FindValidSpawnPosition(spawnPositions);
+        transform.position = spawnPosition;
     }
 
     private Vector3 FindValidSpawnPosition(GameObject[] spawnPositions)
