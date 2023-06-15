@@ -44,8 +44,7 @@ public class NetworkManagerUI : MonoBehaviour {
 
     private void Start() {
         ipAddress = "127.0.0.1";
-        SetIpAddress(); // Set the Ip to the above address
-        InvokeRepeating("assignPlayerController", 0.1f, 0.1f);
+        SetIpAddress(); // Set the Ip to the above address.
     }
 
 
