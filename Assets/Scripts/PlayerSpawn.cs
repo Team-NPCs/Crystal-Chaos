@@ -9,14 +9,14 @@ public class PlayerSpawn : MonoBehaviour
     void Start()
     {
         // Set the initial position.
-        Respawn();
+        Respawn(transform);
     }
 
-    public void Respawn ()
+    public void Respawn (Transform playerTransform)
     {
         GameObject[] spawnPositions = GameObject.FindGameObjectsWithTag("Respawn");
         Vector3 spawnPosition = FindValidSpawnPosition(spawnPositions);
-        transform.position = spawnPosition;
+        playerTransform.position = spawnPosition;
     }
 
     private Vector3 FindValidSpawnPosition(GameObject[] spawnPositions)

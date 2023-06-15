@@ -25,7 +25,6 @@ public class PlayerStats : NetworkBehaviour {
         localPlayerHealthBar = GameObject.FindWithTag("HealthBar").GetComponent<HealthBar>();
         // Add the event listeners to the healthbar.
         health.OnValueChanged += UpdateHealthBar;
-        health.OnValueChanged += CheckForDeath;
         // Initialize the values.
         speedFactor.Value = initialSpeedFactor;
         health.Value = initialHealth;
@@ -47,6 +46,13 @@ public class PlayerStats : NetworkBehaviour {
         NetworkObject targetPlayerNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[targetPlayerNetworkObjectId];
         PlayerStats targetPlayerStats = targetPlayerNetworkObject.GetComponent<PlayerStats>();
         targetPlayerStats.DecreaseHealth(20);
+        // Check if death happened.
+        if (targetPlayerStats.health.Value <= 0) {
+            // Player was killed.
+            targetPlayerStats.deathCount.Value++;
+            targetPlayerStats.health.Value = maxHealth;
+            targetPlayerNetworkObject.transform.position = Vector3.zero;
+        }
     }
 
     public void ActivateFastSpeed() {
@@ -112,25 +118,6 @@ public class PlayerStats : NetworkBehaviour {
         if (IsLocalPlayer())
         {
             localPlayerHealthBar.setHealth(newValue);
-        }
-    }
-
-    // Event handler for checking if the player is dead and has to respawn.
-    // Note that the respawn does not work for the client yet.
-    private void CheckForDeath(int oldValue, int newValue)
-    {
-        if (newValue <= 0) {
-            health.Value = maxHealth;
-        }
-        if (IsLocalPlayer()) {
-            if (newValue <= 0) {
-                // Respawn the player.
-                Debug.Log("Player was killed. Respawn.");
-                deathCount.Value++;
-                PlayerSpawn playerSpawn = GetComponent<PlayerSpawn>();
-                playerSpawn.Respawn();
-                // Reset the health.
-            }
         }
     }
 }
