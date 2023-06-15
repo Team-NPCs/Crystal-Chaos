@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class CrystalBallSpawn : MonoBehaviour {
+public class CrystalBallSpawn : NetworkBehaviour {
     private CrystalType crystalType;
     private float respawnTime = 5f;
 
@@ -10,8 +11,11 @@ public class CrystalBallSpawn : MonoBehaviour {
 
     private void Start() {
         crystalRenderer = GetComponent<SpriteRenderer>();
-        GenerateCrystalType();
-        UpdateCrystalColor();
+        if (crystalRenderer == null)
+        {
+            Debug.LogError("Crystal renderer is not assigned to the CyrstalBallSpawn object.");
+        }
+        RespawnCrystal();
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
@@ -21,7 +25,7 @@ public class CrystalBallSpawn : MonoBehaviour {
                 // Check if the inventory is already full or if the crystal ball can get picked up.
                 if (inventory.AddCrystal(crystalType) == true) {
                     gameObject.SetActive(false);
-                    Invoke("RespawnCrystal", respawnTime);
+                    Invoke(nameof(RespawnCrystal), respawnTime);
                 }
             }
             else {
@@ -32,7 +36,12 @@ public class CrystalBallSpawn : MonoBehaviour {
 
     private void RespawnCrystal() {
         gameObject.SetActive(true);
-        GenerateCrystalType();
+        if (NetworkManager.Singleton.IsHost)
+        {
+            // Generate the potions type on the server.
+            GenerateCrystalType();
+            RpcSetCrystalTypeClientRpc(crystalType);
+        }
         UpdateCrystalColor();
     }
 
@@ -76,5 +85,11 @@ public class CrystalBallSpawn : MonoBehaviour {
                 crystalRenderer.sprite = Resources.Load<Sprite>("CrystalBalls/crystal-ball-void");
                 break;
         }
+    }
+
+    [ClientRpc]
+    private void RpcSetCrystalTypeClientRpc(CrystalType type)
+    {
+        crystalType = type;
     }
 }
