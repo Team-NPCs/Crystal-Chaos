@@ -11,11 +11,14 @@ public class PlayerInventory : MonoBehaviour {
     private Dictionary<CrystalType, List<CrystalBall>> collectedCrystals = new Dictionary<CrystalType, List<CrystalBall>>();
     private Dictionary<CrystalType, bool> isInCoolDownCrystals = new Dictionary<CrystalType, bool>();
 
+    [SerializeField] public InventoryUI inventoryUI;
+
 
     private void Start() {
         // At start we assign a random crystal ball.
         CrystalType crystalType;
         float randomValue = Random.value;
+        inventoryUI = GameObject.FindWithTag("Inventory").GetComponent<InventoryUI>();
         // 23 % chance for fire, water, earth, air. remaining 8% for void.
         float chanceNormalTypes = 0.23f;
         if (randomValue < 1 * chanceNormalTypes) {
@@ -89,6 +92,7 @@ public class PlayerInventory : MonoBehaviour {
             else {
                 // We can add it to the existing list.
                 this.collectedCrystals[crystalType].Add(new CrystalBall(crystalType));
+                inventoryUI.adjustInventory(crystalType, GetNumberOfAmmunition(crystalType), GetNumberOfCrystalBalls(crystalType));
             }
         }
         else {
@@ -97,6 +101,7 @@ public class PlayerInventory : MonoBehaviour {
             this.collectedCrystals[crystalType].Add(new CrystalBall(crystalType));
             // Also add the cooldown time.
             this.isInCoolDownCrystals.Add(crystalType, false);
+            inventoryUI.adjustInventory(crystalType, GetNumberOfAmmunition(crystalType), GetNumberOfCrystalBalls(crystalType));
         }
         // If we did not had any crystal balls at all before, then equip the new one.
         if (this.currentEquippedCrystalType == CrystalType._NONE) {
