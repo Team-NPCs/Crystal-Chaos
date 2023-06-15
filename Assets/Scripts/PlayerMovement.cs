@@ -332,7 +332,7 @@ public class PlayerMovement : NetworkBehaviour {
     #region RUN METHODS
     private void Run(float lerpAmount) {
         // Multiply the runmaxspeed by the current speedFactor that can increase using a movement potion.
-        float _currentMaxSpeed = Data.runMaxSpeed * playerStats.speedFactor;
+        float _currentMaxSpeed = Data.runMaxSpeed * playerStats.speedFactor.Value;
         //Calculate the direction we want to move in and our desired velocity
         float targetSpeed = _moveInput.x * _currentMaxSpeed;
         //We can reduce are control using Lerp() this smooths changes to are direction and speed
