@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PotionSpawn : NetworkBehaviour {
     public PotionType potionType;
-    public int healthIncreaseAmount = 40;
+    public int healthIncreaseAmount = 10;
     public float healthSpawnProbability = 0.6f;
     public float movementSpawnProbability = 0.4f;
     public float respawnTimePotion = 5.0f;
