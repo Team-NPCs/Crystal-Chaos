@@ -92,6 +92,9 @@ public class PlayerMovement : NetworkBehaviour {
         SetGravityScale(Data.gravityScale);
         IsFacingRight = true;
         Camera.main.GetComponent<CameraFollow>().setTarget(NetworkManager.LocalClient.PlayerObject.transform);
+        // Also set the initial position.
+        PlayerSpawn playerSpawn = GameObject.FindGameObjectWithTag("SpawnPointHandler").GetComponent<PlayerSpawn>();
+        transform.position = playerSpawn.GetRespawnPosition();
     }
 
     private void Update() {

@@ -16,7 +16,7 @@ public class PlayerStats : NetworkBehaviour {
     [SerializeField] public NetworkVariable<int> numberOfSpeedIncreasements = new NetworkVariable<int>();
     [SerializeField] public NetworkVariable<int> health = new NetworkVariable<int>();
     [SerializeField] public NetworkVariable<int> deathCount = new NetworkVariable<int>();
-
+    
     // Health Bar.
     [SerializeField] private HealthBar localPlayerHealthBar;
 
@@ -36,6 +36,15 @@ public class PlayerStats : NetworkBehaviour {
         if (Input.GetKeyDown(KeyCode.G) && IsLocalPlayer()) {
             DecreaseHealthServerRpc(gameObject.GetComponent<NetworkObject>().NetworkObjectId);
         }
+        // Since we use the Client Network Transform to sync the players movements, and we set
+        // there that the server cannot set the players position but only the client (see ClientNetworkTransform.cs)
+        // we have to trigger the respawn here. The rest (increasing the death count, resetting the health)
+        // is done by the server. The client only has to reset its position by itself since the server cannot do so.
+        if (health.Value == 0) {
+            health.Value = maxHealth;
+            PlayerSpawn playerSpawn = GameObject.FindGameObjectWithTag("SpawnPointHandler").GetComponent<PlayerSpawn>();
+            transform.position = playerSpawn.GetRespawnPosition();
+        }
     }
 
     // An example function that runs on the server that decreases the health of the player.
@@ -46,13 +55,6 @@ public class PlayerStats : NetworkBehaviour {
         NetworkObject targetPlayerNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[targetPlayerNetworkObjectId];
         PlayerStats targetPlayerStats = targetPlayerNetworkObject.GetComponent<PlayerStats>();
         targetPlayerStats.DecreaseHealth(20);
-        // Check if death happened.
-        if (targetPlayerStats.health.Value <= 0) {
-            // Player was killed.
-            targetPlayerStats.deathCount.Value++;
-            targetPlayerStats.health.Value = maxHealth;
-            targetPlayerNetworkObject.transform.position = Vector3.zero;
-        }
     }
 
     public void ActivateFastSpeed() {

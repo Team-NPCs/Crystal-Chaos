@@ -798,7 +798,6 @@ GameObject:
   - component: {fileID: 8195718817360285470}
   - component: {fileID: 7577164653142158702}
   - component: {fileID: 7577164653142158697}
-  - component: {fileID: 9103565709851274039}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -1016,22 +1015,15 @@ MonoBehaviour:
   speedIncreaseDuration: 10
   initialHealth: 60
   maxHealth: 100
-  speedFactor: 0
-  health: 0
-  bar: {fileID: 0}
---- !u!114 &9103565709851274039
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7577164652645232146}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e8683ee97b43448694d44422420a99b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minDistance: 5
+  speedFactor:
+    m_InternalValue: 0
+  numberOfSpeedIncreasements:
+    m_InternalValue: 0
+  health:
+    m_InternalValue: 0
+  deathCount:
+    m_InternalValue: 0
+  localPlayerHealthBar: {fileID: 0}
 --- !u!1 &8067859620752876239
 GameObject:
   m_ObjectHideFlags: 0
