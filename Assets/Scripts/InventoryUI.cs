@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InventoryUI : MonoBehaviour
 {
@@ -17,7 +18,16 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI airCrystalBall;
     [SerializeField] private TextMeshProUGUI voidCrystalBall;
 
-    public void adjustInventory(CrystalType crystalBall, int numberAmmunition, int numberCrystalBall) {
+    [SerializeField] private Image fireSelection;
+    [SerializeField] private Image waterSelection;
+    [SerializeField] private Image earthSelection;
+    [SerializeField] private Image airSelection;
+    [SerializeField] private Image voidSelection;
+
+    [SerializeField] private Color selectionColor;
+    [SerializeField] private Color noSelectedColor;
+
+    public void AdjustInventory(CrystalType crystalBall, int numberAmmunition, int numberCrystalBall) {
         if(numberAmmunition == 0) {
             numberCrystalBall--;
         }
@@ -43,6 +53,53 @@ public class InventoryUI : MonoBehaviour
                 voidCrystalBall.text = numberCrystalBall.ToString();
                 break;
             default:
+                break;
+        }
+    }
+
+    public void adjustColorSelection(CrystalType crystalBall) {
+        switch (crystalBall) {
+            case CrystalType.Fire:
+                fireSelection.color = selectionColor; //
+                waterSelection.color = noSelectedColor;
+                earthSelection.color = noSelectedColor;
+                airSelection.color = noSelectedColor;
+                voidSelection.color = noSelectedColor;
+                break;
+            case CrystalType.Water:
+                fireSelection.color = noSelectedColor;
+                waterSelection.color = selectionColor; //
+                earthSelection.color = noSelectedColor;
+                airSelection.color = noSelectedColor;
+                voidSelection.color = noSelectedColor;
+                break;
+            case CrystalType.Earth:
+                fireSelection.color = noSelectedColor;
+                waterSelection.color = noSelectedColor;
+                earthSelection.color = selectionColor; //
+                airSelection.color = noSelectedColor;
+                voidSelection.color = noSelectedColor;
+                break;
+            case CrystalType.Air:
+                fireSelection.color = noSelectedColor;
+                waterSelection.color = noSelectedColor;
+                earthSelection.color = noSelectedColor;
+                airSelection.color = selectionColor; //
+                voidSelection.color = noSelectedColor;
+                break;
+            case CrystalType.Void:
+                fireSelection.color = noSelectedColor;
+                waterSelection.color = noSelectedColor;
+                earthSelection.color = noSelectedColor;
+                airSelection.color = noSelectedColor;
+                voidSelection.color = selectionColor; //
+                break;
+            default:
+                fireSelection.color = noSelectedColor;
+                waterSelection.color = noSelectedColor;
+                earthSelection.color = noSelectedColor;
+                airSelection.color = noSelectedColor;
+                voidSelection.color = noSelectedColor;
                 break;
         }
     }

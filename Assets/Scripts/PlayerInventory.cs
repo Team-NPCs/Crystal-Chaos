@@ -106,7 +106,7 @@ public class PlayerInventory : MonoBehaviour {
             Debug.Log("We had no crystal balls before. Now we equipped one.");
             this.SwitchCrystalTo(crystalType);
         }
-        inventoryUI.adjustInventory(crystalType, GetNumberOfAmmunition(crystalType), GetNumberOfCrystalBalls(crystalType));
+        inventoryUI.AdjustInventory(crystalType, GetNumberOfAmmunition(crystalType), GetNumberOfCrystalBalls(crystalType));
         return true;
     }
 
@@ -151,7 +151,7 @@ public class PlayerInventory : MonoBehaviour {
         // Check if the crystal ball needs to get destroyed.
         if (this.collectedCrystals[this.currentEquippedCrystalType][0].IsStillUsable() == false) {
             // Crystal balls ammunition ran out. Destroy it.
-            inventoryUI.adjustInventory(this.currentEquippedCrystalType, GetNumberOfAmmunition(this.currentEquippedCrystalType), GetNumberOfCrystalBalls(this.currentEquippedCrystalType));
+            inventoryUI.AdjustInventory(this.currentEquippedCrystalType, GetNumberOfAmmunition(this.currentEquippedCrystalType), GetNumberOfCrystalBalls(this.currentEquippedCrystalType));
             this.collectedCrystals[this.currentEquippedCrystalType].RemoveAt(0);
             // Check if there are still crystal balls of the same type. If not move to the next one.
             if (this.HasCrystalBall(this.currentEquippedCrystalType) == false) {
@@ -170,7 +170,7 @@ public class PlayerInventory : MonoBehaviour {
                 Debug.Log("Destroyed crystal ball since it ran out of ammo but the player has still crystal balls of the same type.");
             }
         }
-        inventoryUI.adjustInventory(this.currentEquippedCrystalType, GetNumberOfAmmunition(this.currentEquippedCrystalType), GetNumberOfCrystalBalls(this.currentEquippedCrystalType));
+        inventoryUI.AdjustInventory(this.currentEquippedCrystalType, GetNumberOfAmmunition(this.currentEquippedCrystalType), GetNumberOfCrystalBalls(this.currentEquippedCrystalType));
         return true;
     }
 
@@ -232,6 +232,7 @@ public class PlayerInventory : MonoBehaviour {
             Debug.Log("New crystal ball type:" + nextCrystalType.ToString());
             this.currentEquippedCrystalType = nextCrystalType;
         }
+        inventoryUI.adjustColorSelection(this.currentEquippedCrystalType);
     }
 
     // This function switches the equipped crystal ball to the specified type. Note that this only will work if the 
@@ -241,6 +242,7 @@ public class PlayerInventory : MonoBehaviour {
             Debug.Log("Equipped crystal ball type " + crystal_type.ToString());
             this.currentEquippedCrystalType = crystal_type;
         }
+        inventoryUI.adjustColorSelection(this.currentEquippedCrystalType);
     }
 
     // A helper function for the function above.
