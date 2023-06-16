@@ -1,36 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class BulletScript : MonoBehaviour {
-    private Shooting _shooting;
-    private Vector3 mousePos;
-    private Camera _mainCam;
-    private Rigidbody2D rb;
-    public float force;
-
+public class BulletScript : NetworkBehaviour {
     private void OnCollisionEnter2D(Collision2D collision) {
-        Destroy(gameObject);
+        // We have the following cases:
+        // 1. The bullet collides with the map --> DESTROYED.
+        // 2. The bullet collides with another bullet --> CHECK WHAT HAPPENS USING THE MATRIX IN THE GDD.
+        // 3. The bullet collides with a player --> apply the health decrease to this player.
+        // 4. The bullet collides with an item --> do nothing.
+
+        // Also only the hosting player / server will handle the collision.
+        Debug.Log("Collision detected.");
+        NetworkObject.Despawn(true);
+        if (NetworkManager.Singleton.IsHost == false) {
+            // Only the host is allowed to check for the collision.
+            return;
+        }
     }
 
     private void OnCollisionStay2D(Collision2D collision) {
-        Destroy(gameObject);
+        // Do the same as in the enter version. We just need to check this too.
+        OnCollisionEnter2D(collision);
     }
-
-    // Start is called before the first frame update
-    void Start() {
-        _shooting = GameObject.FindGameObjectWithTag("ShootingPoint").GetComponent<Shooting>();
-        _mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-        force = _shooting.bulletForce;
-        Debug.Log("Force" + force);
-        rb = GetComponent<Rigidbody2D>();
-
-        mousePos = _mainCam.ScreenToWorldPoint(Input.mousePosition);
-        Vector3 direction = mousePos - transform.position;
-        Vector3 rotation = transform.position - mousePos;
-        rb.velocity = new Vector2(direction.x, direction.y).normalized * force;
-        float rot = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, rot);
-    }
-
 }
