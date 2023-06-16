@@ -6,7 +6,7 @@ using UnityEngine;
 public class CrystalBallSpawn : NetworkBehaviour {
     private float respawnTimeCrystalBall = 5f;
 
-    // For the initial setting of the potion type.
+    // For the initial setting of the crystal type.
     private bool isFirstRun = true;
 
     private SpriteRenderer crystalRenderer;
@@ -96,7 +96,7 @@ public class CrystalBallSpawn : NetworkBehaviour {
         gameObject.SetActive(isActive);
     }
 
-    private CrystalType GenerateCrystalType() {
+    public static CrystalType GenerateCrystalType() {
         float randomValue = Random.value;
         // 23 % chance for fire, water, earth, air. remaining 8% for void.
         float chanceNormalTypes = 0.23f;
