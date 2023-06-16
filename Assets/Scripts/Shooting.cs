@@ -6,6 +6,7 @@ public class Shooting : MonoBehaviour {
 
     #region Properties
     private CrystalType crystalType;
+    private float inaccuracyAngle = 20f;
     private Camera mainCam;
     private Vector3 mousePos;
     private PlayerMovement player;
@@ -44,10 +45,23 @@ public class Shooting : MonoBehaviour {
             // Give the request to the inventory. The inventory checks if there is a crystal ball
             // or not and also if the currently equipped crystal ball is still in cooldown.
             if (playerInventory.UseCrystalBallNormalAttack() == true) {
-                // We can shoot. So do it.
-                Instantiate(bullet, bulletTransform.position, Quaternion.identity);
+                if (playerInventory.currentEquippedCrystalType == CrystalType.Earth) {
+                    for (int i = 0; i < 10; i++) {
+                        Debug.Log("Quaternion Shotgun: " + GetShootingDirection(rotZ));
+                        Instantiate(bullet, bulletTransform.position, GetShootingDirection(rotZ));
+                    }
+
+                }
+                else {
+                    Debug.Log("Quaternion Not Shotgun: " + Quaternion.identity);
+                    Instantiate(bullet, bulletTransform.position, Quaternion.identity);
+                }
                 // Note that we do not have to set the cooldown here, since the inventory is handling the cooldown.
             }
         }
+    }
+
+    Quaternion GetShootingDirection(float rotZ) {
+        return Quaternion.Euler(0, 0, Random.Range(rotZ - inaccuracyAngle, rotZ + inaccuracyAngle));
     }
 }
