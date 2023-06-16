@@ -168,7 +168,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1195081296214813079, guid: ea88b7fd901adb843a41752a64eeaa5e, type: 3}
       propertyPath: NetworkConfig.EnsureNetworkVariableLengthSafety
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4055665242889323722, guid: ea88b7fd901adb843a41752a64eeaa5e, type: 3}
       propertyPath: m_Name

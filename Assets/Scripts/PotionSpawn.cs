@@ -34,7 +34,7 @@ public class PotionSpawn : NetworkBehaviour {
                 Debug.Log("The colliding player has no network object!");
                 return;
             }
-            // Tell the server what to handle this instance.
+            // Tell the server to handle this instance.
             PotionGotPickedUpServerRpc(targetNetworkObject.NetworkObjectId);
         }
     }

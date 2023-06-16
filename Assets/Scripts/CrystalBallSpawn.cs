@@ -4,10 +4,14 @@ using Unity.Netcode;
 using UnityEngine;
 
 public class CrystalBallSpawn : NetworkBehaviour {
-    private CrystalType crystalType;
-    private float respawnTime = 5f;
+    private float respawnTimeCrystalBall = 5f;
+    private bool isFirstRun = true;
 
     private SpriteRenderer crystalRenderer;
+
+    // Networked variables.
+    [SerializeField] public NetworkVariable<CrystalType> crystalType = new NetworkVariable<CrystalType>();
+    
 
     private void Start() {
         crystalRenderer = GetComponent<SpriteRenderer>();
@@ -15,60 +19,105 @@ public class CrystalBallSpawn : NetworkBehaviour {
         {
             Debug.LogError("Crystal renderer is not assigned to the CyrstalBallSpawn object.");
         }
-        RespawnCrystal();
+        // We want to update the color of the crystal ball with each change.
+        crystalType.OnValueChanged += UpdateCrystalColor;
+    }
+
+    private void Update() {
+        // Initialize the crystal ball with a random type. If we put it to Start() it does not work.
+        // So with isFirstRun we create a little workaround.
+        if (isFirstRun && NetworkManager.Singleton.IsHost) {
+            InitializeCrystalTypeServerRpc();
+            isFirstRun = false;
+        } 
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
         if (other.CompareTag("Player")) {
-            PlayerInventory inventory = other.GetComponent<PlayerInventory>();
-            if (inventory != null) {
-                // Check if the inventory is already full or if the crystal ball can get picked up.
-                if (inventory.AddCrystal(crystalType) == true) {
-                    gameObject.SetActive(false);
-                    Invoke(nameof(RespawnCrystal), respawnTime);
-                }
+            if (NetworkManager.Singleton.IsHost == false) {
+                // Only the host is allowed to check for the collision.
+                return;
             }
-            else {
-                Debug.Log("Can not find players inventory.");
+            // Get the target player's NetworkObject. We need this to also access its inventory later.
+            NetworkObject targetNetworkObject = other.GetComponent<NetworkObject>();
+            if (targetNetworkObject == null) {
+                Debug.Log("The colliding player has no network object!");
+                return;
             }
+            // Tell the server to handle this instance.
+            CrystalBallGotPickedUpServerRpc(targetNetworkObject.NetworkObjectId);
         }
     }
 
-    private void RespawnCrystal() {
-        gameObject.SetActive(true);
-        if (NetworkManager.Singleton.IsHost)
-        {
-            // Generate the potions type on the server.
-            GenerateCrystalType();
-            RpcSetCrystalTypeClientRpc(crystalType);
-        }
-        UpdateCrystalColor();
+    [ServerRpc]
+    private void InitializeCrystalTypeServerRpc() {
+        crystalType.Value = GenerateCrystalType();
+        Debug.Log("Initial crystal type: " + crystalType.Value.ToString());
     }
 
-    private void GenerateCrystalType() {
+    // A function that runs on the server.
+    // If a crystal ball got picked up, we need to know it. The client sends this information to the server.
+    // The server then tells all clients to hide the cyrstal ball.
+    [ServerRpc]
+    private void CrystalBallGotPickedUpServerRpc(ulong targetPlayerNetworkObjectId) {
+        // Find the target player's NetworkObject using the network object ID and the player stats.
+        NetworkObject targetPlayerNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[targetPlayerNetworkObjectId];
+        PlayerInventory targetPlayerInventory = targetPlayerNetworkObject.GetComponent<PlayerInventory>();
+        // Check if the inventory is already full or if the crystal ball can get picked up.
+        if (targetPlayerInventory.AddCrystal(crystalType.Value) == true) {
+            RpcSetCrystalBallActiveClientRpc(false);
+            Invoke(nameof(RespawnCrystalBallServerRpc), respawnTimeCrystalBall);  
+        }
+    }
+
+    // A function that runs on the server.
+    // The server determines the next crystal ball type, and sends it to all clients.
+    // The clients then update their crystal ball type and their visualization.
+    [ServerRpc]
+    private void RespawnCrystalBallServerRpc() {
+        if (NetworkManager.Singleton.IsServer == false) {
+            // Just curios.
+            Debug.Log("This is not the server!");
+            return;
+        }
+        // Determine the next crystal ball type on the server.
+        crystalType.Value = GenerateCrystalType();
+        // Make the crystals on all clients active. We need to set them active before
+        // changing the color otherwise the color change will take no effect.
+        RpcSetCrystalBallActiveClientRpc(true);
+    }
+
+    // Tell the clients to hide / unhide the crystal ball.
+    [ClientRpc]
+    private void RpcSetCrystalBallActiveClientRpc(bool isActive)
+    {
+        gameObject.SetActive(isActive);
+    }
+
+    private CrystalType GenerateCrystalType() {
         float randomValue = Random.value;
         // 23 % chance for fire, water, earth, air. remaining 8% for void.
         float chanceNormalTypes = 0.23f;
         if (randomValue < 1 * chanceNormalTypes) {
-            crystalType = CrystalType.Fire;
+            return CrystalType.Fire;
         }
         else if (randomValue < 2 * chanceNormalTypes) {
-            crystalType = CrystalType.Water;
+            return CrystalType.Water;
         }
         else if (randomValue < 3 * chanceNormalTypes) {
-            crystalType = CrystalType.Earth;
+            return CrystalType.Earth;
         }
         else if (randomValue < 4 * chanceNormalTypes) {
-            crystalType = CrystalType.Air;
+            return CrystalType.Air;
         }
         else {
-            crystalType = CrystalType.Void;
+            return CrystalType.Void;
         }
     }
 
-    private void UpdateCrystalColor() {
+    private void UpdateCrystalColor(CrystalType oldValue, CrystalType newValue) {
         // Assign the appropriate material based on the crystal type
-        switch (crystalType) {
+        switch (newValue) {
             case CrystalType.Fire:
                 crystalRenderer.sprite = Resources.Load<Sprite>("CrystalBalls/crystal-ball-fire");
                 break;
@@ -85,11 +134,5 @@ public class CrystalBallSpawn : NetworkBehaviour {
                 crystalRenderer.sprite = Resources.Load<Sprite>("CrystalBalls/crystal-ball-void");
                 break;
         }
-    }
-
-    [ClientRpc]
-    private void RpcSetCrystalTypeClientRpc(CrystalType type)
-    {
-        crystalType = type;
     }
 }

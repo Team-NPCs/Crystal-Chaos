@@ -27,6 +27,8 @@ public class PlayerStats : NetworkBehaviour {
         // Initialize the values.
         speedFactor.Value = initialSpeedFactor;
         health.Value = initialHealth;
+        // Update the health bar at the start.
+        UpdateHealthBar(0, health.Value);
         numberOfSpeedIncreasements.Value = 0;
         deathCount.Value = 0;
     }
