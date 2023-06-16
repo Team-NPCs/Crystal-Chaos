@@ -7,6 +7,7 @@ TagManager:
   - ShootingPoint
   - GrapplingGun
   - HealthBar
+  - Inventory
   layers:
   - Default
   - TransparentFX
