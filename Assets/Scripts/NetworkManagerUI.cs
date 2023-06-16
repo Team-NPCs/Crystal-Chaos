@@ -30,7 +30,7 @@ public class NetworkManagerUI : NetworkBehaviour {
         });
 
         clientBtn.onClick.AddListener(() => {
-            JoinRelay(joinCodeInputField.text);
+            JoinRelay(joinCodeInputField.text.ToUpper());
         });
     }
 
