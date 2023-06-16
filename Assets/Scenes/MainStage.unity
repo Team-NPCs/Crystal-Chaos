@@ -1012,7 +1012,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c246c70a4fe074343bcc9bcc428c2a80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPoint: {fileID: 0}
   nameText: {fileID: 0}
   SceneData: {fileID: 11400000, guid: ef27be30fe2a5784494b3d189b302457, type: 2}
 --- !u!4 &911551936 stripped
@@ -1386,6 +1385,10 @@ PrefabInstance:
       propertyPath: joinCodeInputField
       value: 
       objectReference: {fileID: 1628350769}
+    - target: {fileID: 1184085315552314202, guid: 287fbdff93572414980e02a2db17586f, type: 3}
+      propertyPath: m_text
+      value: client
+      objectReference: {fileID: 0}
     - target: {fileID: 4712149490177318826, guid: 287fbdff93572414980e02a2db17586f, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 1086175067

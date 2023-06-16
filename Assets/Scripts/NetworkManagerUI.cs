@@ -61,7 +61,7 @@ public class NetworkManagerUI : NetworkBehaviour {
 
             NetworkManager.Singleton.StartHost();
 
-            joinCodeText.text = joinCode;
+            joinCodeText.text = joinCode.ToLower();
 
             _hud.SetActive(true);
             _demoManager.SetActive(true);
