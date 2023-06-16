@@ -69,12 +69,12 @@ public class PlayerStats : NetworkBehaviour {
         numberOfSpeedIncreasements.Value++;
         speedFactor.Value = fastSpeedFactor;
         Invoke(nameof(DeactivateFastSpeed), speedIncreaseDuration);
-        Debug.Log("Increase speed. Number of increasements: " + numberOfSpeedIncreasements.ToString());
+        Debug.Log("Increase speed. Number of increasements: " + numberOfSpeedIncreasements.Value.ToString());
     }
 
     public void DeactivateFastSpeed() {
         numberOfSpeedIncreasements.Value--;
-        Debug.Log("Decrease speed. Number of increasements: " + numberOfSpeedIncreasements.ToString());
+        Debug.Log("Decrease speed. Number of increasements: " + numberOfSpeedIncreasements.Value.ToString());
         if (numberOfSpeedIncreasements.Value == 0) {
             Debug.Log("Reset speed.");
             ResetSpeed();

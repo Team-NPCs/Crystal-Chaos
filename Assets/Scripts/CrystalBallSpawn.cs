@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class CrystalBallSpawn : NetworkBehaviour {
     private float respawnTimeCrystalBall = 5f;
+
+    // For the initial setting of the potion type.
     private bool isFirstRun = true;
 
     private SpriteRenderer crystalRenderer;

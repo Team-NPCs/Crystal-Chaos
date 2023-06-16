@@ -126,10 +126,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthIncreaseAmount: 10
-  healthSpawnProbability: 0.6
-  movementSpawnProbability: 0.4
   respawnTimePotion: 5
-  potionType: 0
+  potionType:
+    m_InternalValue: 0
 --- !u!95 &97186986190176638
 Animator:
   serializedVersion: 5

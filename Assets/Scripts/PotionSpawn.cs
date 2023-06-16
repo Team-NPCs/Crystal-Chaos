@@ -5,13 +5,17 @@ using UnityEngine;
 
 public class PotionSpawn : NetworkBehaviour {
     public int healthIncreaseAmount = 10;
-    public float healthSpawnProbability = 0.6f;
-    public float movementSpawnProbability = 0.4f;
+    private readonly float healthSpawnProbability = 0.6f;
+    private readonly  float movementSpawnProbability = 0.4f;
     public float respawnTimePotion = 5.0f;
+
+    // For the initial setting of the potion type.
+    private bool isFirstRun = true;
 
     private Animator potionAnimator;
 
-    public PotionType potionType;
+    // Networked variables.
+    [SerializeField] public NetworkVariable<PotionType> potionType = new NetworkVariable<PotionType>();
 
     private void Start() {
         potionAnimator = GetComponent<Animator>();
@@ -19,7 +23,17 @@ public class PotionSpawn : NetworkBehaviour {
         {
             Debug.LogError("Potion Animator is not assigned to the PotionSpawn object.");
         }
-        RespawnPotionServerRpc();
+        // We want to update the color of the potion with each change.
+        potionType.OnValueChanged += UpdatePotionColor;
+    }
+
+    private void Update() {
+        // Initialize the potion with a random type. If we put it to Start() it does not work.
+        // So with isFirstRun we create a little workaround.
+        if (isFirstRun && NetworkManager.Singleton.IsHost) {
+            InitializePotionTypeServerRpc();
+            isFirstRun = false;
+        } 
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
@@ -39,6 +53,12 @@ public class PotionSpawn : NetworkBehaviour {
         }
     }
 
+    [ServerRpc]
+    private void InitializePotionTypeServerRpc() {
+        potionType.Value = GeneratePotionType();
+        Debug.Log("Initial potion type: " + potionType.Value.ToString());
+    }
+
     // A function that runs on the server.
     // If a potion got picked up, we need to know it. The client sends this information to the server.
     // The server then tells all clients to hide the potion.
@@ -49,7 +69,7 @@ public class PotionSpawn : NetworkBehaviour {
         PlayerStats targetPlayerStats = targetPlayerNetworkObject.GetComponent<PlayerStats>();
         // Apply potion effects based on type.
         bool potionGotPickedUp = false;
-        switch (potionType)
+        switch (potionType.Value)
         {
             case PotionType.Health:
                 potionGotPickedUp = targetPlayerStats.IncreaseHealth(healthIncreaseAmount);
@@ -75,14 +95,20 @@ public class PotionSpawn : NetworkBehaviour {
         if (NetworkManager.Singleton.IsServer == false) {
             // Just curios.
             Debug.Log("This is not the server!");
+            return;
         }
-        // Determine the next potion type on the server.
-        PotionType nextPotionType = GeneratePotionType();
         // Make the potions on all clients active. We need to set them active before
         // changing the color otherwise the color change will take no effect.
         RpcSetPotionActiveClientRpc(true);
-        // Send the information to all clients. They will also load the new animation.
-        RpcSetPotionTypeClientRpc(nextPotionType);
+        // Determine the next potion type on the server.
+        potionType.Value = GeneratePotionType();
+    }
+
+    // Tell the client to hide / unhide the potion.
+    [ClientRpc]
+    private void RpcSetPotionActiveClientRpc(bool isActive)
+    {
+        gameObject.SetActive(isActive);
     }
 
     private PotionType GeneratePotionType() {
@@ -97,36 +123,16 @@ public class PotionSpawn : NetworkBehaviour {
         }
         return nextPotionType;
     }
-
+    
     // This loads the new animation (depending on the potion type).
-    private void UpdatePotionColor() {
-        switch (potionType) {
+    private void UpdatePotionColor(PotionType oldValue, PotionType newValue) {
+        switch (newValue) {
             case PotionType.Health:
                 potionAnimator.Play("red_potion");
                 break;
             case PotionType.Movement:
-                Debug.Log("I am here.");
                 potionAnimator.Play("blue_potion");
                 break;
         }
-    }
-
-    // Tell the client the new potion type.
-    [ClientRpc]
-    private void RpcSetPotionTypeClientRpc(PotionType type)
-    {
-        Debug.Log("Got information about the new potion type:" + type.ToString());
-        if (type != potionType) {
-            potionType = type;
-            Debug.Log("Update color.");
-            UpdatePotionColor();
-        }
-    }
-
-    // Tell the client to hide / unhide the potion.
-    [ClientRpc]
-    private void RpcSetPotionActiveClientRpc(bool isActive)
-    {
-        gameObject.SetActive(isActive);
     }
 }
