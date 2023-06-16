@@ -11,6 +11,7 @@ public class MainMenuUI : MonoBehaviour {
     [SerializeField] private Button quitButton;
 
     [SerializeField] private HowToPlayUI howToPlay;
+    [SerializeField] private SettingsUI settings;
 
 
     private void Awake() {
@@ -20,6 +21,10 @@ public class MainMenuUI : MonoBehaviour {
 
         howToPlayButton.onClick.AddListener(() => {
             howToPlay.Show();
+        });
+
+        settingsButton.onClick.AddListener(() => {
+            settings.Show();
         });
 
         quitButton.onClick.AddListener(() => {
