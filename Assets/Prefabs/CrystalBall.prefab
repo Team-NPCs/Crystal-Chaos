@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8978515177714171403}
   m_Layer: 0
   m_Name: CrystalBall
-  m_TagString: Untagged
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -114,3 +114,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95fd46a9b05404419a44e2e0961c22a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  crystalType:
+    m_InternalValue: 0

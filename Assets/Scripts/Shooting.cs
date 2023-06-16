@@ -12,7 +12,7 @@ public class Shooting : NetworkBehaviour {
     public GameObject bullet;
     public Transform bulletTransform;
     public float distanceBulletPointToPlayer = 1.2f;
-    private int bulletSpeed = 30;
+    private int bulletSpeed = 5;
     #endregion
 
 
@@ -28,6 +28,10 @@ public class Shooting : NetworkBehaviour {
     // 2. Check if the player wants to shoot. If so, check if he can (has a crystal ball?) and 
     //    if so, spawn the bullet.
     void Update() {
+        // This should only be performed on the local player.
+        if (NetworkManager.Singleton.LocalClientId != GetComponent<NetworkObject>().OwnerClientId) {
+            return;
+        }
         // Get the current mouse position.
         mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         // Get the look vector.
@@ -46,18 +50,8 @@ public class Shooting : NetworkBehaviour {
             // Give the request to the inventory. The inventory checks if there is a crystal ball
             // or not and also if the currently equipped crystal ball is still in cooldown.
             if (playerInventory.UseCrystalBallNormalAttack() == true) {
-                // We can shoot. So do it.
-
-                GameObject bulletInstance = Instantiate(bullet, bulletTransform.position, bulletTransform.rotation);
-                Vector3 bulletVelocity = look_vector * bulletSpeed;
-                bulletInstance.GetComponent<Rigidbody2D>().velocity = (Vector2)bulletVelocity;
-
-                // Get the NetworkObject component of the bullet instance
-                NetworkObject networkObject = bulletInstance.GetComponent<NetworkObject>();
-
-                // Spawn the bullet across the network using the NetworkObject's Spawn method
-                networkObject.Spawn();
-
+                // We can shoot. The server has to initiate it.
+                SpawnBulletServerRpc(look_vector, bulletTransform.position, bulletTransform.rotation);
                 // Note that we do not have to set the cooldown here, since the inventory is handling the cooldown.
             }
             else {
@@ -66,4 +60,18 @@ public class Shooting : NetworkBehaviour {
         }
     }
 
+    // The server needs to spawn the bullets.
+    // IMPORTANT NOTE: In order to also be able to spawn these objects on the clients, the prefab 
+    // of the bullet has to be registered at the NetworkManager.
+    [ServerRpc]
+    private void SpawnBulletServerRpc(Vector3 look_vector, Vector3 position, Quaternion rotation) {
+        GameObject bulletInstance = Instantiate(bullet, position, rotation);
+        Vector3 bulletVelocity = look_vector * bulletSpeed;
+        bulletInstance.GetComponent<Rigidbody2D>().velocity = (Vector2)bulletVelocity;
+
+        // Get the NetworkObject component of the bullet instance.
+        NetworkObject networkObject = bulletInstance.GetComponent<NetworkObject>();
+        // Spawn the bullet at the server / host using the NetworkObject's Spawn method.
+        networkObject.Spawn();
+    }
 }

@@ -43,16 +43,11 @@ public class PlayerStats : NetworkBehaviour {
     // An example function that runs on the server that decreases the health of the player.
     // We can not do it locally, the server has to do it for us.
     [ServerRpc]
-    private void DecreaseHealthServerRpc(ulong targetPlayerNetworkObjectId) {
+    public void DecreaseHealthServerRpc(ulong targetPlayerNetworkObjectId) {
         // Find the target player's NetworkObject using the network object ID and the player stats.
         NetworkObject targetPlayerNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[targetPlayerNetworkObjectId];
         PlayerStats targetPlayerStats = targetPlayerNetworkObject.GetComponent<PlayerStats>();
         targetPlayerStats.DecreaseHealth(20);
-        if (targetPlayerStats.health.Value == 0) {
-            RespawnClientRpc();
-            targetPlayerStats.health.Value = maxHealth;
-            targetPlayerStats.deathCount.Value++;
-        }
     }
 
     // The thing is, that we do not allow the server to set the position of the client using the Client Network Transform.
@@ -107,6 +102,11 @@ public class PlayerStats : NetworkBehaviour {
         health.Value -= amount;
         if (health.Value < 0) {
             health.Value = 0;
+        }
+        if (health.Value == 0) {
+            RespawnClientRpc();
+            health.Value = maxHealth;
+            deathCount.Value++;
         }
     }
 

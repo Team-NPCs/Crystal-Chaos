@@ -8,6 +8,8 @@ TagManager:
   - GrapplingGun
   - HealthBar
   - SpawnPointHandler
+  - Item
+  - Bullet
   layers:
   - Default
   - TransparentFX

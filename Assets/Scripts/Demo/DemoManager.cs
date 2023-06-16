@@ -14,7 +14,6 @@ public class DemoManager : MonoBehaviour {
 
     private Camera _cam;
     private PlayerMovement _player;
-    private Shooting _shooting;
     private GrapplingScript _grappling;
     [SerializeField] private TextMeshProUGUI nameText;
     private bool isPausedGame = false;
@@ -38,7 +37,6 @@ public class DemoManager : MonoBehaviour {
         state = State.WaitingToStart;
         _cam = FindObjectOfType<Camera>();
         _player = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
-        _shooting = GameObject.FindWithTag("ShootingPoint").GetComponent<Shooting>();
         _grappling = GameObject.FindWithTag("GrapplingGun").GetComponent<GrapplingScript>();
     }
 
@@ -88,10 +86,10 @@ public class DemoManager : MonoBehaviour {
 
     public void isGamePlaying() {
         if (state == State.GamePlaying) {
-            _player.enabled = _grappling.enabled = _shooting.enabled = true;
+            _player.enabled = _grappling.enabled = true;
         }
         else {
-            _player.enabled = _grappling.enabled = _shooting.enabled = false;
+            _player.enabled = _grappling.enabled = false;
         }
     }
 
