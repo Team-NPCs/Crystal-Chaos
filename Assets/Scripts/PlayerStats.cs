@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-
 public class PlayerStats : NetworkBehaviour {
     public float initialSpeedFactor;
     public float fastSpeedFactor;
@@ -33,17 +32,9 @@ public class PlayerStats : NetworkBehaviour {
     }
 
     void Update () {
+        // Just a way to debug the health decreasement and respawn logic.
         if (Input.GetKeyDown(KeyCode.G) && IsLocalPlayer()) {
             DecreaseHealthServerRpc(gameObject.GetComponent<NetworkObject>().NetworkObjectId);
-        }
-        // Since we use the Client Network Transform to sync the players movements, and we set
-        // there that the server cannot set the players position but only the client (see ClientNetworkTransform.cs)
-        // we have to trigger the respawn here. The rest (increasing the death count, resetting the health)
-        // is done by the server. The client only has to reset its position by itself since the server cannot do so.
-        if (health.Value == 0) {
-            health.Value = maxHealth;
-            PlayerSpawn playerSpawn = GameObject.FindGameObjectWithTag("SpawnPointHandler").GetComponent<PlayerSpawn>();
-            transform.position = playerSpawn.GetRespawnPosition();
         }
     }
 
@@ -55,6 +46,21 @@ public class PlayerStats : NetworkBehaviour {
         NetworkObject targetPlayerNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[targetPlayerNetworkObjectId];
         PlayerStats targetPlayerStats = targetPlayerNetworkObject.GetComponent<PlayerStats>();
         targetPlayerStats.DecreaseHealth(20);
+        if (targetPlayerStats.health.Value == 0) {
+            RespawnClientRpc();
+            targetPlayerStats.health.Value = maxHealth;
+            targetPlayerStats.deathCount.Value++;
+        }
+    }
+
+    // The thing is, that we do not allow the server to set the position of the client using the Client Network Transform.
+    // Therefore, the client has to respawn himself. This function is executed on the client but triggered by the server.
+    // So we handle the health logic on the server (increasing, decreasing, death) but the respawn position on the client.
+    [ClientRpc]
+    private void RespawnClientRpc()
+    {
+        PlayerSpawn playerSpawn = GameObject.FindGameObjectWithTag("SpawnPointHandler").GetComponent<PlayerSpawn>();
+        transform.position = playerSpawn.GetRespawnPosition();
     }
 
     public void ActivateFastSpeed() {
