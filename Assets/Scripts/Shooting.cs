@@ -82,7 +82,9 @@ public class Shooting : NetworkBehaviour {
         // Get the current mouse position.
         mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         // Get the look vector.
-        Vector3 look_vector = (mousePosition - transform.position).normalized;
+        Vector3 look_vector = mousePosition - transform.position;
+        look_vector.z = 0;
+        look_vector = look_vector.normalized;
         float rotZ = Mathf.Atan2(look_vector.y, look_vector.x) * Mathf.Rad2Deg;
 
         // Here we do not face the player but we change the position of the shooting point depending
@@ -134,8 +136,9 @@ public class Shooting : NetworkBehaviour {
         // Create the object.
         GameObject bulletInstance = Instantiate(bullet, position, rotation);
         // Set the velocity to the rigid body.
-        Vector3 bulletVelocity = look_vector * spellSpeeds[crystalType];
-        bulletInstance.GetComponent<Rigidbody2D>().velocity = (Vector2)bulletVelocity;
+        Vector2 bulletVelocity = ((Vector2)look_vector).normalized * spellSpeeds[crystalType];
+        Debug.Log(bulletVelocity.ToString() + "  " + bulletVelocity.ToString());
+        bulletInstance.GetComponent<Rigidbody2D>().velocity = bulletVelocity;
         // Set the damage information within the bullet.
         BulletScript bulletScript = bulletInstance.GetComponent<BulletScript>();
         bulletScript.spellDamageNormalAttackBody = spellDamageNormalAttackBody[crystalType];
