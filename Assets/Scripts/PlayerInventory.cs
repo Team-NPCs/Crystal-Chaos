@@ -304,6 +304,9 @@ public class PlayerInventory : NetworkBehaviour {
                 break;
         }
         // Check if the crystal ball needs to get destroyed.
+        // Save what crystal type we used for the attack since the currentEquippedCrystalType can
+        // change if the crystal ball got deleted.
+        CrystalType usedCrystalType = currentEquippedCrystalType;
         if (ammunitionCount[currentEquippedCrystalType] <= 0) {
             Debug.Log("CrystalBall ran out of ammo.");
             // Crystal balls ammunition ran out. Destroy it.
@@ -354,7 +357,8 @@ public class PlayerInventory : NetworkBehaviour {
                 Debug.Log("Destroyed crystal ball since it ran out of ammo but the player has still crystal balls of the same type.");
             }
         }
-        inventoryUI.AdjustInventory(this.currentEquippedCrystalType, GetNumberOfAmmunition(this.currentEquippedCrystalType), GetNumberOfCrystalBalls(this.currentEquippedCrystalType));
+        // Update the number of ammunition and number of crystal balls for the used one.
+        inventoryUI.AdjustInventory(usedCrystalType, GetNumberOfAmmunition(usedCrystalType), GetNumberOfCrystalBalls(usedCrystalType));
         return true;
     }
 
@@ -416,7 +420,7 @@ public class PlayerInventory : NetworkBehaviour {
             Debug.Log("New crystal ball type:" + nextCrystalType.ToString());
             currentEquippedCrystalType = nextCrystalType;
         }
-        inventoryUI.adjustColorSelection(this.currentEquippedCrystalType);
+        inventoryUI.adjustColorSelection(currentEquippedCrystalType);
     }
 
     // This function switches the equipped crystal ball to the specified type. Note that this only will work if the 
@@ -426,7 +430,7 @@ public class PlayerInventory : NetworkBehaviour {
             Debug.Log("Equipped crystal ball type " + crystal_type.ToString());
             currentEquippedCrystalType = crystal_type;
         }
-        inventoryUI.adjustColorSelection(this.currentEquippedCrystalType);
+        inventoryUI.adjustColorSelection(currentEquippedCrystalType);
     }
 
     // A helper function for the function above.
@@ -500,6 +504,7 @@ public class PlayerInventory : NetworkBehaviour {
                     " local = " + crystalCount[CrystalType.Fire].ToString() +
                     " networked = " + newValue.ToString());
             }
+            // We do not need to update the inventory UI here since this is already done in the shooting function.
         }
         // Did the number increase? Do not check against the oldValue but the local one.
         else if (newValue > crystalCount[CrystalType.Fire]) {
@@ -507,13 +512,15 @@ public class PlayerInventory : NetworkBehaviour {
             // equipped, it means that this is the only one we have, so switch to it.
             crystalCount[CrystalType.Fire] = newValue;
             if (currentEquippedCrystalType == CrystalType._NONE) {
-                currentEquippedCrystalType = CrystalType.Fire;
+                SwitchCrystalTo(CrystalType.Fire);
             }
             // If the new value is now one, it means, that the ammunition of the this type was before at zero.
             // So reset this too. If not, the ammunition refers to another crystal ball of the same type in the inventory.
             if (newValue == 1) {
                 ammunitionCount[CrystalType.Fire] = maxAmmunitionCount[CrystalType.Fire];
             }
+            // Update the inventory UI.
+            inventoryUI.AdjustInventory(CrystalType.Fire, GetNumberOfAmmunition(CrystalType.Fire), GetNumberOfCrystalBalls(CrystalType.Fire));
         }
     }
     // WATER.
@@ -527,6 +534,7 @@ public class PlayerInventory : NetworkBehaviour {
                     " local = " + crystalCount[CrystalType.Water].ToString() +
                     " networked = " + newValue.ToString());
             }
+            // We do not need to update the inventory UI here since this is already done in the shooting function.
         }
         // Did the number increase? Do not check against the oldValue but the local one.
         else if (newValue > crystalCount[CrystalType.Water]) {
@@ -534,13 +542,15 @@ public class PlayerInventory : NetworkBehaviour {
             // equipped, it means that this is the only one we have, so switch to it.
             crystalCount[CrystalType.Water] = newValue;
             if (currentEquippedCrystalType == CrystalType._NONE) {
-                currentEquippedCrystalType = CrystalType.Water;
+                SwitchCrystalTo(CrystalType.Water);
             }
             // If the new value is now one, it means, that the ammunition of the this type was before at zero.
             // So reset this too. If not, the ammunition refers to another crystal ball of the same type in the inventory.
             if (newValue == 1) {
                 ammunitionCount[CrystalType.Water] = maxAmmunitionCount[CrystalType.Water];
             }
+            // Update the inventory UI.
+            inventoryUI.AdjustInventory(CrystalType.Water, GetNumberOfAmmunition(CrystalType.Water), GetNumberOfCrystalBalls(CrystalType.Water));
         }
     }
     // EARTH.
@@ -554,6 +564,7 @@ public class PlayerInventory : NetworkBehaviour {
                     " local = " + crystalCount[CrystalType.Earth].ToString() +
                     " networked = " + newValue.ToString());
             }
+            // We do not need to update the inventory UI here since this is already done in the shooting function.
         }
         // Did the number increase? Do not check against the oldValue but the local one.
         else if (newValue > crystalCount[CrystalType.Earth]) {
@@ -561,13 +572,15 @@ public class PlayerInventory : NetworkBehaviour {
             // equipped, it means that this is the only one we have, so switch to it.
             crystalCount[CrystalType.Earth] = newValue;
             if (currentEquippedCrystalType == CrystalType._NONE) {
-                currentEquippedCrystalType = CrystalType.Earth;
+                SwitchCrystalTo(CrystalType.Earth);
             }
             // If the new value is now one, it means, that the ammunition of the this type was before at zero.
             // So reset this too. If not, the ammunition refers to another crystal ball of the same type in the inventory.
             if (newValue == 1) {
                 ammunitionCount[CrystalType.Earth] = maxAmmunitionCount[CrystalType.Earth];
             }
+            // Update the inventory UI.
+            inventoryUI.AdjustInventory(CrystalType.Earth, GetNumberOfAmmunition(CrystalType.Earth), GetNumberOfCrystalBalls(CrystalType.Earth));
         }
     }
     // AIR.
@@ -581,6 +594,7 @@ public class PlayerInventory : NetworkBehaviour {
                     " local = " + crystalCount[CrystalType.Air].ToString() +
                     " networked = " + newValue.ToString());
             }
+            // We do not need to update the inventory UI here since this is already done in the shooting function.
         }
         // Did the number increase? Do not check against the oldValue but the local one.
         else if (newValue > crystalCount[CrystalType.Air]) {
@@ -588,13 +602,15 @@ public class PlayerInventory : NetworkBehaviour {
             // equipped, it means that this is the only one we have, so switch to it.
             crystalCount[CrystalType.Air] = newValue;
             if (currentEquippedCrystalType == CrystalType._NONE) {
-                currentEquippedCrystalType = CrystalType.Air;
+                SwitchCrystalTo(CrystalType.Air);
             }
             // If the new value is now one, it means, that the ammunition of the this type was before at zero.
             // So reset this too. If not, the ammunition refers to another crystal ball of the same type in the inventory.
             if (newValue == 1) {
                 ammunitionCount[CrystalType.Air] = maxAmmunitionCount[CrystalType.Air];
             }
+            // Update the inventory UI.
+            inventoryUI.AdjustInventory(CrystalType.Air, GetNumberOfAmmunition(CrystalType.Air), GetNumberOfCrystalBalls(CrystalType.Air));
         }
     }
     // VOID.
@@ -608,6 +624,7 @@ public class PlayerInventory : NetworkBehaviour {
                     " local = " + crystalCount[CrystalType.Void].ToString() +
                     " networked = " + newValue.ToString());
             }
+            // We do not need to update the inventory UI here since this is already done in the shooting function.
         }
         // Did the number increase? Do not check against the oldValue but the local one.
         else if (newValue > crystalCount[CrystalType.Void]) {
@@ -615,13 +632,15 @@ public class PlayerInventory : NetworkBehaviour {
             // equipped, it means that this is the only one we have, so switch to it.
             crystalCount[CrystalType.Void] = newValue;
             if (currentEquippedCrystalType == CrystalType._NONE) {
-                currentEquippedCrystalType = CrystalType.Void;
+                SwitchCrystalTo(CrystalType.Void);
             }
             // If the new value is now one, it means, that the ammunition of the this type was before at zero.
             // So reset this too. If not, the ammunition refers to another crystal ball of the same type in the inventory.
             if (newValue == 1) {
                 ammunitionCount[CrystalType.Void] = maxAmmunitionCount[CrystalType.Void];
             }
+            // Update the inventory UI.
+            inventoryUI.AdjustInventory(CrystalType.Void, GetNumberOfAmmunition(CrystalType.Void), GetNumberOfCrystalBalls(CrystalType.Void));
         }
     }
 }

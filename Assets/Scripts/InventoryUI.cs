@@ -28,9 +28,6 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private Color noSelectedColor;
 
     public void AdjustInventory(CrystalType crystalBall, int numberAmmunition, int numberCrystalBall) {
-        if(numberAmmunition == 0) {
-            numberCrystalBall--;
-        }
         switch (crystalBall) {
             case CrystalType.Fire:
                 fireAmmunition.text = numberAmmunition.ToString();

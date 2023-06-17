@@ -96,10 +96,14 @@ public class Shooting : NetworkBehaviour {
             Debug.Log("Shoot request.");
             // Give the request to the inventory. The inventory checks if there is a crystal ball
             // or not and also if the currently equipped crystal ball is still in cooldown.
+            // We need to save the to be used crystal type since the UseAttack funtion eventually sees
+            // that the crystal ball runs out and then changes the currentEquippedCrystalType before we
+            // can spawn the new crystal attack. So we use our own variable.
+            CrystalType crystalTypeToBeUsed = playerInventory.currentEquippedCrystalType;
             if (playerInventory.UseCrystalBallNormalAttack() == true) {
                 // We can shoot. The server has to initiate it.
                 // Note that the earth crystals normal attack spawns multiple shards, so differ this here.
-                if (playerInventory.currentEquippedCrystalType == CrystalType.Earth) {
+                if (crystalTypeToBeUsed == CrystalType.Earth) {
                     // Spawn multiple shots.
                     for (int i = 0; i < numberOfShardsNormalAttackEarth; i++) {
                         float inaccuracyAngle = Random.Range(-inaccuracyAngleNormalAttackEarth, inaccuracyAngleNormalAttackEarth);
@@ -107,14 +111,12 @@ public class Shooting : NetworkBehaviour {
                         // Note that we have to add this rotation to the look vector for the flying direction but also to the
                         // rotation itself because this value tells the program how to rotate the bullets visuals so that the 
                         // bullet itself also looks like it flies into this direction and not lies "horizontally" to it.
-                        SpawnBulletServerRpc(playerInventory.currentEquippedCrystalType, 
-                            inaccuracyRotation * look_vector, bulletTransform.position, inaccuracyRotation * bulletTransform.rotation);
+                        SpawnBulletServerRpc(crystalTypeToBeUsed, inaccuracyRotation * look_vector, bulletTransform.position, inaccuracyRotation * bulletTransform.rotation);
                     }
                 }
                 else {
                     // Just spawn one shot.
-                    SpawnBulletServerRpc(playerInventory.currentEquippedCrystalType, 
-                        look_vector, bulletTransform.position, bulletTransform.rotation);
+                    SpawnBulletServerRpc(crystalTypeToBeUsed, look_vector, bulletTransform.position, bulletTransform.rotation);
                 }
                 // Note that we do not have to set the cooldown here, since the inventory is handling the cooldown.
             }
