@@ -109,6 +109,8 @@ public class PotionSpawn : NetworkBehaviour {
         RpcSetPotionActiveClientRpc(true);
         // Determine the next potion type on the server.
         potionType.Value = GeneratePotionType();
+        // Update the potion color on the server.
+        UpdatePotionColor();
     }
 
     // Tell the client to hide / unhide the potion.
