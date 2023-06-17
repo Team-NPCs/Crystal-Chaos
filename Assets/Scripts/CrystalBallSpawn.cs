@@ -105,6 +105,8 @@ public class CrystalBallSpawn : NetworkBehaviour {
         // Make the crystals on all clients active. We need to set them active before
         // changing the color otherwise the color change will take no effect.
         RpcSetCrystalBallActiveClientRpc(true);
+        // Update the crystal ball color on the server.
+        UpdateCrystalColor();
     }
 
     // Tell the clients to hide / unhide the crystal ball.
