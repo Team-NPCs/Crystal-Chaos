@@ -6,17 +6,11 @@ public class PlayerSpawn : MonoBehaviour
 {
     [SerializeField] private float minDistance = 10f;
 
-    void Start()
-    {
-        // Set the initial position.
-        Respawn();
-    }
-
-    public void Respawn ()
+    public Vector3 GetRespawnPosition ()
     {
         GameObject[] spawnPositions = GameObject.FindGameObjectsWithTag("Respawn");
         Vector3 spawnPosition = FindValidSpawnPosition(spawnPositions);
-        transform.position = spawnPosition;
+        return spawnPosition;
     }
 
     private Vector3 FindValidSpawnPosition(GameObject[] spawnPositions)

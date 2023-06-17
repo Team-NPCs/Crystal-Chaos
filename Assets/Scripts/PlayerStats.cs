@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-
 public class PlayerStats : NetworkBehaviour {
     public float initialSpeedFactor;
     public float fastSpeedFactor;
@@ -16,7 +15,7 @@ public class PlayerStats : NetworkBehaviour {
     [SerializeField] public NetworkVariable<int> numberOfSpeedIncreasements = new NetworkVariable<int>();
     [SerializeField] public NetworkVariable<int> health = new NetworkVariable<int>();
     [SerializeField] public NetworkVariable<int> deathCount = new NetworkVariable<int>();
-
+    
     // Health Bar.
     [SerializeField] private HealthBar localPlayerHealthBar;
 
@@ -25,15 +24,17 @@ public class PlayerStats : NetworkBehaviour {
         localPlayerHealthBar = GameObject.FindWithTag("HealthBar").GetComponent<HealthBar>();
         // Add the event listeners to the healthbar.
         health.OnValueChanged += UpdateHealthBar;
-        health.OnValueChanged += CheckForDeath;
         // Initialize the values.
         speedFactor.Value = initialSpeedFactor;
         health.Value = initialHealth;
+        // Update the health bar at the start.
+        UpdateHealthBar(0, health.Value);
         numberOfSpeedIncreasements.Value = 0;
         deathCount.Value = 0;
     }
 
     void Update () {
+        // Just a way to debug the health decreasement and respawn logic.
         if (Input.GetKeyDown(KeyCode.G) && IsLocalPlayer()) {
             DecreaseHealthServerRpc(gameObject.GetComponent<NetworkObject>().NetworkObjectId);
         }
@@ -42,23 +43,34 @@ public class PlayerStats : NetworkBehaviour {
     // An example function that runs on the server that decreases the health of the player.
     // We can not do it locally, the server has to do it for us.
     [ServerRpc]
-    private void DecreaseHealthServerRpc(ulong targetPlayerNetworkObjectId) {
+    public void DecreaseHealthServerRpc(ulong targetPlayerNetworkObjectId) {
         // Find the target player's NetworkObject using the network object ID and the player stats.
         NetworkObject targetPlayerNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[targetPlayerNetworkObjectId];
         PlayerStats targetPlayerStats = targetPlayerNetworkObject.GetComponent<PlayerStats>();
         targetPlayerStats.DecreaseHealth(20);
     }
 
+    // The thing is, that we do not allow the server to set the position of the client using the Client Network Transform.
+    // Therefore, the client has to respawn himself. This function is executed on the client but triggered by the server.
+    // So we handle the health logic on the server (increasing, decreasing, death) but the respawn position on the client.
+    [ClientRpc]
+    private void RespawnClientRpc()
+    {
+        // Get the new position and move there.
+        PlayerSpawn playerSpawn = GameObject.FindGameObjectWithTag("SpawnPointHandler").GetComponent<PlayerSpawn>();
+        transform.position = playerSpawn.GetRespawnPosition();
+    }
+
     public void ActivateFastSpeed() {
         numberOfSpeedIncreasements.Value++;
         speedFactor.Value = fastSpeedFactor;
         Invoke(nameof(DeactivateFastSpeed), speedIncreaseDuration);
-        Debug.Log("Increase speed. Number of increasements: " + numberOfSpeedIncreasements.ToString());
+        Debug.Log("Increase speed. Number of increasements: " + numberOfSpeedIncreasements.Value.ToString());
     }
 
     public void DeactivateFastSpeed() {
         numberOfSpeedIncreasements.Value--;
-        Debug.Log("Decrease speed. Number of increasements: " + numberOfSpeedIncreasements.ToString());
+        Debug.Log("Decrease speed. Number of increasements: " + numberOfSpeedIncreasements.Value.ToString());
         if (numberOfSpeedIncreasements.Value == 0) {
             Debug.Log("Reset speed.");
             ResetSpeed();
@@ -92,17 +104,11 @@ public class PlayerStats : NetworkBehaviour {
         if (health.Value < 0) {
             health.Value = 0;
         }
-    }
-
-    // Check if the player that this script is assigned to is the local player.
-    // The thing is, that we have multiple players at the end within the game. Each player has the 
-    // playerStats and it does not matter what playerstats is changed, the bar will change if we do
-    // not check which stats were changed. So only visualize the health of the own player / local player.
-    private bool IsLocalPlayer()
-    {
-        // Replace this with your own logic to determine if this instance is the local player
-        // For example, you can compare the NetworkClientId with the local client's NetworkClientId
-        return NetworkManager.Singleton.LocalClientId == GetComponent<NetworkObject>().OwnerClientId;
+        if (health.Value == 0) {
+            RespawnClientRpc();
+            health.Value = maxHealth;
+            deathCount.Value++;
+        }
     }
 
     // Event handler for updating the health bar
@@ -115,20 +121,14 @@ public class PlayerStats : NetworkBehaviour {
         }
     }
 
-    // Event handler for checking if the player is dead and has to respawn.
-    // Note that the respawn does not work for the client yet.
-    private void CheckForDeath(int oldValue, int newValue)
+    // Check if the player that this script is assigned to is the local player.
+    // The thing is, that we have multiple players at the end within the game. Each player has the 
+    // playerStats and it does not matter what playerstats is changed, the bar will change if we do
+    // not check which stats were changed. So only visualize the health of the own player / local player.
+    private bool IsLocalPlayer()
     {
-        if (IsLocalPlayer()) {
-            if (newValue <= 0) {
-                // Respawn the player.
-                Debug.Log("Player was killed. Respawn.");
-                deathCount.Value++;
-                PlayerSpawn playerSpawn = GetComponent<PlayerSpawn>();
-                playerSpawn.Respawn();
-                // Reset the health.
-                health.Value = maxHealth;
-            }
-        }
+        // Replace this with your own logic to determine if this instance is the local player
+        // For example, you can compare the NetworkClientId with the local client's NetworkClientId
+        return NetworkManager.Singleton.LocalClientId == GetComponent<NetworkObject>().OwnerClientId;
     }
 }
