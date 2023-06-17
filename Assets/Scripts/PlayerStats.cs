@@ -7,7 +7,6 @@ public class PlayerStats : NetworkBehaviour {
     public float initialSpeedFactor;
     public float fastSpeedFactor;
     public float speedIncreaseDuration;
-    public int initialHealth;
     public int maxHealth;
 
     // Networked variables.
@@ -26,7 +25,7 @@ public class PlayerStats : NetworkBehaviour {
         health.OnValueChanged += UpdateHealthBar;
         // Initialize the values.
         speedFactor.Value = initialSpeedFactor;
-        health.Value = initialHealth;
+        health.Value = maxHealth;
         // Update the health bar at the start.
         UpdateHealthBar(0, health.Value);
         numberOfSpeedIncreasements.Value = 0;
