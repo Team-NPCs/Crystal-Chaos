@@ -22,7 +22,7 @@ public class CrystalBallSpawn : NetworkBehaviour {
             Debug.LogError("Crystal renderer is not assigned to the CyrstalBallSpawn object.");
         }
         // We want to update the color of the crystal ball with each change.
-        crystalType.OnValueChanged += UpdateCrystalColor;
+        crystalType.OnValueChanged += UpdateCrystalColorEvent;
     }
 
     private void Update() {
@@ -32,12 +32,21 @@ public class CrystalBallSpawn : NetworkBehaviour {
             InitializeCrystalTypeServerRpc();
             isFirstRun = false;
         } 
+        else if (isFirstRun && NetworkManager.Singleton.IsClient) {
+            // Update it if this is not the host. Because then the initial colors are already set and we just need to 
+            // draw the correct crystal. If we do it immediately the new colors are not synced, so give it a little
+            // bit of time.
+            Invoke(nameof(UpdateCrystalColor), 0.5f);
+            isFirstRun = false;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
         if (other.CompareTag("Player")) {
-            if (NetworkManager.Singleton.IsHost == false) {
+            if (NetworkManager.Singleton.IsServer == false) {
                 // Only the host is allowed to check for the collision.
+                // Because the networked objects (crystal balls) are owned by the host, only
+                // the host can send the serverRPCs to the server.
                 return;
             }
             // Get the target player's NetworkObject. We need this to also access its inventory later.
@@ -66,7 +75,16 @@ public class CrystalBallSpawn : NetworkBehaviour {
         NetworkObject targetPlayerNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[targetPlayerNetworkObjectId];
         PlayerInventory targetPlayerInventory = targetPlayerNetworkObject.GetComponent<PlayerInventory>();
         // Check if the inventory is already full or if the crystal ball can get picked up.
-        if (targetPlayerInventory.AddCrystal(crystalType.Value) == true) {
+        if (targetPlayerInventory.CanAddCrystal(crystalType.Value) == true) {
+            // Ok the player who touched the crystal ball can pick it up.
+            // Tell the server of this players inventory that it has to add a crystal ball of the given type.
+            // The server then tells the respective client to add the crystal ball.
+            // Here is the problem. The players inventory is owned by the player. In order to access it,
+            // the local player needs to call it for his own inventory. But since the crystal balls are owned by
+            // the host we have a dilemma.
+
+            targetPlayerInventory.AddCrystal(crystalType.Value);
+            // Hide the crystal ball but respawn it after a specific time.
             RpcSetCrystalBallActiveClientRpc(false);
             Invoke(nameof(RespawnCrystalBallServerRpc), respawnTimeCrystalBall);  
         }
@@ -117,9 +135,32 @@ public class CrystalBallSpawn : NetworkBehaviour {
         }
     }
 
-    private void UpdateCrystalColor(CrystalType oldValue, CrystalType newValue) {
+    // Used for the event handler.
+    private void UpdateCrystalColorEvent(CrystalType oldValue, CrystalType newValue) {
         // Assign the appropriate material based on the crystal type
         switch (newValue) {
+            case CrystalType.Fire:
+                crystalRenderer.sprite = Resources.Load<Sprite>("CrystalBalls/crystal-ball-fire");
+                break;
+            case CrystalType.Water:
+                crystalRenderer.sprite = Resources.Load<Sprite>("CrystalBalls/crystal-ball-water");
+                break;
+            case CrystalType.Earth:
+                crystalRenderer.sprite = Resources.Load<Sprite>("CrystalBalls/crystal-ball-earth");
+                break;
+            case CrystalType.Air:
+                crystalRenderer.sprite = Resources.Load<Sprite>("CrystalBalls/crystal-ball-air");
+                break;
+            case CrystalType.Void:
+                crystalRenderer.sprite = Resources.Load<Sprite>("CrystalBalls/crystal-ball-void");
+                break;
+        }
+    }
+
+    // Used for manual updating.
+    private void UpdateCrystalColor() {
+        // Assign the appropriate material based on the crystal type
+        switch (crystalType.Value) {
             case CrystalType.Fire:
                 crystalRenderer.sprite = Resources.Load<Sprite>("CrystalBalls/crystal-ball-fire");
                 break;

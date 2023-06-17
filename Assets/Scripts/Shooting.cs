@@ -12,7 +12,7 @@ public class Shooting : NetworkBehaviour {
     public GameObject bullet;
     public Transform bulletTransform;
     public float distanceBulletPointToPlayer = 1.2f;
-    private int bulletSpeed = 5;
+    private int bulletSpeed = 50;
     #endregion
 
 

@@ -56,6 +56,7 @@ public class PlayerStats : NetworkBehaviour {
     [ClientRpc]
     private void RespawnClientRpc()
     {
+        // Get the new position and move there.
         PlayerSpawn playerSpawn = GameObject.FindGameObjectWithTag("SpawnPointHandler").GetComponent<PlayerSpawn>();
         transform.position = playerSpawn.GetRespawnPosition();
     }
@@ -110,6 +111,16 @@ public class PlayerStats : NetworkBehaviour {
         }
     }
 
+    // Event handler for updating the health bar
+    private void UpdateHealthBar(int oldValue, int newValue)
+    {
+        // Only update the health bar for the local player
+        if (IsLocalPlayer())
+        {
+            localPlayerHealthBar.setHealth(newValue);
+        }
+    }
+
     // Check if the player that this script is assigned to is the local player.
     // The thing is, that we have multiple players at the end within the game. Each player has the 
     // playerStats and it does not matter what playerstats is changed, the bar will change if we do
@@ -119,15 +130,5 @@ public class PlayerStats : NetworkBehaviour {
         // Replace this with your own logic to determine if this instance is the local player
         // For example, you can compare the NetworkClientId with the local client's NetworkClientId
         return NetworkManager.Singleton.LocalClientId == GetComponent<NetworkObject>().OwnerClientId;
-    }
-
-    // Event handler for updating the health bar
-    private void UpdateHealthBar(int oldValue, int newValue)
-    {
-        // Only update the health bar for the local player
-        if (IsLocalPlayer())
-        {
-            localPlayerHealthBar.setHealth(newValue);
-        }
     }
 }

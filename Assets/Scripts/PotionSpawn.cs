@@ -24,7 +24,7 @@ public class PotionSpawn : NetworkBehaviour {
             Debug.LogError("Potion Animator is not assigned to the PotionSpawn object.");
         }
         // We want to update the color of the potion with each change.
-        potionType.OnValueChanged += UpdatePotionColor;
+        potionType.OnValueChanged += UpdatePotionColorEvent;
     }
 
     private void Update() {
@@ -34,6 +34,13 @@ public class PotionSpawn : NetworkBehaviour {
             InitializePotionTypeServerRpc();
             isFirstRun = false;
         } 
+        else if (isFirstRun && NetworkManager.Singleton.IsClient) {
+            // Update it if this is not the host. Because then the initial colors are already set and we just need to 
+            // draw the correct potion. If we do it immediately the new colors are not synced, so give it a little
+            // bit of time.
+            Invoke(nameof(UpdatePotionColor), 0.5f);
+            isFirstRun = false;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
@@ -124,9 +131,23 @@ public class PotionSpawn : NetworkBehaviour {
         return nextPotionType;
     }
     
-    // This loads the new animation (depending on the potion type).
-    private void UpdatePotionColor(PotionType oldValue, PotionType newValue) {
+    // This loads the new animation (depending on the potion type). 
+    // It will be used for the event handler.
+    private void UpdatePotionColorEvent(PotionType oldValue, PotionType newValue) {
         switch (newValue) {
+            case PotionType.Health:
+                potionAnimator.Play("red_potion");
+                break;
+            case PotionType.Movement:
+                potionAnimator.Play("blue_potion");
+                break;
+        }
+    }
+
+    // This loads the new animation (depending on the potion type). 
+    // It will be used for manual updating the color.
+    private void UpdatePotionColor() {
+        switch (potionType.Value) {
             case PotionType.Health:
                 potionAnimator.Play("red_potion");
                 break;
