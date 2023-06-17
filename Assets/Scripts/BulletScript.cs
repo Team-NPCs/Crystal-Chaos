@@ -4,6 +4,10 @@ using Unity.Netcode;
 using UnityEngine;
 
 public class BulletScript : NetworkBehaviour {
+    // These values define how much damage the hitted player gets.
+    // They are set in the shooting script depending on the crystal type of the spell.
+    public int spellDamageNormalAttackBody;
+    public int spellDamageNormalAttackHead;
     
     private void OnTriggerEnter2D(Collider2D other) {
         // We have the following cases:
@@ -22,10 +26,12 @@ public class BulletScript : NetworkBehaviour {
             return;
         }
         if (other.CompareTag("Player")) {
-            // The player got hit.
+            // The player got hit. Currently we only support normal hits (so on the body and not on the head).
             ApplyDamageServerRpc(other.GetComponent<NetworkObject>().NetworkObjectId);
             // Delete the bullet.
-            NetworkObject.Despawn(true);
+            if (NetworkObject.IsSpawned) {
+                NetworkObject.Despawn(true);
+            }
             return;
         }
         if (other.CompareTag("Item")) {
@@ -35,7 +41,9 @@ public class BulletScript : NetworkBehaviour {
 
         // Checking the collision with a tilemap is quite complicated. Therefore we simply check if 
         // we got through the end (no other objects were involved in the collision, so it has to be the map).
-        NetworkObject.Despawn(true);
+        if (NetworkObject.IsSpawned) {
+            NetworkObject.Despawn(true);
+        }
     }
 
     private void OnTriggerStay2D (Collider2D other) {
@@ -46,8 +54,10 @@ public class BulletScript : NetworkBehaviour {
     // The server needs to do the damage.
     [ServerRpc]
     private void ApplyDamageServerRpc (ulong targetPlayerNetworkObjectId) {
+        // Get the playerStats of the hitted player.
         NetworkObject targetPlayerNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[targetPlayerNetworkObjectId];
         PlayerStats targetPlayerStats = targetPlayerNetworkObject.GetComponent<PlayerStats>();
-        targetPlayerStats.DecreaseHealth(20);
+        // Apply damage depending on the setted damage value (that depends on the crystal type).
+        targetPlayerStats.DecreaseHealth(spellDamageNormalAttackBody);
     }
 }
