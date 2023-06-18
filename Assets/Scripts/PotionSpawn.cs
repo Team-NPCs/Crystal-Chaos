@@ -6,12 +6,11 @@ using UnityEngine;
 public class PotionSpawn : NetworkBehaviour {
     public int healthIncreaseAmount = 10;
     private readonly float healthSpawnProbability = 0.6f;
-    private readonly  float movementSpawnProbability = 0.4f;
+    private readonly float movementSpawnProbability = 0.4f;
     private readonly float respawnTimePotion = 10.0f;
-
+    private SfxScript sfxScript;
     // For the initial setting of the potion type.
     private bool isFirstRun = true;
-
     private Animator potionAnimator;
 
     // Networked variables.
@@ -19,12 +18,14 @@ public class PotionSpawn : NetworkBehaviour {
 
     private void Start() {
         potionAnimator = GetComponent<Animator>();
-        if (potionAnimator == null)
-        {
+        if (potionAnimator == null) {
             Debug.LogError("Potion Animator is not assigned to the PotionSpawn object.");
         }
         // We want to update the color of the potion with each change.
         potionType.OnValueChanged += UpdatePotionColorEvent;
+        // Audio.
+        sfxScript = GameObject.FindGameObjectWithTag("SfxManager").GetComponent<SfxScript>();
+
     }
 
     private void Update() {
@@ -57,6 +58,9 @@ public class PotionSpawn : NetworkBehaviour {
                 return;
             }
             // Tell the server to handle this instance.
+            if (IsLocalPlayer) {
+                sfxScript.potionAudio[potionType.Value].Play();
+            }
             PotionGotPickedUpServerRpc(targetNetworkObject.NetworkObjectId);
         }
     }
@@ -77,8 +81,7 @@ public class PotionSpawn : NetworkBehaviour {
         PlayerStats targetPlayerStats = targetPlayerNetworkObject.GetComponent<PlayerStats>();
         // Apply potion effects based on type.
         bool potionGotPickedUp = false;
-        switch (potionType.Value)
-        {
+        switch (potionType.Value) {
             case PotionType.Health:
                 potionGotPickedUp = targetPlayerStats.IncreaseHealth(healthIncreaseAmount);
                 break;
@@ -91,7 +94,7 @@ public class PotionSpawn : NetworkBehaviour {
             // Make the potions on all clients inactive.
             RpcSetPotionActiveClientRpc(false);
             // Make the potions appear again.
-            Invoke(nameof(RespawnPotionServerRpc), respawnTimePotion);  
+            Invoke(nameof(RespawnPotionServerRpc), respawnTimePotion);
         }
     }
 
@@ -116,8 +119,7 @@ public class PotionSpawn : NetworkBehaviour {
 
     // Tell the client to hide / unhide the potion.
     [ClientRpc]
-    private void RpcSetPotionActiveClientRpc(bool isActive)
-    {
+    private void RpcSetPotionActiveClientRpc(bool isActive) {
         gameObject.SetActive(isActive);
     }
 
@@ -133,8 +135,8 @@ public class PotionSpawn : NetworkBehaviour {
         }
         return nextPotionType;
     }
-    
-    // This loads the new animation (depending on the potion type). 
+
+    // This loads the new animation (depending on the potion type).
     // It will be used for the event handler.
     private void UpdatePotionColorEvent(PotionType oldValue, PotionType newValue) {
         switch (newValue) {
@@ -147,7 +149,7 @@ public class PotionSpawn : NetworkBehaviour {
         }
     }
 
-    // This loads the new animation (depending on the potion type). 
+    // This loads the new animation (depending on the potion type).
     // It will be used for manual updating the color.
     private void UpdatePotionColor() {
         switch (potionType.Value) {

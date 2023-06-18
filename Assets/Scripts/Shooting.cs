@@ -12,7 +12,7 @@ public class Shooting : NetworkBehaviour {
     public Transform bulletTransform;
     public float distanceBulletPointToPlayer = 1.2f;
 
-    // For the different crystal ball attacks we need different properties. 
+    // For the different crystal ball attacks we need different properties.
     // This include: the damage this spell does, the speed the spell has and also if it should
     // get destroyed after a specific time (e.g. the earth shards do not have the big reachability).
     // Set this here. This will then be initiated into a dictionary in the Start() function.
@@ -44,6 +44,8 @@ public class Shooting : NetworkBehaviour {
     public int numberOfShardsNormalAttackEarth = 10;
     public float inaccuracyAngleNormalAttackEarth = 25.0f;
 
+    private SfxScript sfxScript;
+
     // Start is called before the first frame update
     void Start() {
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
@@ -67,12 +69,14 @@ public class Shooting : NetworkBehaviour {
         spellSpeeds.Add(CrystalType.Earth, spellSpeedNormalAttackEarth);
         spellSpeeds.Add(CrystalType.Air, spellSpeedNormalAttackAir);
         spellSpeeds.Add(CrystalType.Void, spellSpeedNormalAttackVoid);
+        // Audio.
+        sfxScript = GameObject.FindGameObjectWithTag("SfxManager").GetComponent<SfxScript>();
     }
 
     // The update function gets called every frame. We want to do two things:
-    // 1. Get the mouse position and rotate the players shooting point. 
+    // 1. Get the mouse position and rotate the players shooting point.
     //    We will also use the mouse potion for the bullets direction and initial position.
-    // 2. Check if the player wants to shoot. If so, check if he can (has a crystal ball?) and 
+    // 2. Check if the player wants to shoot. If so, check if he can (has a crystal ball?) and
     //    if so, spawn the bullet.
     void Update() {
         // This should only be performed on the local player.
@@ -90,7 +94,7 @@ public class Shooting : NetworkBehaviour {
         // Here we do not face the player but we change the position of the shooting point depending
         // on the mouse position.
         bulletTransform.SetPositionAndRotation(
-            transform.position + Quaternion.Euler(0, 0, rotZ) * Vector3.right * distanceBulletPointToPlayer, 
+            transform.position + Quaternion.Euler(0, 0, rotZ) * Vector3.right * distanceBulletPointToPlayer,
             Quaternion.Euler(0, 0, rotZ));
 
         // If the left mouse button was pressed, shoot.
@@ -111,7 +115,7 @@ public class Shooting : NetworkBehaviour {
                         float inaccuracyAngle = Random.Range(-inaccuracyAngleNormalAttackEarth, inaccuracyAngleNormalAttackEarth);
                         Quaternion inaccuracyRotation = Quaternion.Euler(0, 0, inaccuracyAngle);
                         // Note that we have to add this rotation to the look vector for the flying direction but also to the
-                        // rotation itself because this value tells the program how to rotate the bullets visuals so that the 
+                        // rotation itself because this value tells the program how to rotate the bullets visuals so that the
                         // bullet itself also looks like it flies into this direction and not lies "horizontally" to it.
                         SpawnBulletServerRpc(crystalTypeToBeUsed, inaccuracyRotation * look_vector, bulletTransform.position, inaccuracyRotation * bulletTransform.rotation);
                     }
@@ -120,6 +124,8 @@ public class Shooting : NetworkBehaviour {
                     // Just spawn one shot.
                     SpawnBulletServerRpc(crystalTypeToBeUsed, look_vector, bulletTransform.position, bulletTransform.rotation);
                 }
+                // Play the shooting sound
+                sfxScript.spellAudio[crystalTypeToBeUsed].Play();
                 // Note that we do not have to set the cooldown here, since the inventory is handling the cooldown.
             }
             else {
@@ -129,7 +135,7 @@ public class Shooting : NetworkBehaviour {
     }
 
     // The server needs to spawn the bullets.
-    // IMPORTANT NOTE: In order to also be able to spawn these objects on the clients, the prefab 
+    // IMPORTANT NOTE: In order to also be able to spawn these objects on the clients, the prefab
     // of the bullet has to be registered at the NetworkManager.
     [ServerRpc]
     private void SpawnBulletServerRpc(CrystalType crystalType, Vector3 look_vector, Vector3 position, Quaternion rotation) {
@@ -150,8 +156,7 @@ public class Shooting : NetworkBehaviour {
         networkObject.Spawn();
 
         // Check if the bullet is of type CrystalType.Earth. If so, destroy it after a specified time.
-        if (crystalType == CrystalType.Earth)
-        {
+        if (crystalType == CrystalType.Earth) {
             // Start a coroutine to destroy the bullet after the specified lifetime
             StartCoroutine(DestroyBulletAfterLifetime(networkObject));
         }
