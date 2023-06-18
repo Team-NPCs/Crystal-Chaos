@@ -485,13 +485,23 @@ public class PlayerInventory : NetworkBehaviour {
     // after deleting a crystal ball and we do not know if the server response already reached this client.
     public bool HasCrystalBall(CrystalType crystalType) {
         if (crystalType == CrystalType._NONE) return false;
-        return crystalCount[crystalType] > 0;
+        if (crystalCount.ContainsKey(cyrstalType) == true) {
+            return crystalCount[crystalType] > 0;
+        }
+        else {
+            return false;
+        }
     }
 
     // A function that can be used for the interface to get and visualize the number of crystal balls per type.
     public int GetNumberOfCrystalBalls(CrystalType crystalType) {
         if (crystalType == CrystalType._NONE) return 0;
-        return crystalCount[crystalType];
+        if (crystalCount.ContainsKey(cyrstalType) == true) {
+            return crystalCount[crystalType];
+        }
+        else {
+            return 0;
+        }
     }
 
     // A function that can be used for the interface to get and visualize the number of available ammunition for 
@@ -499,7 +509,12 @@ public class PlayerInventory : NetworkBehaviour {
     // other balls with the same type, they have full ammo, this has to be requested by the function above).
     public int GetNumberOfAmmunition(CrystalType crystalType) {
         if (crystalType == CrystalType._NONE) return 0;
-        return ammunitionCount[crystalType];
+        if (ammunitionCount.ContainsKey(cyrstalType) == true) {
+            return ammunitionCount[crystalType];
+        }
+        else {
+            return 0;
+        }
     }
 
     // Check if the player that this script is assigned to is the local player.

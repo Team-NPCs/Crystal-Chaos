@@ -38,6 +38,9 @@ public class NetworkManagerUI : NetworkBehaviour {
 
         await UnityServices.InitializeAsync();
 
+        if (AuthenticationService.Instance.IsSignedIn) {
+            return;
+        }
 
         AuthenticationService.Instance.SignedIn += () => {
             Debug.Log("Signed in");
