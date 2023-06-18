@@ -6,7 +6,7 @@ public class PlayerAnimator : MonoBehaviour {
     private PlayerMovement mov;
     private Animator anim;
     private SpriteRenderer spriteRend;
-    private Color jump_land_color = new Color(1f, 1f, 0f, 1f);
+    private Color jump_land_color = new Color(1f, 1f, 1f, 1f);
 
     private DemoManager demoManager;
 
