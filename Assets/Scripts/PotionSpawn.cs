@@ -33,13 +33,14 @@ public class PotionSpawn : NetworkBehaviour {
         if (isFirstRun && NetworkManager.Singleton.IsHost) {
             InitializePotionTypeServerRpc();
             isFirstRun = false;
-        } 
-        else if (isFirstRun && NetworkManager.Singleton.IsClient) {
-            // Update it if this is not the host. Because then the initial colors are already set and we just need to 
-            // draw the correct potion. If we do it immediately the new colors are not synced, so give it a little
-            // bit of time.
-            Invoke(nameof(UpdatePotionColor), 2.0f);
-            isFirstRun = false;
+        }
+    }
+
+    // When the client spawns on the network, he needs to update the potion colors.
+    public override void OnNetworkSpawn() {
+        if (IsClient) {
+            // Object is spawned on the client, so set the bullet sprite
+            UpdatePotionColor();
         }
     }
 
