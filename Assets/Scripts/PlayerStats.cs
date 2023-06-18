@@ -15,14 +15,25 @@ public class PlayerStats : NetworkBehaviour {
     [SerializeField] public NetworkVariable<int> health = new NetworkVariable<int>();
     [SerializeField] public NetworkVariable<int> deathCount = new NetworkVariable<int>();
     
-    // Health Bar.
+    // Health Bar and Pause Menu (kill count).
     [SerializeField] private HealthBar localPlayerHealthBar;
+    [SerializeField] private GamePauseUI localGamePauseUI;
 
     private void Start() {
-        // Find and assign the local player's health bar.
+        // Find and assign the local player's health bar and the game pause menu.
         localPlayerHealthBar = GameObject.FindWithTag("HealthBar").GetComponent<HealthBar>();
-        // Add the event listeners to the healthbar.
+        // It is a little bit difficult to access the gamepauseUI if it is inactive. So we stored it
+        // in the demomangager (our object manager).
+        // Find the demo manager GameObject in the scene
+        GameObject demoManagerGO = GameObject.FindWithTag("DemoManagerTag");
+        // Access the script attached to the demo managers GameObject.
+        DemoManager demoManager = demoManagerGO.GetComponent<DemoManager>();
+        // Access the gamePauseMenuObject reference
+        localGamePauseUI = demoManager._gamePauseUI;
+        // Add the event listener to the healthbar.
         health.OnValueChanged += UpdateHealthBar;
+        // Add the event listener to the deathcount.
+        deathCount.OnValueChanged += UpdateScore;
         // Initialize the values.
         speedFactor.Value = initialSpeedFactor;
         health.Value = maxHealth;
@@ -66,6 +77,7 @@ public class PlayerStats : NetworkBehaviour {
         // Get the new position and move there.
         PlayerSpawn playerSpawn = GameObject.FindGameObjectWithTag("SpawnPointHandler").GetComponent<PlayerSpawn>();
         transform.position = playerSpawn.GetRespawnPosition();
+        UpdateHealthBar(0, maxHealth);
     }
 
     public void ActivateFastSpeed() {
@@ -113,9 +125,9 @@ public class PlayerStats : NetworkBehaviour {
             health.Value = 0;
         }
         if (health.Value == 0) {
-            RespawnClientRpc();
             health.Value = maxHealth;
             deathCount.Value++;
+            RespawnClientRpc();
             return true;
         }
         else {
@@ -124,12 +136,28 @@ public class PlayerStats : NetworkBehaviour {
     }
 
     // Event handler for updating the health bar
-    private void UpdateHealthBar(int oldValue, int newValue)
-    {
+    private void UpdateHealthBar(int oldValue, int newValue) {
         // Only update the health bar for the local player
         if (IsLocalPlayer())
         {
             localPlayerHealthBar.setHealth(newValue);
+        }
+    }
+
+    // Event handler for the score.
+    private void UpdateScore (int oldValue, int newValue) {
+        // The value we get is the death count of a player.
+        // First check if the value changed for the local or for the other player.
+        // If the death count of the local player changed, it is equal to the kill count of the other player.
+        // So this is then for the enemy.
+        // If the death count of the other player changed, this is then for my own player.
+        if (IsLocalPlayer()) {
+            // I died. This is a death for me.
+            localGamePauseUI.AdjustNumberOfDeath(newValue);
+        }
+        else {
+            // The enemy died. This is a kill for me.
+            localGamePauseUI.AdjustNumberOfKill(newValue);
         }
     }
 

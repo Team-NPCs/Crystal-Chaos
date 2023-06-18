@@ -11,6 +11,8 @@ TagManager:
   - SpawnPointHandler
   - Item
   - Bullet
+  - GamePauseMenu
+  - DemoManagerTag
   layers:
   - Default
   - TransparentFX
