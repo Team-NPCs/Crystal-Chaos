@@ -20,6 +20,7 @@ public class DemoManager : NetworkBehaviour {
     public static DemoManager Instance { get; private set; }
 
     public event System.EventHandler OnStateChanged;
+    public event System.EventHandler OnCountDownStart;
     public event System.EventHandler OnGamePaused;
     public event System.EventHandler OnGameUnPaused;
 
@@ -33,9 +34,9 @@ public class DemoManager : NetworkBehaviour {
     // We need to network the state variable.
     public NetworkVariable<State> state = new NetworkVariable<State>();
     private State previousState = State._NONE;
-    private float countdownToStartTimer = 3f;
+    private NetworkVariable<float> countdownToStartTimer = new();
     // This is the total length of the game after the game started.
-    public float matchDuration = 5f;
+    private float matchDuration = 5f;
     private NetworkVariable<float> gamePlayingTimer = new NetworkVariable<float>();
 
     public SceneData SceneData;
@@ -46,6 +47,7 @@ public class DemoManager : NetworkBehaviour {
         //_gamePauseUI = GameObject.FindWithTag("GamePauseMenu").GetComponent<GamePauseUI>();
         // Initialize the networked game time.
         gamePlayingTimer.Value = matchDuration;
+        countdownToStartTimer.Value = 3.0f;
     }
 
     private void Start() {
@@ -124,8 +126,8 @@ public class DemoManager : NetworkBehaviour {
                     //}
                 }
                 if (NetworkManager.Singleton.IsServer) {
-                    countdownToStartTimer -= Time.deltaTime;
-                    if (countdownToStartTimer < 0f) {
+                    countdownToStartTimer.Value -= Time.deltaTime;
+                    if (countdownToStartTimer.Value < 0f) {
                         // Change the state and lets go.
                         SetNextStateServerRpc(State.GamePlaying);
                     }
@@ -135,10 +137,6 @@ public class DemoManager : NetworkBehaviour {
                 if (previousState == State.CountDownToStart) {
                     // Send the event once.
                     OnStateChanged?.Invoke(this, System.EventArgs.Empty);
-                    previousState = State.GamePlaying;
-                }
-                // To only do it once.
-                if (previousState == State.CountDownToStart) {
                     players = GameObject.FindGameObjectsWithTag("Player");
                     foreach (GameObject player in players) {
                         // Only deactivate it for your own player.
@@ -191,7 +189,7 @@ public class DemoManager : NetworkBehaviour {
     }
 
     public float getCountdownToStartTimer() {
-        return countdownToStartTimer;
+        return countdownToStartTimer.Value;
     }
 
     public float GetGamePlayingTimer() {
