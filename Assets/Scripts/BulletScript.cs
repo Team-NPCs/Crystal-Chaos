@@ -8,6 +8,27 @@ public class BulletScript : NetworkBehaviour {
     // They are set in the shooting script depending on the crystal type of the spell.
     public int spellDamageNormalAttackBody;
     public int spellDamageNormalAttackHead;
+    public NetworkVariable<CrystalType> crystalType = new();
+    private SpriteRenderer bulletRenderer;
+
+    private void Start () {
+        bulletRenderer = GetComponent<SpriteRenderer>();
+        if (crystalType.Value == CrystalType.Fire) {
+            bulletRenderer.sprite = Resources.Load<Sprite>("Elemental Bullets/bullet-fire");
+        }
+        else if (crystalType.Value == CrystalType.Water) {
+            bulletRenderer.sprite = Resources.Load<Sprite>("Elemental Bullets/bullet-water");
+        }
+        else if (crystalType.Value == CrystalType.Earth) {
+            bulletRenderer.sprite = Resources.Load<Sprite>("Elemental Bullets/bullet-earth");
+        }
+        else if (crystalType.Value == CrystalType.Air) {
+            bulletRenderer.sprite = Resources.Load<Sprite>("Elemental Bullets/bullet-air");
+        }
+        else if (crystalType.Value == CrystalType.Void) {
+            bulletRenderer.sprite = Resources.Load<Sprite>("Elemental Bullets/bullet-void");
+        }
+    }
     
     private void OnTriggerEnter2D(Collider2D other) {
         // We have the following cases:

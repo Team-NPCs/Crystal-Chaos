@@ -142,7 +142,7 @@ public class Shooting : NetworkBehaviour {
         BulletScript bulletScript = bulletInstance.GetComponent<BulletScript>();
         bulletScript.spellDamageNormalAttackBody = spellDamageNormalAttackBody[crystalType];
         bulletScript.spellDamageNormalAttackHead = spellDamageNormalAttackHead[crystalType];
-
+        bulletScript.crystalType.Value = crystalType;
 
         // Get the NetworkObject component of the bullet instance.
         NetworkObject networkObject = bulletInstance.GetComponent<NetworkObject>();
