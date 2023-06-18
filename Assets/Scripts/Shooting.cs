@@ -137,7 +137,6 @@ public class Shooting : NetworkBehaviour {
         GameObject bulletInstance = Instantiate(bullet, position, rotation);
         // Set the velocity to the rigid body.
         Vector2 bulletVelocity = ((Vector2)look_vector).normalized * spellSpeeds[crystalType];
-        Debug.Log(bulletVelocity.ToString() + "  " + bulletVelocity.ToString());
         bulletInstance.GetComponent<Rigidbody2D>().velocity = bulletVelocity;
         // Set the damage information within the bullet.
         BulletScript bulletScript = bulletInstance.GetComponent<BulletScript>();

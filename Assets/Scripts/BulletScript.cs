@@ -54,10 +54,17 @@ public class BulletScript : NetworkBehaviour {
     // The server needs to do the damage.
     [ServerRpc]
     private void ApplyDamageServerRpc (ulong targetPlayerNetworkObjectId) {
-        // Get the playerStats of the hitted player.
+        // Find the target player's NetworkObject using the network object ID and the player stats.
         NetworkObject targetPlayerNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[targetPlayerNetworkObjectId];
         PlayerStats targetPlayerStats = targetPlayerNetworkObject.GetComponent<PlayerStats>();
-        // Apply damage depending on the setted damage value (that depends on the crystal type).
-        targetPlayerStats.DecreaseHealth(spellDamageNormalAttackBody);
+        bool playerDied = targetPlayerStats.DecreaseHealth(spellDamageNormalAttackBody);
+        // If the player died, reset the inventory and add a random crystal ball.
+        if (playerDied) {
+            // Reset the inventory. The player loses all when he dies.
+            PlayerInventory targetPlayerInventory = targetPlayerNetworkObject.GetComponent<PlayerInventory>();
+            targetPlayerInventory.ResetCrystal();
+            // Add a new random crystal ball to the inventory.
+            targetPlayerInventory.AddRandomCrystal();
+        }
     }
 }

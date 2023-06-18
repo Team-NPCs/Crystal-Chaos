@@ -208,6 +208,11 @@ public class PlayerInventory : NetworkBehaviour {
         }
     }
 
+    // A function that adds a random crystal ball to the inventory.
+    public void AddRandomCrystal() {
+        AddCrystal(CrystalBallSpawn.GenerateCrystalType());
+    }
+
 
     public bool AddCrystal(CrystalType crystalType) {
         // Check if the crystal ball can be added.
@@ -230,7 +235,9 @@ public class PlayerInventory : NetworkBehaviour {
         else if (crystalType == CrystalType.Void) {
             crystalCountVoid.Value++;
         }
-        inventoryUI.AdjustInventory(crystalType, GetNumberOfAmmunition(crystalType), GetNumberOfCrystalBalls(crystalType));
+        if (IsLocalPlayer()) {
+            inventoryUI.AdjustInventory(crystalType, GetNumberOfAmmunition(crystalType), GetNumberOfCrystalBalls(crystalType));
+        }
         return true;
     }
 
@@ -258,6 +265,15 @@ public class PlayerInventory : NetworkBehaviour {
             (crystalCountAir.Value < 0) || (crystalCountVoid.Value < 0)) {
                 Debug.Log("Error syncing the numbers of crystal balls. A value is below zero.");
         }
+    }
+
+    // This sets all crystals to zero. It is used when a player dies.
+    public void ResetCrystal() {
+        crystalCountFire.Value = 0;
+        crystalCountWater.Value = 0;
+        crystalCountEarth.Value = 0;
+        crystalCountAir.Value = 0;
+        crystalCountVoid.Value = 0;
     }
 
     // The player wants to use a normal attack with the currently equipped crystal ball.
@@ -335,10 +351,10 @@ public class PlayerInventory : NetworkBehaviour {
                 // We can reset the number of ammunition.
                 ammunitionCount[currentEquippedCrystalType] = maxAmmunitionCount[currentEquippedCrystalType];
             }
-            // Tell the server to delete the destroyed crystal.
-            RemoveCrystalServerRpc(currentEquippedCrystalType);
             // Remove it yourself.
             crystalCount[currentEquippedCrystalType]--;
+            // Tell the server to delete the destroyed crystal.
+            RemoveCrystalServerRpc(currentEquippedCrystalType);
             // Check if there are still crystal balls of the same type. If not move to the next one.
             // But only on the local player.
             if (hasAnotherOne == false) {
@@ -358,7 +374,9 @@ public class PlayerInventory : NetworkBehaviour {
             }
         }
         // Update the number of ammunition and number of crystal balls for the used one.
-        inventoryUI.AdjustInventory(usedCrystalType, GetNumberOfAmmunition(usedCrystalType), GetNumberOfCrystalBalls(usedCrystalType));
+        if (IsLocalPlayer()) {
+            inventoryUI.AdjustInventory(usedCrystalType, GetNumberOfAmmunition(usedCrystalType), GetNumberOfCrystalBalls(usedCrystalType));
+        }
         return true;
     }
 
@@ -420,7 +438,9 @@ public class PlayerInventory : NetworkBehaviour {
             Debug.Log("New crystal ball type:" + nextCrystalType.ToString());
             currentEquippedCrystalType = nextCrystalType;
         }
-        inventoryUI.adjustColorSelection(currentEquippedCrystalType);
+        if (IsLocalPlayer()) {
+            inventoryUI.adjustColorSelection(currentEquippedCrystalType);
+        }
     }
 
     // This function switches the equipped crystal ball to the specified type. Note that this only will work if the 
@@ -430,7 +450,9 @@ public class PlayerInventory : NetworkBehaviour {
             Debug.Log("Equipped crystal ball type " + crystal_type.ToString());
             currentEquippedCrystalType = crystal_type;
         }
-        inventoryUI.adjustColorSelection(currentEquippedCrystalType);
+        if (IsLocalPlayer()) {
+            inventoryUI.adjustColorSelection(currentEquippedCrystalType);
+        }
     }
 
     // A helper function for the function above.
@@ -462,11 +484,13 @@ public class PlayerInventory : NetworkBehaviour {
     // We operate on the local copy of the number of crystal balls since we call this function immediately
     // after deleting a crystal ball and we do not know if the server response already reached this client.
     public bool HasCrystalBall(CrystalType crystalType) {
+        if (crystalType == CrystalType._NONE) return false;
         return crystalCount[crystalType] > 0;
     }
 
     // A function that can be used for the interface to get and visualize the number of crystal balls per type.
     public int GetNumberOfCrystalBalls(CrystalType crystalType) {
+        if (crystalType == CrystalType._NONE) return 0;
         return crystalCount[crystalType];
     }
 
@@ -474,6 +498,7 @@ public class PlayerInventory : NetworkBehaviour {
     // the specified crystal ball type. It only looks into the first crystal ball of each type (so if there are
     // other balls with the same type, they have full ammo, this has to be requested by the function above).
     public int GetNumberOfAmmunition(CrystalType crystalType) {
+        if (crystalType == CrystalType._NONE) return 0;
         return ammunitionCount[crystalType];
     }
 
@@ -496,15 +521,23 @@ public class PlayerInventory : NetworkBehaviour {
     // FIRE.
     private void receivedUpdateCrystalCountFire(int oldValue, int newValue) {
         // Did the number decrease?
-        if (newValue < oldValue) {
-            // This was already handled by the client himself.
-            // Just to be sure, check if it corresponds to the local copy.
-            if (newValue != crystalCount[CrystalType.Fire]) {
-                Debug.Log("Encountered difference between local copy of crystal count and networked crystal count:" +
-                    " local = " + crystalCount[CrystalType.Fire].ToString() +
-                    " networked = " + newValue.ToString());
+        if (newValue < crystalCount[CrystalType.Fire]) {
+            // This was in the most cases already handled by the local client using the useAttadck method.
+            // But this can also happen when the server takes away crystal balls e.g., when the player dies.
+            if (newValue == 0) {
+                // Take away everything.
+                crystalCount[CrystalType.Fire] = 0;
+                ammunitionCount[CrystalType.Fire] = 0;
+                // If this crystal ball was selected before, check for the next one.
+                if (currentEquippedCrystalType == CrystalType.Fire) {
+                    SwitchCrystalOneStep();
+                }
             }
-            // We do not need to update the inventory UI here since this is already done in the shooting function.
+            else {
+                // Only one crystal ball was taken away. Set the new amount of crystal balls and the ammunition to max.
+                crystalCount[CrystalType.Fire] = newValue;
+                ammunitionCount[CrystalType.Fire] = maxAmmunitionCount[CrystalType.Fire];
+            }
         }
         // Did the number increase? Do not check against the oldValue but the local one.
         else if (newValue > crystalCount[CrystalType.Fire]) {
@@ -519,22 +552,37 @@ public class PlayerInventory : NetworkBehaviour {
             if (newValue == 1) {
                 ammunitionCount[CrystalType.Fire] = maxAmmunitionCount[CrystalType.Fire];
             }
-            // Update the inventory UI.
+        }
+        else {
+            // The new value is the same as the local one. This happens when the crystal balls get removed after the shooting
+            // function. In this case we have to do nothing, not even update the inventory ui since this happened already locally.
+            return;
+        }
+        // Update the inventory UI.
+        if (IsLocalPlayer()) {
             inventoryUI.AdjustInventory(CrystalType.Fire, GetNumberOfAmmunition(CrystalType.Fire), GetNumberOfCrystalBalls(CrystalType.Fire));
         }
     }
     // WATER.
     private void receivedUpdateCrystalCountWater(int oldValue, int newValue) {
         // Did the number decrease?
-        if (newValue < oldValue) {
-            // This was already handled by the client himself.
-            // Just to be sure, check if it corresponds to the local copy.
-            if (newValue != crystalCount[CrystalType.Water]) {
-                Debug.Log("Encountered difference between local copy of crystal count and networked crystal count:" +
-                    " local = " + crystalCount[CrystalType.Water].ToString() +
-                    " networked = " + newValue.ToString());
+        if (newValue < crystalCount[CrystalType.Water]) {
+            // This was in the most cases already handled by the local client using the useAttadck method.
+            // But this can also happen when the server takes away crystal balls e.g., when the player dies.
+            if (newValue == 0) {
+                // Take away everything.
+                crystalCount[CrystalType.Water] = 0;
+                ammunitionCount[CrystalType.Water] = 0;
+                // If this crystal ball was selected before, check for the next one.
+                if (currentEquippedCrystalType == CrystalType.Water) {
+                    SwitchCrystalOneStep();
+                }
             }
-            // We do not need to update the inventory UI here since this is already done in the shooting function.
+            else {
+                // Only one crystal ball was taken away. Set the new amount of crystal balls and the ammunition to max.
+                crystalCount[CrystalType.Water] = newValue;
+                ammunitionCount[CrystalType.Water] = maxAmmunitionCount[CrystalType.Water];
+            }
         }
         // Did the number increase? Do not check against the oldValue but the local one.
         else if (newValue > crystalCount[CrystalType.Water]) {
@@ -549,22 +597,37 @@ public class PlayerInventory : NetworkBehaviour {
             if (newValue == 1) {
                 ammunitionCount[CrystalType.Water] = maxAmmunitionCount[CrystalType.Water];
             }
-            // Update the inventory UI.
+        }
+        else {
+            // The new value is the same as the local one. This happens when the crystal balls get removed after the shooting
+            // function. In this case we have to do nothing, not even update the inventory ui since this happened already locally.
+            return;
+        }
+        // Update the inventory UI.
+        if (IsLocalPlayer()) {
             inventoryUI.AdjustInventory(CrystalType.Water, GetNumberOfAmmunition(CrystalType.Water), GetNumberOfCrystalBalls(CrystalType.Water));
         }
     }
     // EARTH.
     private void receivedUpdateCrystalCountEarth(int oldValue, int newValue) {
         // Did the number decrease?
-        if (newValue < oldValue) {
-            // This was already handled by the client himself.
-            // Just to be sure, check if it corresponds to the local copy.
-            if (newValue != crystalCount[CrystalType.Earth]) {
-                Debug.Log("Encountered difference between local copy of crystal count and networked crystal count:" +
-                    " local = " + crystalCount[CrystalType.Earth].ToString() +
-                    " networked = " + newValue.ToString());
+        if (newValue < crystalCount[CrystalType.Earth]) {
+            // This was in the most cases already handled by the local client using the useAttadck method.
+            // But this can also happen when the server takes away crystal balls e.g., when the player dies.
+            if (newValue == 0) {
+                // Take away everything.
+                crystalCount[CrystalType.Earth] = 0;
+                ammunitionCount[CrystalType.Earth] = 0;
+                // If this crystal ball was selected before, check for the next one.
+                if (currentEquippedCrystalType == CrystalType.Earth) {
+                    SwitchCrystalOneStep();
+                }
             }
-            // We do not need to update the inventory UI here since this is already done in the shooting function.
+            else {
+                // Only one crystal ball was taken away. Set the new amount of crystal balls and the ammunition to max.
+                crystalCount[CrystalType.Earth] = newValue;
+                ammunitionCount[CrystalType.Earth] = maxAmmunitionCount[CrystalType.Earth];
+            }
         }
         // Did the number increase? Do not check against the oldValue but the local one.
         else if (newValue > crystalCount[CrystalType.Earth]) {
@@ -579,22 +642,37 @@ public class PlayerInventory : NetworkBehaviour {
             if (newValue == 1) {
                 ammunitionCount[CrystalType.Earth] = maxAmmunitionCount[CrystalType.Earth];
             }
-            // Update the inventory UI.
+        }
+        else {
+            // The new value is the same as the local one. This happens when the crystal balls get removed after the shooting
+            // function. In this case we have to do nothing, not even update the inventory ui since this happened already locally.
+            return;
+        }
+        // Update the inventory UI.
+        if (IsLocalPlayer()) {
             inventoryUI.AdjustInventory(CrystalType.Earth, GetNumberOfAmmunition(CrystalType.Earth), GetNumberOfCrystalBalls(CrystalType.Earth));
         }
     }
     // AIR.
     private void receivedUpdateCrystalCountAir(int oldValue, int newValue) {
         // Did the number decrease?
-        if (newValue < oldValue) {
-            // This was already handled by the client himself.
-            // Just to be sure, check if it corresponds to the local copy.
-            if (newValue != crystalCount[CrystalType.Air]) {
-                Debug.Log("Encountered difference between local copy of crystal count and networked crystal count:" +
-                    " local = " + crystalCount[CrystalType.Air].ToString() +
-                    " networked = " + newValue.ToString());
+        if (newValue < crystalCount[CrystalType.Air]) {
+            // This was in the most cases already handled by the local client using the useAttadck method.
+            // But this can also happen when the server takes away crystal balls e.g., when the player dies.
+            if (newValue == 0) {
+                // Take away everything.
+                crystalCount[CrystalType.Air] = 0;
+                ammunitionCount[CrystalType.Air] = 0;
+                // If this crystal ball was selected before, check for the next one.
+                if (currentEquippedCrystalType == CrystalType.Air) {
+                    SwitchCrystalOneStep();
+                }
             }
-            // We do not need to update the inventory UI here since this is already done in the shooting function.
+            else {
+                // Only one crystal ball was taken away. Set the new amount of crystal balls and the ammunition to max.
+                crystalCount[CrystalType.Air] = newValue;
+                ammunitionCount[CrystalType.Air] = maxAmmunitionCount[CrystalType.Air];
+            }
         }
         // Did the number increase? Do not check against the oldValue but the local one.
         else if (newValue > crystalCount[CrystalType.Air]) {
@@ -609,22 +687,37 @@ public class PlayerInventory : NetworkBehaviour {
             if (newValue == 1) {
                 ammunitionCount[CrystalType.Air] = maxAmmunitionCount[CrystalType.Air];
             }
-            // Update the inventory UI.
+        }
+        else {
+            // The new value is the same as the local one. This happens when the crystal balls get removed after the shooting
+            // function. In this case we have to do nothing, not even update the inventory ui since this happened already locally.
+            return;
+        }
+        // Update the inventory UI.
+        if (IsLocalPlayer()) {
             inventoryUI.AdjustInventory(CrystalType.Air, GetNumberOfAmmunition(CrystalType.Air), GetNumberOfCrystalBalls(CrystalType.Air));
         }
     }
     // VOID.
     private void receivedUpdateCrystalCountVoid(int oldValue, int newValue) {
         // Did the number decrease?
-        if (newValue < oldValue) {
-            // This was already handled by the client himself.
-            // Just to be sure, check if it corresponds to the local copy.
-            if (newValue != crystalCount[CrystalType.Void]) {
-                Debug.Log("Encountered difference between local copy of crystal count and networked crystal count:" +
-                    " local = " + crystalCount[CrystalType.Void].ToString() +
-                    " networked = " + newValue.ToString());
+        if (newValue < crystalCount[CrystalType.Void]) {
+            // This was in the most cases already handled by the local client using the useAttadck method.
+            // But this can also happen when the server takes away crystal balls e.g., when the player dies.
+            if (newValue == 0) {
+                // Take away everything.
+                crystalCount[CrystalType.Void] = 0;
+                ammunitionCount[CrystalType.Void] = 0;
+                // If this crystal ball was selected before, check for the next one.
+                if (currentEquippedCrystalType == CrystalType.Void) {
+                    SwitchCrystalOneStep();
+                }
             }
-            // We do not need to update the inventory UI here since this is already done in the shooting function.
+            else {
+                // Only one crystal ball was taken away. Set the new amount of crystal balls and the ammunition to max.
+                crystalCount[CrystalType.Void] = newValue;
+                ammunitionCount[CrystalType.Void] = maxAmmunitionCount[CrystalType.Void];
+            }
         }
         // Did the number increase? Do not check against the oldValue but the local one.
         else if (newValue > crystalCount[CrystalType.Void]) {
@@ -639,7 +732,14 @@ public class PlayerInventory : NetworkBehaviour {
             if (newValue == 1) {
                 ammunitionCount[CrystalType.Void] = maxAmmunitionCount[CrystalType.Void];
             }
-            // Update the inventory UI.
+        }
+        else {
+            // The new value is the same as the local one. This happens when the crystal balls get removed after the shooting
+            // function. In this case we have to do nothing, not even update the inventory ui since this happened already locally.
+            return;
+        }
+        // Update the inventory UI.
+        if (IsLocalPlayer()) {
             inventoryUI.AdjustInventory(CrystalType.Void, GetNumberOfAmmunition(CrystalType.Void), GetNumberOfCrystalBalls(CrystalType.Void));
         }
     }
