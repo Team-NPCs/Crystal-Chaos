@@ -5,6 +5,7 @@ using UnityEngine;
 public class SfxScript : MonoBehaviour {
     [SerializeField] private AudioSource earthAudio, airAudio, voidAudio, waterAudio, fireAudio;
     [SerializeField] private AudioSource healthPotionAudio, movementPotionAudio;
+    public AudioSource deathAudio;
     public readonly Dictionary<CrystalType, AudioSource> spellAudio = new();
     public readonly Dictionary<PotionType, AudioSource> potionAudio = new();
 
