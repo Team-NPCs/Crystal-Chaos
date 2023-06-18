@@ -5,7 +5,17 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class DemoManager : MonoBehaviour {
+
+public enum State {
+    Init,
+    WaitingToStart,
+    CountDownToStart,
+    GamePlaying,
+    GameOver,
+    _NONE
+}
+
+public class DemoManager : NetworkBehaviour {
 
     public static DemoManager Instance { get; private set; }
 
@@ -20,34 +30,29 @@ public class DemoManager : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI nameText;
     private bool isPausedGame = false;
 
-    public enum State {
-        Init,
-        WaitingToStart,
-        CountDownToStart,
-        GamePlaying,
-        GameOver
-    }
-
-    public State state;
+    // We need to network the state variable.
+    public NetworkVariable<State> state = new NetworkVariable<State>();
+    private State previousState = State._NONE;
     private float countdownToStartTimer = 3f;
     // This is the total length of the game after the game started.
-    private float gamePlayingTimer = 120f;
+    public float matchDuration = 5f;
+    private NetworkVariable<float> gamePlayingTimer = new NetworkVariable<float>();
 
     public SceneData SceneData;
 
     private void Awake() {
         Instance = this;
-        state = State.Init;
         _cam = FindObjectOfType<Camera>();
-        _player = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
-        _grappling = GameObject.FindWithTag("Player").GetComponent<GrapplingScript>();
-        _gamePauseUI = GameObject.FindWithTag("GamePauseMenu").GetComponent<GamePauseUI>();
+        //_gamePauseUI = GameObject.FindWithTag("GamePauseMenu").GetComponent<GamePauseUI>();
+        // Initialize the networked game time.
+        gamePlayingTimer.Value = matchDuration;
     }
 
     private void Start() {
+        SetNextStateServerRpc(State.Init);
         SetSceneData(SceneData);
-        OnGamePaused += _gamePauseUI.DemoManager_OnGamePaused;
-        OnGameUnPaused += _gamePauseUI.DemoManager_OnGameUnPaused;
+        //OnGamePaused += _gamePauseUI.DemoManager_OnGamePaused;
+        //OnGameUnPaused += _gamePauseUI.DemoManager_OnGameUnPaused;
     }
 
     public void SetSceneData(SceneData data) {
@@ -59,58 +64,130 @@ public class DemoManager : MonoBehaviour {
 
 
     private void Update() {
-        DemoManager.Instance.isGamePlaying();
-        switch (state) {
+        GameObject[] players;
+        switch (state.Value) {
             case State.Init:
+                previousState = State.Init;
                 // We do this only once.
                 // Now call the GameStartCountdownUI and tell that we want to change.
-                state = State.WaitingToStart;
-                // Send the event once.
-                OnStateChanged?.Invoke(this, System.EventArgs.Empty);
+                if (NetworkManager.Singleton.IsServer) {
+                    SetNextStateServerRpc(State.WaitingToStart);
+                }
                 break;
             case State.WaitingToStart:
-                // We wait for a second player to join.
-                if (NetworkManager.Singleton.ConnectedClientsIds.Count > 1) {
-                    state = State.CountDownToStart;
+                if (previousState == State.Init) {
+                    // Send the event once.
                     OnStateChanged?.Invoke(this, System.EventArgs.Empty);
+                    previousState = State.WaitingToStart;
+                }
+                // We wait for a second player to join.
+                // Find all players and their respective movement and grappling and deactivate them 
+                // until the game starts.
+                // This does every client for himself (only deactivate the movement for your own player),
+                // since the movement is networked.
+                players = GameObject.FindGameObjectsWithTag("Player");
+                foreach (GameObject player in players) {
+                    // Only deactivate it for your own player.
+                    //NetworkObject playerNetworkObject = player.GetComponent<NetworkObject>();
+                    //if (NetworkManager.Singleton.LocalClientId == playerNetworkObject.OwnerClientId) {
+                    PlayerMovement playersMovement = player.GetComponent<PlayerMovement>();
+                    GrapplingScript grapplingScript = player.GetComponent<GrapplingScript>();
+                    playersMovement.enabled = false;
+                    grapplingScript.enabled = false;
+                    //}
+                }
+                // Check if we can start. We need two players.
+                if (NetworkManager.Singleton.IsServer) {
+                    Debug.Log("Connected players: " + NetworkManager.Singleton.ConnectedClientsIds.Count.ToString());
+                    if (NetworkManager.Singleton.ConnectedClientsIds.Count > 1) {
+                        SetNextStateServerRpc(State.CountDownToStart);
+                    }
                 }
                 break;
             case State.CountDownToStart:
-                countdownToStartTimer -= Time.deltaTime;
-                if (countdownToStartTimer < 0f) {
-                    state = State.GamePlaying;
+                if (previousState == State.WaitingToStart) {
+                    // Send the event once.
                     OnStateChanged?.Invoke(this, System.EventArgs.Empty);
+                    previousState = State.CountDownToStart;
+                }
+                // We still wait until the countdown is down.
+                previousState = State.CountDownToStart;
+                players = GameObject.FindGameObjectsWithTag("Player");
+                foreach (GameObject player in players) {
+                    // Only deactivate it for your own player.
+                    //NetworkObject playerNetworkObject = player.GetComponent<NetworkObject>();
+                    //if (NetworkManager.Singleton.LocalClientId == playerNetworkObject.OwnerClientId) {
+                    PlayerMovement playersMovement = player.GetComponent<PlayerMovement>();
+                    GrapplingScript grapplingScript = player.GetComponent<GrapplingScript>();
+                    playersMovement.enabled = false;
+                    grapplingScript.enabled = false;
+                    //}
+                }
+                if (NetworkManager.Singleton.IsServer) {
+                    countdownToStartTimer -= Time.deltaTime;
+                    if (countdownToStartTimer < 0f) {
+                        // Change the state and lets go.
+                        SetNextStateServerRpc(State.GamePlaying);
+                    }
                 }
                 break;
             case State.GamePlaying:
-                gamePlayingTimer -= Time.deltaTime;
-                if (Input.GetKeyDown(KeyCode.P)) {
-                    ToggleGamePaused();
-                }
-                if (gamePlayingTimer < 0f) {
-                    state = State.GameOver;
+                if (previousState == State.CountDownToStart) {
+                    // Send the event once.
                     OnStateChanged?.Invoke(this, System.EventArgs.Empty);
+                    previousState = State.GamePlaying;
+                }
+                // To only do it once.
+                if (previousState == State.CountDownToStart) {
+                    players = GameObject.FindGameObjectsWithTag("Player");
+                    foreach (GameObject player in players) {
+                        // Only deactivate it for your own player.
+                        //NetworkObject playerNetworkObject = player.GetComponent<NetworkObject>();
+                        //if (NetworkManager.Singleton.LocalClientId == playerNetworkObject.OwnerClientId) {
+                        PlayerMovement playersMovement = player.GetComponent<PlayerMovement>();
+                        GrapplingScript grapplingScript = player.GetComponent<GrapplingScript>();
+                        playersMovement.enabled = true;
+                        grapplingScript.enabled = true;
+                        //}
+                    }
+                    previousState = State.GamePlaying;
+                }
+
+                //if (Input.GetKeyDown(KeyCode.P)) {
+                //    ToggleGamePaused();
+                //}
+                
+                if (NetworkManager.Singleton.IsServer) {
+                    gamePlayingTimer.Value -= Time.deltaTime;
+                    if (gamePlayingTimer.Value < 0f) {
+                        // The game is over, deactivate movement.
+                        players = GameObject.FindGameObjectsWithTag("Player");
+                        foreach (GameObject player in players) {
+                            PlayerMovement playersMovement = player.GetComponent<PlayerMovement>();
+                            GrapplingScript grapplingScript = player.GetComponent<GrapplingScript>();
+                            playersMovement.enabled = false;
+                            grapplingScript.enabled = false;
+                        }
+                        // Game over.
+                        SetNextStateServerRpc(State.GameOver);
+                    }
                 }
                 break;
             case State.GameOver:
+                if (previousState == State.GamePlaying) {
+                    // Send the event once.
+                    OnStateChanged?.Invoke(this, System.EventArgs.Empty);
+                    previousState = State.GameOver;
+                }
                 break;
-        }
-    }
-
-    public void isGamePlaying() {
-        if (state == State.GamePlaying) {
-            _player.enabled = _grappling.enabled = true;
-        }
-        else {
-            _player.enabled = _grappling.enabled = false;
         }
     }
 
     public bool isCountDownToStartActive() {
-        return state == State.CountDownToStart;
+        return state.Value == State.CountDownToStart;
     }
     public bool isGameOver() {
-        return state == State.GameOver;
+        return state.Value == State.GameOver;
     }
 
     public float getCountdownToStartTimer() {
@@ -118,7 +195,17 @@ public class DemoManager : MonoBehaviour {
     }
 
     public float GetGamePlayingTimer() {
-        return gamePlayingTimer;
+        return gamePlayingTimer.Value;
+    }
+
+    [ServerRpc]
+    public void SetNextStateServerRpc (State nextState) {
+        state.Value = nextState;
+    }
+
+    [ServerRpc]
+    public void testServerRpc (string message) {
+        Debug.Log(message);
     }
 
     private void ToggleGamePaused() {

@@ -17,7 +17,7 @@ public class GameStartCountdownUI : MonoBehaviour {
 
     private void DemoManager_OnStateChanged(object sender, EventArgs e) {
         // If the countdown is currently active we show it, afterwards hide it.
-        if ((DemoManager.Instance.state == DemoManager.State.WaitingToStart) || (DemoManager.Instance.state == DemoManager.State.CountDownToStart)) {
+        if ((DemoManager.Instance.state.Value == State.WaitingToStart) || (DemoManager.Instance.state.Value == State.CountDownToStart)) {
             Show();
         }
         else {
@@ -26,11 +26,11 @@ public class GameStartCountdownUI : MonoBehaviour {
     }
     private void Update() {
         // Set the time (seconds) value.
-        if (DemoManager.Instance.state == DemoManager.State.WaitingToStart) {
+        if (DemoManager.Instance.state.Value == State.WaitingToStart) {
             joinInformationText.text = "waiting for the other player to join ...";
             countDownText.text = "";
         }
-        else if (DemoManager.Instance.state == DemoManager.State.CountDownToStart) {
+        else if (DemoManager.Instance.state.Value == State.CountDownToStart) {
             joinInformationText.text = "";
             countDownText.text = Math.Ceiling(DemoManager.Instance.getCountdownToStartTimer()).ToString();
         }

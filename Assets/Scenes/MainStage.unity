@@ -1052,13 +1052,14 @@ GameObject:
   m_Component:
   - component: {fileID: 909106431}
   - component: {fileID: 909106432}
+  - component: {fileID: 909106433}
   m_Layer: 0
   m_Name: Demo Manager
   m_TagString: DemoManagerTag
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &909106431
 Transform:
   m_ObjectHideFlags: 0
@@ -1088,8 +1089,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gamePauseUI: {fileID: 2052901561}
   nameText: {fileID: 0}
-  state: 0
+  state:
+    m_InternalValue: 0
+  matchDuration: 120
   SceneData: {fileID: 11400000, guid: ef27be30fe2a5784494b3d189b302457, type: 2}
+--- !u!114 &909106433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 909106429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2902299526
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!4 &911551936 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 159955194230682089, guid: 33c1eba20e058492593d9d7745b271d0, type: 3}

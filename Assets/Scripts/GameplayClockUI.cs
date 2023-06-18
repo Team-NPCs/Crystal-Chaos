@@ -12,5 +12,9 @@ public class GameplayClockUI : MonoBehaviour {
     private void Update() {
         timeSpan = TimeSpan.FromSeconds(DemoManager.Instance.GetGamePlayingTimer());
         gameplayTimer.text = string.Format("{0:00}:{1:00}", timeSpan.Minutes, timeSpan.Seconds);
+
+        if (Input.GetKeyDown(KeyCode.T)) {
+            DemoManager.Instance.testServerRpc("tested from the client");
+        }
     }
 }
