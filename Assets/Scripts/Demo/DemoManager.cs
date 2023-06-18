@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -29,6 +30,7 @@ public class DemoManager : MonoBehaviour {
     private State state;
     private float waitingToStartTimer = 1f;
     private float countdownToStartTimer = 3f;
+    // This is the total length of the game after the game started.
     private float gamePlayingTimer = 120f;
 
     public SceneData SceneData;
@@ -60,11 +62,15 @@ public class DemoManager : MonoBehaviour {
         DemoManager.Instance.isGamePlaying();
         switch (state) {
             case State.WaitingToStart:
+                // We wait for a second player to join.
+                //Debug.Log(NetworkManager.Singleton.ConnectedClientsIds.Count.ToString());
+                
                 waitingToStartTimer -= Time.deltaTime;
                 if (waitingToStartTimer < 0f) {
                     state = State.CountDownToStart;
                     OnStateChanged?.Invoke(this, System.EventArgs.Empty);
                 }
+                
                 break;
             case State.CountDownToStart:
                 countdownToStartTimer -= Time.deltaTime;

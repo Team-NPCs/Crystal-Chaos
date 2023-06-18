@@ -8,12 +8,14 @@ public class GameStartCountdownUI : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI countDownText;
 
     private void Start() {
+        // Add a callback for the state of the game so we know when we should do something.
         DemoManager.Instance.OnStateChanged += DemoManager_OnStateChanged;
-
+        // Hide for now.
         Hide();
     }
 
     private void DemoManager_OnStateChanged(object sender, EventArgs e) {
+        // If the countdown is currently active we show it, afterwards hide it.
         if (DemoManager.Instance.isCountDownToStartActive()) {
             Show();
         }
@@ -22,6 +24,7 @@ public class GameStartCountdownUI : MonoBehaviour {
         }
     }
     private void Update() {
+        // Set the time (seconds) value.
         countDownText.text = Math.Ceiling(DemoManager.Instance.getCountdownToStartTimer()).ToString();
     }
     private void Show() {

@@ -485,7 +485,7 @@ public class PlayerInventory : NetworkBehaviour {
     // after deleting a crystal ball and we do not know if the server response already reached this client.
     public bool HasCrystalBall(CrystalType crystalType) {
         if (crystalType == CrystalType._NONE) return false;
-        if (crystalCount.ContainsKey(cyrstalType) == true) {
+        if (crystalCount.ContainsKey(crystalType) == true) {
             return crystalCount[crystalType] > 0;
         }
         else {
@@ -496,7 +496,7 @@ public class PlayerInventory : NetworkBehaviour {
     // A function that can be used for the interface to get and visualize the number of crystal balls per type.
     public int GetNumberOfCrystalBalls(CrystalType crystalType) {
         if (crystalType == CrystalType._NONE) return 0;
-        if (crystalCount.ContainsKey(cyrstalType) == true) {
+        if (crystalCount.ContainsKey(crystalType) == true) {
             return crystalCount[crystalType];
         }
         else {
@@ -509,7 +509,7 @@ public class PlayerInventory : NetworkBehaviour {
     // other balls with the same type, they have full ammo, this has to be requested by the function above).
     public int GetNumberOfAmmunition(CrystalType crystalType) {
         if (crystalType == CrystalType._NONE) return 0;
-        if (ammunitionCount.ContainsKey(cyrstalType) == true) {
+        if (ammunitionCount.ContainsKey(crystalType) == true) {
             return ammunitionCount[crystalType];
         }
         else {
