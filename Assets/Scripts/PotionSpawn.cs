@@ -7,7 +7,7 @@ public class PotionSpawn : NetworkBehaviour {
     public int healthIncreaseAmount = 10;
     private readonly float healthSpawnProbability = 0.6f;
     private readonly  float movementSpawnProbability = 0.4f;
-    public float respawnTimePotion = 5.0f;
+    private readonly float respawnTimePotion = 10.0f;
 
     // For the initial setting of the potion type.
     private bool isFirstRun = true;

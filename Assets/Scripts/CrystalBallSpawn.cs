@@ -4,7 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 
 public class CrystalBallSpawn : NetworkBehaviour {
-    private float respawnTimeCrystalBall = 5f;
+    private readonly float respawnTimeCrystalBall = 10f;
 
     // For the initial setting of the crystal type.
     private bool isFirstRun = true;
