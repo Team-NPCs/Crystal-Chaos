@@ -168,6 +168,7 @@ public class GrapplingScript : NetworkBehaviour {
     bool SetGrapplePoint() {
         Vector2 distanceVector = m_camera.ScreenToWorldPoint(Input.mousePosition) - gunPivot.position;
         if (Physics2D.Raycast(firePoint.position, distanceVector.normalized)) {
+            // On a later version we should check what it grabbed. Because currently it also grabs items and players.
             RaycastHit2D _hit = Physics2D.Raycast(firePoint.position, distanceVector.normalized);
             if (_hit.transform.gameObject.layer == grappableLayerNumber || grappleToAll) {
                 if (Vector2.Distance(_hit.point, firePoint.position) <= maxDistnace || !hasMaxDistance) {

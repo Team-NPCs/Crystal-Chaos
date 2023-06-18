@@ -47,7 +47,16 @@ public class BulletScript : NetworkBehaviour {
             return;
         }
         if (other.CompareTag("Bullet")) {
-            // Do the further stuff here.
+            // Within the GDD there is a matrix that lists the interaction of the spells.
+            // Get the type of the other bullet.
+            BulletScript otherBulletScript = other.GetComponent<BulletScript>();
+            // Fire gets erased by water.
+            if ((crystalType.Value == CrystalType.Fire) && (otherBulletScript.crystalType.Value == CrystalType.Water)) {
+                // Delete the bullet.
+                if (NetworkObject.IsSpawned) {
+                    NetworkObject.Despawn(true);
+                }
+            }
             return;
         }
         if (other.CompareTag("Player")) {
