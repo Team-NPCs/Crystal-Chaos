@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class GrapplingScript : MonoBehaviour {
+public class GrapplingScript : NetworkBehaviour {
     private PlayerMovement player;
     [Header("Scripts Ref:")]
     public RopeScript grappleRope;
@@ -18,6 +19,7 @@ public class GrapplingScript : MonoBehaviour {
     public Transform gunHolder;
     public Transform gunPivot;
     public Transform firePoint;
+    private readonly float distanceFirePointToPlayer = 1.0f;
 
     [Header("Physics Ref:")]
     public SpringJoint2D m_springJoint2D;
@@ -54,13 +56,16 @@ public class GrapplingScript : MonoBehaviour {
     }
 
     private void Start() {
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
+        player = GetComponent<PlayerMovement>();
         grappleRope.enabled = false;
         m_springJoint2D.enabled = false;
-
     }
 
     private void Update() {
+        // This should only be performed on the local player.
+        if (IsLocalPlayer() == false) {
+            return;
+        }
         if (Input.GetKeyDown(KeyCode.Mouse1)) {
             SetGrapplePoint();
         }
@@ -100,12 +105,12 @@ public class GrapplingScript : MonoBehaviour {
             gunPivot.rotation = Quaternion.Lerp(gunPivot.rotation, Quaternion.AngleAxis(angle, Vector3.forward), Time.deltaTime * rotationSpeed);
         }
         else {
-            if (player.IsFacingRight) {
-                gunPivot.rotation = Quaternion.Euler(0, 0, angle);
-            }
-            else {
-                gunPivot.rotation = Quaternion.Euler(0, 0, angle + 180);
-            }
+            firePoint.SetPositionAndRotation(
+                transform.position + Quaternion.Euler(0, 0, angle) * Vector3.right * distanceFirePointToPlayer, 
+                Quaternion.Euler(0, 0, angle));
+            gunPivot.SetPositionAndRotation(
+                transform.position + Quaternion.Euler(0, 0, angle) * Vector3.right * distanceFirePointToPlayer, 
+                Quaternion.Euler(0, 0, angle));
         }
     }
 
@@ -162,5 +167,12 @@ public class GrapplingScript : MonoBehaviour {
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(firePoint.position, maxDistnace);
         }
+    }
+
+    private bool IsLocalPlayer()
+    {
+        // Replace this with your own logic to determine if this instance is the local player
+        // For example, you can compare the NetworkClientId with the local client's NetworkClientId
+        return NetworkManager.Singleton.LocalClientId == GetComponent<NetworkObject>().OwnerClientId;
     }
 }

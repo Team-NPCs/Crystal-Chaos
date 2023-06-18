@@ -38,7 +38,7 @@ public class DemoManager : MonoBehaviour {
         state = State.WaitingToStart;
         _cam = FindObjectOfType<Camera>();
         _player = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
-        _grappling = GameObject.FindWithTag("GrapplingGun").GetComponent<GrapplingScript>();
+        _grappling = GameObject.FindWithTag("Player").GetComponent<GrapplingScript>();
         _gamePauseUI = GameObject.FindWithTag("GamePauseMenu").GetComponent<GamePauseUI>();
     }
 
