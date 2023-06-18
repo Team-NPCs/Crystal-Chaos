@@ -20,15 +20,15 @@ public class DemoManager : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI nameText;
     private bool isPausedGame = false;
 
-    private enum State {
+    public enum State {
+        Init,
         WaitingToStart,
         CountDownToStart,
         GamePlaying,
         GameOver
     }
 
-    private State state;
-    private float waitingToStartTimer = 1f;
+    public State state;
     private float countdownToStartTimer = 3f;
     // This is the total length of the game after the game started.
     private float gamePlayingTimer = 120f;
@@ -37,7 +37,7 @@ public class DemoManager : MonoBehaviour {
 
     private void Awake() {
         Instance = this;
-        state = State.WaitingToStart;
+        state = State.Init;
         _cam = FindObjectOfType<Camera>();
         _player = GameObject.FindWithTag("Player").GetComponent<PlayerMovement>();
         _grappling = GameObject.FindWithTag("Player").GetComponent<GrapplingScript>();
@@ -61,16 +61,19 @@ public class DemoManager : MonoBehaviour {
     private void Update() {
         DemoManager.Instance.isGamePlaying();
         switch (state) {
+            case State.Init:
+                // We do this only once.
+                // Now call the GameStartCountdownUI and tell that we want to change.
+                state = State.WaitingToStart;
+                // Send the event once.
+                OnStateChanged?.Invoke(this, System.EventArgs.Empty);
+                break;
             case State.WaitingToStart:
                 // We wait for a second player to join.
-                //Debug.Log(NetworkManager.Singleton.ConnectedClientsIds.Count.ToString());
-                
-                waitingToStartTimer -= Time.deltaTime;
-                if (waitingToStartTimer < 0f) {
+                if (NetworkManager.Singleton.ConnectedClientsIds.Count > 1) {
                     state = State.CountDownToStart;
                     OnStateChanged?.Invoke(this, System.EventArgs.Empty);
                 }
-                
                 break;
             case State.CountDownToStart:
                 countdownToStartTimer -= Time.deltaTime;

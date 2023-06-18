@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class GameStartCountdownUI : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI countDownText;
+    [SerializeField] private TextMeshProUGUI joinInformationText;
 
     private void Start() {
         // Add a callback for the state of the game so we know when we should do something.
@@ -16,7 +17,7 @@ public class GameStartCountdownUI : MonoBehaviour {
 
     private void DemoManager_OnStateChanged(object sender, EventArgs e) {
         // If the countdown is currently active we show it, afterwards hide it.
-        if (DemoManager.Instance.isCountDownToStartActive()) {
+        if ((DemoManager.Instance.state == DemoManager.State.WaitingToStart) || (DemoManager.Instance.state == DemoManager.State.CountDownToStart)) {
             Show();
         }
         else {
@@ -25,7 +26,14 @@ public class GameStartCountdownUI : MonoBehaviour {
     }
     private void Update() {
         // Set the time (seconds) value.
-        countDownText.text = Math.Ceiling(DemoManager.Instance.getCountdownToStartTimer()).ToString();
+        if (DemoManager.Instance.state == DemoManager.State.WaitingToStart) {
+            joinInformationText.text = "waiting for the other player to join ...";
+            countDownText.text = "";
+        }
+        else if (DemoManager.Instance.state == DemoManager.State.CountDownToStart) {
+            joinInformationText.text = "";
+            countDownText.text = Math.Ceiling(DemoManager.Instance.getCountdownToStartTimer()).ToString();
+        }
     }
     private void Show() {
         gameObject.SetActive(true);
