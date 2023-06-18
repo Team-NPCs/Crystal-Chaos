@@ -48,8 +48,13 @@ public class GrapplingScript : NetworkBehaviour {
     [SerializeField] private float targetDistance = 3;
     [SerializeField] private float targetFrequncy = 1;
 
-    [HideInInspector] public Vector2 grapplePoint;
     [HideInInspector] public Vector2 grappleDistanceVector;
+
+    // Our networked variable for enabling the grappling.
+    [HideInInspector] public NetworkVariable<bool> grapplingEnabled = new(false);
+    // Our networked variable for the target position.
+    [HideInInspector] public Vector2 grapplePoint;
+    [HideInInspector] public NetworkVariable<Vector2> grapplePointNetworked = new();
 
     private void Awake() {
         m_camera = FindObjectOfType<Camera>();
@@ -57,52 +62,94 @@ public class GrapplingScript : NetworkBehaviour {
 
     private void Start() {
         player = GetComponent<PlayerMovement>();
+        // No rope at the start.
         grappleRope.enabled = false;
+        // No force to the player because of the rope at the start.
         m_springJoint2D.enabled = false;
+        // Our callback for a value change.
+        grapplingEnabled.OnValueChanged += grapplingEnabledValueChange;
     }
 
     private void Update() {
-        // This should only be performed on the local player.
-        if (IsLocalPlayer() == false) {
-            return;
-        }
-        if (Input.GetKeyDown(KeyCode.Mouse1)) {
-            SetGrapplePoint();
-        }
-        else if (Input.GetKey(KeyCode.Mouse1)) {
+        // We have to keep in mind that this function is called depending on the number of clients.
+        // What is the local client allowed to do?
+        // - activating and deactivating the rope
+        // - getting forces from the rope that apply to his position
+        // - to draw the rope
+        // What is the non-local client allowed to do?
+        // - to draw the rope (this is the rope of the other player but we want to see it)
+        // So what does the non-local client needs to know about this client?
+        // - if the rope is enabled
+        // - the position of the player (already synced due to the network transform of the player)
+        // - the position where the grappling hook is attached 
+
+        // The following code does activate / deactivate / apply forces to the player / set the reference point of the rope.
+        // We need to network two variables: the enable-bool and the target vec2.
+        // We do not need to network the position of the rope on the players side (so where the reference point is) because
+        // we will make this easier: in the rope script we will check whether its the local player or not. If its not the local
+        // player we will simply use the players position so the rope starts in the middle of the player.
+        if (IsLocalPlayer()) {
+            // If the mouse key goes down, activate the grapple rope.
+            // But only if the desired grapple point is in reachable distance.
+            if (Input.GetKeyDown(KeyCode.Mouse1)) {
+                bool result = SetGrapplePoint();
+                if (result == true) {
+                    // Always set the grapple point first before visualizing. 
+                    // The time difference between these server updates could introduce artifacts.
+                    SetGrapplePointServerRpc(grapplePoint);
+                    // The grapple rope can be activated.
+                    grappleRope.enabled = true;
+                    SetGrapplingEnabledServerRpc(true);
+                }
+            }
+            // If the mouse key goes up again, deactivate the grapple rope.
+            else if (Input.GetKeyUp(KeyCode.Mouse1)) {
+                // Deactivate the rope.
+                grappleRope.enabled = false;
+                SetGrapplingEnabledServerRpc(false);
+                // Deactivate the forces / velocities the rope introduces onto the player.
+                // These values do not need to be networked since they operate on the players 
+                // position and the position is already networked. We only need to network the rope.
+                m_springJoint2D.enabled = false;
+                m_rigidbody.gravityScale = 1;
+            }
+            // If the mouse is still pressed, we need to update the position of the player based on the distance
+            // and the desired launch speed.
+            // Note that this if statement does NOT update the ropes line. It just updates the position of the player.
+            else if (Input.GetKey(KeyCode.Mouse1)) {
+                if (launchToPoint && grappleRope.isGrappling) {
+                    if (launchType == LaunchType.Transform_Launch) {
+                        Vector2 firePointDistance = firePoint.position - gunHolder.localPosition;
+                        Vector2 targetPos = grapplePoint - firePointDistance;
+                        gunHolder.position = Vector2.Lerp(gunHolder.position, targetPos, Time.deltaTime * launchSpeed);
+                    }
+                }
+            }
+            // In each case we need to rotate the grapple point (the green one next to the player so that the position
+            // either matches the mouse direction if no grappling is active or the rope direction if the grappling is active).
             if (grappleRope.enabled) {
+                // Grappling is enabled, so the direction is given by the grapple point.
                 RotateGun(grapplePoint, false);
             }
             else {
+                // Grappling is currently not enabled, so the green dot looks into the direction of the mouse.
+                // Therefore get the mouse position.
                 Vector3 mousePos = m_camera.ScreenToWorldPoint(Input.mousePosition);
                 RotateGun(mousePos, true);
             }
-
-            if (launchToPoint && grappleRope.isGrappling) {
-                if (launchType == LaunchType.Transform_Launch) {
-                    Vector2 firePointDistnace = firePoint.position - gunHolder.localPosition;
-                    Vector2 targetPos = grapplePoint - firePointDistnace;
-                    gunHolder.position = Vector2.Lerp(gunHolder.position, targetPos, Time.deltaTime * launchSpeed);
-                }
-            }
-        }
-        else if (Input.GetKeyUp(KeyCode.Mouse1)) {
-            grappleRope.enabled = false;
-            m_springJoint2D.enabled = false;
-            m_rigidbody.gravityScale = 1;
-        }
-        else {
-            Vector3 mousePos = m_camera.ScreenToWorldPoint(Input.mousePosition);
-            RotateGun(mousePos, true);
         }
     }
 
+    // This function rotates the little firepoint next to the player depending on the lookPoint.
+    // The lookpoint can ever be in the direction of the mouse position (if grappling is currently not enabled)
+    // or into the direction of the point where the grappling hook is attached to (if grappling is currently enabled).
     void RotateGun(Vector3 lookPoint, bool allowRotationOverTime) {
         Vector3 distanceVector = lookPoint - gunPivot.position;
 
         float angle = Mathf.Atan2(distanceVector.y, distanceVector.x) * Mathf.Rad2Deg;
         if (rotateOverTime && allowRotationOverTime) {
-            gunPivot.rotation = Quaternion.Lerp(gunPivot.rotation, Quaternion.AngleAxis(angle, Vector3.forward), Time.deltaTime * rotationSpeed);
+            gunPivot.rotation = Quaternion.Lerp(gunPivot.rotation, Quaternion.AngleAxis(angle, Vector3.forward), 
+                Time.deltaTime * rotationSpeed);
         }
         else {
             firePoint.SetPositionAndRotation(
@@ -114,7 +161,11 @@ public class GrapplingScript : NetworkBehaviour {
         }
     }
 
-    void SetGrapplePoint() {
+    // This function creates based on the players fire point position (the dot next to the player) and the mouses direction
+    // a fire direction of the rope and finds the first hitted object (the surroundings). Depending if the object is near enough 
+    // to be used by the rope, the grapple point is set.
+    // The bool return value tells us if we can grap this point or not (if its too far away).
+    bool SetGrapplePoint() {
         Vector2 distanceVector = m_camera.ScreenToWorldPoint(Input.mousePosition) - gunPivot.position;
         if (Physics2D.Raycast(firePoint.position, distanceVector.normalized)) {
             RaycastHit2D _hit = Physics2D.Raycast(firePoint.position, distanceVector.normalized);
@@ -122,10 +173,21 @@ public class GrapplingScript : NetworkBehaviour {
                 if (Vector2.Distance(_hit.point, firePoint.position) <= maxDistnace || !hasMaxDistance) {
                     grapplePoint = _hit.point;
                     grappleDistanceVector = grapplePoint - (Vector2)gunPivot.position;
-                    grappleRope.enabled = true;
+                    return true;
                 }
             }
         }
+        return false;
+    }
+
+    [ServerRpc]
+    private void SetGrapplePointServerRpc (Vector2 _grapplePoint) {
+        grapplePointNetworked.Value = _grapplePoint;
+    }
+
+    [ServerRpc]
+    private void SetGrapplingEnabledServerRpc (bool _enabled) {
+        grapplingEnabled.Value = _enabled;
     }
 
     public void Grapple() {
@@ -171,8 +233,10 @@ public class GrapplingScript : NetworkBehaviour {
 
     private bool IsLocalPlayer()
     {
-        // Replace this with your own logic to determine if this instance is the local player
-        // For example, you can compare the NetworkClientId with the local client's NetworkClientId
         return NetworkManager.Singleton.LocalClientId == GetComponent<NetworkObject>().OwnerClientId;
+    }
+
+    private void grapplingEnabledValueChange (bool oldValue, bool newValue) {
+        grappleRope.enabled = newValue;
     }
 }

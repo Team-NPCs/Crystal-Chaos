@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class RopeScript : MonoBehaviour {
+public class RopeScript : NetworkBehaviour {
     [Header("General Refernces:")]
     public GrapplingScript grapplingGun;
     public LineRenderer m_lineRenderer;
@@ -27,6 +27,13 @@ public class RopeScript : MonoBehaviour {
 
     bool strightLine = true;
 
+    // Depending if we are drawing the line for the local or the non local player we use different 
+    // reference values for the endpoint. We cannot always use the networked one since this value 
+    // has a little lag until it was updated by the server so the local client would first draw the 
+    // line to Vec3.Zero since its not updated yet and then the value would update and the correct one 
+    // would be shown. To not encounter this artifact we decide on enabling what to use.
+    private Vector2 grapplePointToUse;
+
     private void OnEnable() {
         moveTime = 0;
         m_lineRenderer.positionCount = percision;
@@ -45,18 +52,29 @@ public class RopeScript : MonoBehaviour {
 
     private void LinePointsToFirePoint() {
         for (int i = 0; i < percision; i++) {
-            m_lineRenderer.SetPosition(i, grapplingGun.firePoint.position);
+            m_lineRenderer.SetPosition(i, grapplingGun.gunHolder.position);
         }
     }
 
     private void Update() {
         moveTime += Time.deltaTime;
+
+        // For more details see the big comment above.
+        if (IsLocalPlayer()) {
+            // Use the local one.
+            grapplePointToUse = grapplingGun.grapplePoint;
+        }
+        else {
+            // Use the networked one.
+            grapplePointToUse = grapplingGun.grapplePointNetworked.Value;
+        }
+
         DrawRope();
     }
 
     void DrawRope() {
         if (!strightLine) {
-            if (m_lineRenderer.GetPosition(percision - 1).x == grapplingGun.grapplePoint.x) {
+            if (m_lineRenderer.GetPosition(percision - 1).x == grapplePointToUse.x) {
                 strightLine = true;
             }
             else {
@@ -86,15 +104,20 @@ public class RopeScript : MonoBehaviour {
         for (int i = 0; i < percision; i++) {
             float delta = (float)i / ((float)percision - 1f);
             Vector2 offset = Vector2.Perpendicular(grapplingGun.grappleDistanceVector).normalized * ropeAnimationCurve.Evaluate(delta) * waveSize;
-            Vector2 targetPosition = Vector2.Lerp(grapplingGun.firePoint.position, grapplingGun.grapplePoint, delta) + offset;
-            Vector2 currentPosition = Vector2.Lerp(grapplingGun.firePoint.position, targetPosition, ropeProgressionCurve.Evaluate(moveTime) * ropeProgressionSpeed);
+            Vector2 targetPosition = Vector2.Lerp(grapplingGun.gunHolder.position, grapplePointToUse, delta) + offset;
+            Vector2 currentPosition = Vector2.Lerp(grapplingGun.gunHolder.position, targetPosition, ropeProgressionCurve.Evaluate(moveTime) * ropeProgressionSpeed);
 
             m_lineRenderer.SetPosition(i, currentPosition);
         }
     }
 
     void DrawRopeNoWaves() {
-        m_lineRenderer.SetPosition(0, grapplingGun.firePoint.position);
-        m_lineRenderer.SetPosition(1, grapplingGun.grapplePoint);
+        m_lineRenderer.SetPosition(0, grapplingGun.gunHolder.position);
+        m_lineRenderer.SetPosition(1, grapplePointToUse);
+    }
+
+    private bool IsLocalPlayer()
+    {
+        return GetComponentInParent<NetworkObject>().IsLocalPlayer;
     }
 }

@@ -723,7 +723,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  StartWaveSize: 2.5
+  StartWaveSize: 2.62
   ropeProgressionCurve:
     serializedVersion: 2
     m_Curve:
@@ -1068,7 +1068,6 @@ MonoBehaviour:
   gunHolder: {fileID: 1987819042283052552}
   gunPivot: {fileID: 1499306292381146684}
   firePoint: {fileID: 6317888579837908463}
-  distanceFirePointToPlayer: 1.2
   m_springJoint2D: {fileID: 8387352678202426040}
   m_rigidbody: {fileID: 362567639747297860}
   rotateOverTime: 0
@@ -1081,8 +1080,12 @@ MonoBehaviour:
   autoConfigureDistance: 0
   targetDistance: 3
   targetFrequncy: 1
-  grapplePoint: {x: 0, y: 0}
   grappleDistanceVector: {x: 0, y: 0}
+  grapplingEnabled:
+    m_InternalValue: 0
+  grapplePoint: {x: 0, y: 0}
+  grapplePointNetworked:
+    m_InternalValue: {x: 0, y: 0}
 --- !u!1 &8067859620752876239
 GameObject:
   m_ObjectHideFlags: 0
@@ -1157,7 +1160,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 506c7e56acb2fe94d9ca1fffce154020, type: 3}
-  m_Color: {r: 0.4593557, g: 0.8207547, b: 0.45296368, a: 1}
+  m_Color: {r: 0.4593557, g: 0.8207547, b: 0.45296368, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
