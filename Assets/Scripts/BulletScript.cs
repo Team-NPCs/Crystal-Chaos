@@ -13,6 +13,10 @@ public class BulletScript : NetworkBehaviour {
 
     private void Start () {
         bulletRenderer = GetComponent<SpriteRenderer>();
+        SetBulletSprite();
+    }
+
+    private void SetBulletSprite () {
         if (crystalType.Value == CrystalType.Fire) {
             bulletRenderer.sprite = Resources.Load<Sprite>("Elemental Bullets/bullet-fire");
         }
