@@ -36,7 +36,7 @@ public class CrystalBallSpawn : NetworkBehaviour {
             // Update it if this is not the host. Because then the initial colors are already set and we just need to 
             // draw the correct crystal. If we do it immediately the new colors are not synced, so give it a little
             // bit of time.
-            Invoke(nameof(UpdateCrystalColor), 0.5f);
+            Invoke(nameof(UpdateCrystalColor), 2.0f);
             isFirstRun = false;
         }
     }

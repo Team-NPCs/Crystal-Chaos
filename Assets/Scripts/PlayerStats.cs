@@ -35,18 +35,26 @@ public class PlayerStats : NetworkBehaviour {
     void Update () {
         // Just a way to debug the health decreasement and respawn logic.
         if (Input.GetKeyDown(KeyCode.G) && IsLocalPlayer()) {
-            DecreaseHealthServerRpc(gameObject.GetComponent<NetworkObject>().NetworkObjectId);
+            DecreaseHealthServerRpc(gameObject.GetComponent<NetworkObject>().NetworkObjectId, 20);
         }
     }
 
-    // An example function that runs on the server that decreases the health of the player.
+    // An function that runs on the server that decreases the health of the player.
     // We can not do it locally, the server has to do it for us.
     [ServerRpc]
-    public void DecreaseHealthServerRpc(ulong targetPlayerNetworkObjectId) {
+    public void DecreaseHealthServerRpc(ulong targetPlayerNetworkObjectId, int amount) {
         // Find the target player's NetworkObject using the network object ID and the player stats.
         NetworkObject targetPlayerNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[targetPlayerNetworkObjectId];
         PlayerStats targetPlayerStats = targetPlayerNetworkObject.GetComponent<PlayerStats>();
-        targetPlayerStats.DecreaseHealth(20);
+        bool playerDied = targetPlayerStats.DecreaseHealth(amount);
+        // If the player died, reset the inventory and add a random crystal ball.
+        if (playerDied) {
+            // Reset the inventory. The player loses all when he dies.
+            PlayerInventory targetPlayerInventory = targetPlayerNetworkObject.GetComponent<PlayerInventory>();
+            targetPlayerInventory.ResetCrystal();
+            // Add a new random crystal ball to the inventory.
+            targetPlayerInventory.AddRandomCrystal();
+        }
     }
 
     // The thing is, that we do not allow the server to set the position of the client using the Client Network Transform.
@@ -98,7 +106,8 @@ public class PlayerStats : NetworkBehaviour {
         return false;
     }
 
-    public void DecreaseHealth(int amount) {
+    public bool DecreaseHealth(int amount) {
+        // This function returns true if the player died.
         health.Value -= amount;
         if (health.Value < 0) {
             health.Value = 0;
@@ -107,6 +116,10 @@ public class PlayerStats : NetworkBehaviour {
             RespawnClientRpc();
             health.Value = maxHealth;
             deathCount.Value++;
+            return true;
+        }
+        else {
+            return false;
         }
     }
 
