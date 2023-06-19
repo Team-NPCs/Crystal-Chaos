@@ -1,9 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 
 public enum State {
@@ -17,7 +15,7 @@ public enum State {
 
 public class DemoManager : NetworkBehaviour {
 
-    public static DemoManager Instance { get; private set; }
+    public static DemoManager Instance { get; set; }
 
     public event System.EventHandler OnStateChanged;
     public event System.EventHandler OnCountDownStart;
@@ -25,10 +23,6 @@ public class DemoManager : NetworkBehaviour {
     public event System.EventHandler OnGameUnPaused;
 
     private Camera _cam;
-    private PlayerMovement _player;
-    private GrapplingScript _grappling;
-    public GamePauseUI _gamePauseUI;
-    [SerializeField] private TextMeshProUGUI nameText;
     private bool isPausedGame = false;
 
     // We need to network the state variable.
@@ -36,15 +30,17 @@ public class DemoManager : NetworkBehaviour {
     private State previousState = State._NONE;
     private NetworkVariable<float> countdownToStartTimer = new();
     // This is the total length of the game after the game started.
-    private float matchDuration = 5f;
+    private float matchDuration = 120f;
     private NetworkVariable<float> gamePlayingTimer = new NetworkVariable<float>();
 
     public SceneData SceneData;
 
+    [SerializeField] public HealthBar playerHealthBar;
+    [SerializeField] public GamePauseUI gamePauseUI;
+
     private void Awake() {
         Instance = this;
         _cam = FindObjectOfType<Camera>();
-        //_gamePauseUI = GameObject.FindWithTag("GamePauseMenu").GetComponent<GamePauseUI>();
         // Initialize the networked game time.
         gamePlayingTimer.Value = matchDuration;
         countdownToStartTimer.Value = 3.0f;
@@ -53,8 +49,6 @@ public class DemoManager : NetworkBehaviour {
     private void Start() {
         SetNextStateServerRpc(State.Init);
         SetSceneData(SceneData);
-        //OnGamePaused += _gamePauseUI.DemoManager_OnGamePaused;
-        //OnGameUnPaused += _gamePauseUI.DemoManager_OnGameUnPaused;
     }
 
     public void SetSceneData(SceneData data) {
@@ -151,9 +145,9 @@ public class DemoManager : NetworkBehaviour {
                     previousState = State.GamePlaying;
                 }
 
-                //if (Input.GetKeyDown(KeyCode.P)) {
-                //    ToggleGamePaused();
-                //}
+                if (Input.GetKeyDown(KeyCode.P)) {
+                    ToggleGamePaused();
+                }
                 
                 if (NetworkManager.Singleton.IsServer) {
                     gamePlayingTimer.Value -= Time.deltaTime;

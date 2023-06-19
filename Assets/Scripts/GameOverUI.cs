@@ -9,6 +9,11 @@ using UnityEngine.UI;
 public class GameOverUI : MonoBehaviour
 {
     [SerializeField] private Button goToMenuButton;
+    [SerializeField] private TextMeshProUGUI numberOfKill;
+    [SerializeField] private TextMeshProUGUI numberOfDeath;
+    [SerializeField] private TextMeshProUGUI numberOfKillReference;
+    [SerializeField] private TextMeshProUGUI numberOfDeathReference;
+
     private void Awake() {
         goToMenuButton.onClick.AddListener(() => {
             NetworkManager.Singleton.Shutdown();
@@ -33,6 +38,8 @@ public class GameOverUI : MonoBehaviour
         }
     }
     private void Show() {
+        numberOfKill.text = numberOfKillReference.text;
+        numberOfDeath.text = numberOfDeathReference.text;
         gameObject.SetActive(true);
     }
     private void Hide() {
