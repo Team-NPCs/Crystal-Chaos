@@ -30,7 +30,7 @@ public class DemoManager : NetworkBehaviour {
     private State previousState = State._NONE;
     private NetworkVariable<float> countdownToStartTimer = new();
     // This is the total length of the game after the game started.
-    private float matchDuration = 5f;
+    private float matchDuration = 120f;
     private NetworkVariable<float> gamePlayingTimer = new NetworkVariable<float>();
 
     public SceneData SceneData;
@@ -158,16 +158,6 @@ public class DemoManager : NetworkBehaviour {
                 if (NetworkManager.Singleton.IsServer) {
                     gamePlayingTimer.Value -= Time.deltaTime;
                     if (gamePlayingTimer.Value < 0f) {
-                        // The game is over, deactivate movement.
-                        players = GameObject.FindGameObjectsWithTag("Player");
-                        foreach (GameObject player in players) {
-                            PlayerMovement playersMovement = player.GetComponent<PlayerMovement>();
-                            GrapplingScript grapplingScript = player.GetComponent<GrapplingScript>();
-                            Shooting playerShooting = player.GetComponent<Shooting>();
-                            playersMovement.enabled = false;
-                            grapplingScript.enabled = false;
-                            playerShooting.enabled = false;
-                        }
                         // Game over.
                         SetNextStateServerRpc(State.GameOver);
                     }
@@ -175,6 +165,16 @@ public class DemoManager : NetworkBehaviour {
                 break;
             case State.GameOver:
                 if (previousState == State.GamePlaying) {
+                    // The game is over, deactivate movement.
+                    players = GameObject.FindGameObjectsWithTag("Player");
+                    foreach (GameObject player in players) {
+                        PlayerMovement playersMovement = player.GetComponent<PlayerMovement>();
+                        GrapplingScript grapplingScript = player.GetComponent<GrapplingScript>();
+                        Shooting playerShooting = player.GetComponent<Shooting>();
+                        playersMovement.enabled = false;
+                        grapplingScript.enabled = false;
+                        playerShooting.enabled = false;
+                    }
                     // Send the event once.
                     OnStateChanged?.Invoke(this, System.EventArgs.Empty);
                     previousState = State.GameOver;
