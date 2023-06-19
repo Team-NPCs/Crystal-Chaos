@@ -43,6 +43,10 @@ public class NetworkManagerUI : NetworkBehaviour {
             Debug.Log("Signed in");
         };
 
+        if (AuthenticationService.Instance.IsSignedIn) {
+            return;
+        }
+
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
     }
 

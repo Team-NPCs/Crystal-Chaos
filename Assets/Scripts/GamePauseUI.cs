@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,9 @@ public class GamePauseUI : MonoBehaviour
 
     private void Awake() {
         mainMenuButton.onClick.AddListener(() => {
+            NetworkManager.Singleton.Shutdown();
+            NetworkManager networkManager = GameObject.FindObjectOfType<NetworkManager>();
+            Destroy(networkManager.gameObject);
             Loader.Load(Loader.Scene.MainMenu);
         });
     }
