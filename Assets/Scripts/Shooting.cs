@@ -44,8 +44,6 @@ public class Shooting : NetworkBehaviour {
     public int numberOfShardsNormalAttackEarth = 10;
     public float inaccuracyAngleNormalAttackEarth = 25.0f;
 
-    private SfxScript sfxScript;
-
     // Start is called before the first frame update
     void Start() {
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
@@ -69,8 +67,6 @@ public class Shooting : NetworkBehaviour {
         spellSpeeds.Add(CrystalType.Earth, spellSpeedNormalAttackEarth);
         spellSpeeds.Add(CrystalType.Air, spellSpeedNormalAttackAir);
         spellSpeeds.Add(CrystalType.Void, spellSpeedNormalAttackVoid);
-        // Audio.
-        sfxScript = GameObject.FindGameObjectWithTag("SfxManager").GetComponent<SfxScript>();
     }
 
     // The update function gets called every frame. We want to do two things:
@@ -124,8 +120,6 @@ public class Shooting : NetworkBehaviour {
                     // Just spawn one shot.
                     SpawnBulletServerRpc(crystalTypeToBeUsed, look_vector, bulletTransform.position, bulletTransform.rotation);
                 }
-                // Play the shooting sound
-                sfxScript.spellAudio[crystalTypeToBeUsed].Play();
                 // Note that we do not have to set the cooldown here, since the inventory is handling the cooldown.
             }
             else {

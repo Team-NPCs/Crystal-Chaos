@@ -10,10 +10,16 @@ public class BulletScript : NetworkBehaviour {
     public int spellDamageNormalAttackHead;
     public NetworkVariable<CrystalType> crystalType = new();
     private SpriteRenderer bulletRenderer;
+    // Our audio handler.
+    private SfxScript sfxScript;
 
     private void Start () {
+        // Set the correct sprite.
         bulletRenderer = GetComponent<SpriteRenderer>();
         SetBulletSprite();
+        // Let the sound play.
+        sfxScript = GameObject.FindGameObjectWithTag("SfxManager").GetComponent<SfxScript>();
+        sfxScript.spellAudio[crystalType.Value].Play();
     }
 
     private void SetBulletSprite () {
