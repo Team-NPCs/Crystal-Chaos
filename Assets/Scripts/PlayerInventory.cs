@@ -111,14 +111,6 @@ public class PlayerInventory : NetworkBehaviour {
     }
 
     private void Update() {
-        // Only for debug reasons, delete this later.
-        Debug.Log("Fire: " + GetNumberOfCrystalBalls(CrystalType.Fire).ToString() + 
-            " Water: " + GetNumberOfCrystalBalls(CrystalType.Water).ToString() + 
-            " Earth: " + GetNumberOfCrystalBalls(CrystalType.Earth).ToString() + 
-            " Air: " + GetNumberOfCrystalBalls(CrystalType.Air).ToString() + 
-            " Void: " + GetNumberOfCrystalBalls(CrystalType.Void).ToString() + 
-            " Equipped: " + currentEquippedCrystalType.ToString());
-        
         // Input only applies to the local players inventory.
         if (IsLocalPlayer()) {
             // Check if the mouse scroll was used. Change the crystal ball based on 

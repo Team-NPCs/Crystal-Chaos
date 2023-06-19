@@ -19,6 +19,9 @@ public class PlayerStats : NetworkBehaviour {
     private HealthBar localPlayerHealthBar;
     private GamePauseUI localGamePauseUI;
 
+    // Find the sprite renderer for the visualization of different colors for the mages.
+    [SerializeField] private SpriteRenderer mageRenderer;
+
     private void Start() {
         // It is a little bit difficult to access the gamepauseUI if it is inactive. So we stored it
         // in the demomangager (our object manager).
@@ -39,6 +42,42 @@ public class PlayerStats : NetworkBehaviour {
         UpdateHealthBar(0, health.Value);
         numberOfSpeedIncreasements.Value = 0;
         deathCount.Value = 0;
+        UpdateMageSprite();
+    }
+
+    // This function sets the sprite of the character. 
+    void UpdateMageSprite () {
+        if (IsLocalPlayer()) {
+            // This is my sprite.
+            // If i am the host, make me red.
+            if (NetworkManager.Singleton.IsHost) {
+                mageRenderer.sprite = Resources.Load<Sprite>("Mages/mage-red");
+            }
+            // Otherwise I am the client, so make me blue.
+            else {
+                mageRenderer.sprite = Resources.Load<Sprite>("Mages/mage-blue");
+            }
+        }
+        else {
+            // This is the sprite of my opponent.
+            // If i am the host, make him blue.
+            if (NetworkManager.Singleton.IsHost) {
+                mageRenderer.sprite = Resources.Load<Sprite>("Mages/mage-blue");
+            }
+            // Otherwise I am the client, so make him red.
+            else {
+                mageRenderer.sprite = Resources.Load<Sprite>("Mages/mage-red");
+            }
+        }
+    }
+
+    // When the client spawns on the network, he needs to update the potion colors.
+    // The code above does only work for the host. The thing is, the client thinks at the 
+    // start too that he is the host.
+    public override void OnNetworkSpawn() {
+        if (IsClient) {
+            mageRenderer.sprite = Resources.Load<Sprite>("Mages/mage-blue");
+        }
     }
 
     void Update () {

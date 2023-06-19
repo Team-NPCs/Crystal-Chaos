@@ -89,6 +89,8 @@ public class NetworkManagerUI : NetworkBehaviour {
 
             NetworkManager.Singleton.StartClient();
 
+            joinCodeText.text = joinCode.ToLower();
+
             _demoManager.SetActive(true);
             _hud.SetActive(true);
             gameObject.SetActive(false);
