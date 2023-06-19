@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerSpawn : MonoBehaviour
-{
+public class PlayerSpawn : NetworkBehaviour {
     [SerializeField] private float minDistance = 10f;
 
     public Vector3 GetRespawnPosition ()

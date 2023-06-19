@@ -92,9 +92,14 @@ public class PlayerMovement : NetworkBehaviour {
         SetGravityScale(Data.gravityScale);
         IsFacingRight = true;
         Camera.main.GetComponent<CameraFollow>().setTarget(NetworkManager.LocalClient.PlayerObject.transform);
-        // Also set the initial position.
-        PlayerSpawn playerSpawn = GameObject.FindGameObjectWithTag("SpawnPointHandler").GetComponent<PlayerSpawn>();
-        transform.position = playerSpawn.GetRespawnPosition();
+    }
+
+    // When the client spawns on the network, he needs a good spawn position.
+    public override void OnNetworkSpawn() {
+        if (IsLocalPlayer()) {
+            PlayerSpawn playerSpawn = GameObject.FindGameObjectWithTag("SpawnPointHandler").GetComponent<PlayerSpawn>();
+            transform.position = playerSpawn.GetRespawnPosition();
+        }
     }
 
     private void Update() {
@@ -550,6 +555,13 @@ public class PlayerMovement : NetworkBehaviour {
         Gizmos.DrawWireCube(_backWallCheckPoint.position, _wallCheckSize);
     }
     #endregion
+
+    private bool IsLocalPlayer()
+    {
+        // Replace this with your own logic to determine if this instance is the local player
+        // For example, you can compare the NetworkClientId with the local client's NetworkClientId
+        return NetworkManager.Singleton.LocalClientId == GetComponent<NetworkObject>().OwnerClientId;
+    }
 }
 
 // created by Dawnosaur :D
