@@ -13,6 +13,8 @@ public class GamePauseUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI numberOfDeath;
 
     private void Awake() {
+        DemoManager.Instance.OnGamePaused += DemoManager_OnGamePaused;
+        DemoManager.Instance.OnGameUnPaused += DemoManager_OnGameUnPaused;
         mainMenuButton.onClick.AddListener(() => {
             NetworkManager.Singleton.Shutdown();
             NetworkManager networkManager = GameObject.FindObjectOfType<NetworkManager>();

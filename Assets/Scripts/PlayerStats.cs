@@ -16,20 +16,18 @@ public class PlayerStats : NetworkBehaviour {
     [SerializeField] public NetworkVariable<int> deathCount = new NetworkVariable<int>();
     
     // Health Bar and Pause Menu (kill count).
-    [SerializeField] private HealthBar localPlayerHealthBar;
-    [SerializeField] private GamePauseUI localGamePauseUI;
+    private HealthBar localPlayerHealthBar;
+    private GamePauseUI localGamePauseUI;
 
     private void Start() {
-        // Find and assign the local player's health bar and the game pause menu.
-        localPlayerHealthBar = GameObject.FindWithTag("HealthBar").GetComponent<HealthBar>();
         // It is a little bit difficult to access the gamepauseUI if it is inactive. So we stored it
         // in the demomangager (our object manager).
         // Find the demo manager GameObject in the scene
-        GameObject demoManagerGO = GameObject.FindWithTag("DemoManagerTag");
-        // Access the script attached to the demo managers GameObject.
-        DemoManager demoManager = demoManagerGO.GetComponent<DemoManager>();
+        DemoManager demoManager = GameObject.FindWithTag("DemoManagerTag").GetComponent<DemoManager>();
+        // Find and assign the local player's health bar and the game pause menu.
+        localPlayerHealthBar = demoManager.playerHealthBar;
         // Access the gamePauseMenuObject reference
-        localGamePauseUI = demoManager._gamePauseUI;
+        localGamePauseUI = demoManager.gamePauseUI;
         // Add the event listener to the healthbar.
         health.OnValueChanged += UpdateHealthBar;
         // Add the event listener to the deathcount.
