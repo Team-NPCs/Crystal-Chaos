@@ -71,6 +71,15 @@ public class PlayerStats : NetworkBehaviour {
         }
     }
 
+    // When the client spawns on the network, he needs to update the potion colors.
+    // The code above does only work for the host. The thing is, the client thinks at the 
+    // start too that he is the host.
+    public override void OnNetworkSpawn() {
+        if (IsClient) {
+            mageRenderer.sprite = Resources.Load<Sprite>("Mages/mage-blue");
+        }
+    }
+
     void Update () {
         // Just a way to debug the health decreasement and respawn logic.
         if (Input.GetKeyDown(KeyCode.G) && IsLocalPlayer()) {
