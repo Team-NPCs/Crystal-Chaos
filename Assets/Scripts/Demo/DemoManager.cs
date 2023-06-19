@@ -30,7 +30,7 @@ public class DemoManager : NetworkBehaviour {
     private State previousState = State._NONE;
     private NetworkVariable<float> countdownToStartTimer = new();
     // This is the total length of the game after the game started.
-    private float matchDuration = 120f;
+    private float matchDuration = 5f;
     private NetworkVariable<float> gamePlayingTimer = new NetworkVariable<float>();
 
     public SceneData SceneData;

@@ -13,6 +13,7 @@ public class GameOverUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI numberOfDeath;
     [SerializeField] private TextMeshProUGUI numberOfKillReference;
     [SerializeField] private TextMeshProUGUI numberOfDeathReference;
+    [SerializeField] private TextMeshProUGUI result;
 
     private void Awake() {
         goToMenuButton.onClick.AddListener(() => {
@@ -40,6 +41,18 @@ public class GameOverUI : MonoBehaviour
     private void Show() {
         numberOfKill.text = numberOfKillReference.text;
         numberOfDeath.text = numberOfDeathReference.text;
+        // Determine the winner.
+        int numberOfKillValue = Int32.Parse(numberOfKillReference.text);
+        int numberOfDeathValue = Int32.Parse(numberOfDeathReference.text);
+        if (numberOfKillValue > numberOfDeathValue) {
+            result.text = "you won!";
+        }
+        else if (numberOfKillValue < numberOfDeathValue) {
+            result.text = "you lost ...";
+        }
+        else {
+            result.text = "tie!";
+        }
         gameObject.SetActive(true);
     }
     private void Hide() {
