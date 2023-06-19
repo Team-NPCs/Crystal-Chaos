@@ -10,13 +10,15 @@ public class SfxScript : MonoBehaviour {
     public readonly Dictionary<CrystalType, AudioSource> spellAudio = new();
     public readonly Dictionary<PotionType, AudioSource> potionAudio = new();
 
+    public readonly float soundVolume = 0.15f;
+
     void Awake() {
         spellAudio.Add(CrystalType.Fire, fireAudio);
         spellAudio.Add(CrystalType.Water, waterAudio);
         spellAudio.Add(CrystalType.Earth, earthAudio);
         spellAudio.Add(CrystalType.Air, airAudio);
         spellAudio.Add(CrystalType.Void, voidAudio);
-        potionAudio.Add(PotionType.Health, voidAudio);
-        potionAudio.Add(PotionType.Movement, voidAudio);
+        potionAudio.Add(PotionType.Health, healthPotionAudio);
+        potionAudio.Add(PotionType.Movement, movementPotionAudio);
     }
 }

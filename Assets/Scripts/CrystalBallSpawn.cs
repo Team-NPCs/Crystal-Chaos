@@ -8,8 +8,10 @@ public class CrystalBallSpawn : NetworkBehaviour {
 
     // For the initial setting of the crystal type.
     private bool isFirstRun = true;
-
+    // Renderer.
     private SpriteRenderer crystalRenderer;
+    // Audio.
+    private SfxScript sfxScript;
 
     // Networked variables.
     [SerializeField] public NetworkVariable<CrystalType> crystalType = new NetworkVariable<CrystalType>();
@@ -23,6 +25,8 @@ public class CrystalBallSpawn : NetworkBehaviour {
         }
         // We want to update the color of the crystal ball with each change.
         crystalType.OnValueChanged += UpdateCrystalColorEvent;
+        // Audio.
+        sfxScript = GameObject.FindGameObjectWithTag("SfxManager").GetComponent<SfxScript>();
     }
 
     private void Update() {
@@ -83,7 +87,6 @@ public class CrystalBallSpawn : NetworkBehaviour {
             // Here is the problem. The players inventory is owned by the player. In order to access it,
             // the local player needs to call it for his own inventory. But since the crystal balls are owned by
             // the host we have a dilemma.
-
             targetPlayerInventory.AddCrystal(crystalType.Value);
             // Hide the crystal ball but respawn it after a specific time.
             RpcSetCrystalBallActiveClientRpc(false);
@@ -115,6 +118,12 @@ public class CrystalBallSpawn : NetworkBehaviour {
     private void RpcSetCrystalBallActiveClientRpc(bool isActive)
     {
         gameObject.SetActive(isActive);
+        // If it is set to false, it means it was picked up so play the sound for everybody.
+        if (isActive == false) {
+            AudioSource audioSource = sfxScript.crystalBallPickUpAudio;
+            audioSource.volume = sfxScript.soundVolume;
+            audioSource.Play();
+        }
     }
 
     public static CrystalType GenerateCrystalType() {

@@ -6,8 +6,8 @@ using UnityEngine;
 public class PlayerStats : NetworkBehaviour {
     public float initialSpeedFactor;
     public float fastSpeedFactor;
-    public float speedIncreaseDuration;
-    public int maxHealth;
+    private readonly float speedIncreaseDuration = 15.0f;
+    private readonly int maxHealth = 100;
 
     // Networked variables.
     [SerializeField] public NetworkVariable<float> speedFactor = new NetworkVariable<float>();

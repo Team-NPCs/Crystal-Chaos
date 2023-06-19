@@ -19,7 +19,9 @@ public class BulletScript : NetworkBehaviour {
         SetBulletSprite();
         // Let the sound play.
         sfxScript = GameObject.FindGameObjectWithTag("SfxManager").GetComponent<SfxScript>();
-        sfxScript.spellAudio[crystalType.Value].Play();
+        AudioSource audioSource = sfxScript.spellAudio[crystalType.Value];
+        audioSource.volume = sfxScript.soundVolume;
+        audioSource.Play();
     }
 
     private void SetBulletSprite () {

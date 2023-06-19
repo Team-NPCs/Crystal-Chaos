@@ -4,14 +4,15 @@ using Unity.Netcode;
 using UnityEngine;
 
 public class PotionSpawn : NetworkBehaviour {
-    public int healthIncreaseAmount = 10;
+    private readonly int healthIncreaseAmount = 60;
     private readonly float healthSpawnProbability = 0.6f;
     private readonly float movementSpawnProbability = 0.4f;
     private readonly float respawnTimePotion = 10.0f;
-    private SfxScript sfxScript;
     // For the initial setting of the potion type.
     private bool isFirstRun = true;
     private Animator potionAnimator;
+    // Audio.
+    private SfxScript sfxScript;
 
     // Networked variables.
     [SerializeField] public NetworkVariable<PotionType> potionType = new NetworkVariable<PotionType>();
@@ -25,7 +26,6 @@ public class PotionSpawn : NetworkBehaviour {
         potionType.OnValueChanged += UpdatePotionColorEvent;
         // Audio.
         sfxScript = GameObject.FindGameObjectWithTag("SfxManager").GetComponent<SfxScript>();
-
     }
 
     private void Update() {
@@ -58,9 +58,6 @@ public class PotionSpawn : NetworkBehaviour {
                 return;
             }
             // Tell the server to handle this instance.
-            if (IsLocalPlayer) {
-                sfxScript.potionAudio[potionType.Value].Play();
-            }
             PotionGotPickedUpServerRpc(targetNetworkObject.NetworkObjectId);
         }
     }
@@ -121,6 +118,12 @@ public class PotionSpawn : NetworkBehaviour {
     [ClientRpc]
     private void RpcSetPotionActiveClientRpc(bool isActive) {
         gameObject.SetActive(isActive);
+        // If it is set to false, it means the potion was drunk so play the sound.
+        if (isActive == false) {
+            AudioSource audioSource = sfxScript.potionAudio[potionType.Value];
+            audioSource.volume = sfxScript.soundVolume;
+            audioSource.Play();
+        }
     }
 
     private PotionType GeneratePotionType() {
