@@ -30,7 +30,7 @@ public class GameStartCountdownUI : MonoBehaviour {
             joinInformationText.text = "waiting for the other player to join ...";
             countDownText.text = "";
         }
-        else {
+        else if (DemoManager.Instance.state.Value == State.CountDownToStart) {
             joinInformationText.text = "";
             countDownText.text = Math.Ceiling(DemoManager.Instance.getCountdownToStartTimer()).ToString();
         }

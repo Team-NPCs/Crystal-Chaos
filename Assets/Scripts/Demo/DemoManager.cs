@@ -88,8 +88,10 @@ public class DemoManager : NetworkBehaviour {
                     //if (NetworkManager.Singleton.LocalClientId == playerNetworkObject.OwnerClientId) {
                     PlayerMovement playersMovement = player.GetComponent<PlayerMovement>();
                     GrapplingScript grapplingScript = player.GetComponent<GrapplingScript>();
+                    Shooting playerShooting = player.GetComponent<Shooting>();
                     playersMovement.enabled = false;
                     grapplingScript.enabled = false;
+                    playerShooting.enabled = false;
                     //}
                 }
                 // Check if we can start. We need two players.
@@ -115,8 +117,10 @@ public class DemoManager : NetworkBehaviour {
                     //if (NetworkManager.Singleton.LocalClientId == playerNetworkObject.OwnerClientId) {
                     PlayerMovement playersMovement = player.GetComponent<PlayerMovement>();
                     GrapplingScript grapplingScript = player.GetComponent<GrapplingScript>();
+                    Shooting playerShooting = player.GetComponent<Shooting>();
                     playersMovement.enabled = false;
                     grapplingScript.enabled = false;
+                    playerShooting.enabled = false;
                     //}
                 }
                 if (NetworkManager.Singleton.IsServer) {
@@ -138,8 +142,10 @@ public class DemoManager : NetworkBehaviour {
                         //if (NetworkManager.Singleton.LocalClientId == playerNetworkObject.OwnerClientId) {
                         PlayerMovement playersMovement = player.GetComponent<PlayerMovement>();
                         GrapplingScript grapplingScript = player.GetComponent<GrapplingScript>();
+                        Shooting playerShooting = player.GetComponent<Shooting>();
                         playersMovement.enabled = true;
                         grapplingScript.enabled = true;
+                        playerShooting.enabled = true;
                         //}
                     }
                     previousState = State.GamePlaying;
@@ -157,8 +163,10 @@ public class DemoManager : NetworkBehaviour {
                         foreach (GameObject player in players) {
                             PlayerMovement playersMovement = player.GetComponent<PlayerMovement>();
                             GrapplingScript grapplingScript = player.GetComponent<GrapplingScript>();
+                            Shooting playerShooting = player.GetComponent<Shooting>();
                             playersMovement.enabled = false;
                             grapplingScript.enabled = false;
+                            playerShooting.enabled = false;
                         }
                         // Game over.
                         SetNextStateServerRpc(State.GameOver);
