@@ -17,32 +17,33 @@ public class Shooting : NetworkBehaviour {
     // get destroyed after a specific time (e.g. the earth shards do not have the big reachability).
     // Set this here. This will then be initiated into a dictionary in the Start() function.
     // Damage on the body of the normal attack.
-    public int spellDamageNormalAttackBodyFire = 10;
-    public int spellDamageNormalAttackBodyWater = 5;
-    public int spellDamageNormalAttackBodyEarth = 10;
-    public int spellDamageNormalAttackBodyAir = 40;
-    public int spellDamageNormalAttackBodyVoid = 12;
+    [HideInInspector] private int spellDamageNormalAttackBodyFire = 20;
+    [HideInInspector] private int spellDamageNormalAttackBodyWater = 12;
+    [HideInInspector] private int spellDamageNormalAttackBodyEarth = 8;
+    [HideInInspector] private int spellDamageNormalAttackBodyAir = 80;
+    [HideInInspector] private int spellDamageNormalAttackBodyVoid = 17;
     private Dictionary<CrystalType, int> spellDamageNormalAttackBody = new();
     // Damage on the head of the normal attack.
-    public int spellDamageNormalAttackHeadFire = 20;
-    public int spellDamageNormalAttackHeadWater = 10;
-    public int spellDamageNormalAttackHeadEarth = 10;
-    public int spellDamageNormalAttackHeadAir = 100;
-    public int spellDamageNormalAttackHeadVoid = 24;
+    // NOTE: These are not used currently so they are not updated.
+    [HideInInspector] private int spellDamageNormalAttackHeadFire = 20;
+    [HideInInspector] private int spellDamageNormalAttackHeadWater = 10;
+    [HideInInspector] private int spellDamageNormalAttackHeadEarth = 10;
+    [HideInInspector] private int spellDamageNormalAttackHeadAir = 100;
+    [HideInInspector] private int spellDamageNormalAttackHeadVoid = 24;
     private Dictionary<CrystalType, int> spellDamageNormalAttackHead = new();
     // Speed.
-    public int spellSpeedNormalAttackFire = 30;
-    public int spellSpeedNormalAttackWater = 30;
-    public int spellSpeedNormalAttackEarth = 30;
-    public int spellSpeedNormalAttackAir = 40;
-    public int spellSpeedNormalAttackVoid = 30;
+    [HideInInspector] private int spellSpeedNormalAttackFire = 30;
+    [HideInInspector] private int spellSpeedNormalAttackWater = 30;
+    [HideInInspector] private int spellSpeedNormalAttackEarth = 30;
+    [HideInInspector] private int spellSpeedNormalAttackAir = 40;
+    [HideInInspector] private int spellSpeedNormalAttackVoid = 30;
     private Dictionary<CrystalType, int> spellSpeeds = new();
     // Further settings.
     // The normal attack of the earth crystal is like a shotgun. It spawns mulitple shards that do not have
     // a long lifetime (they get erased after a specific distance / or a specific time). Define the settings here.
-    public float spellLifetimeNormalAttackEarth = 0.5f;
-    public int numberOfShardsNormalAttackEarth = 10;
-    public float inaccuracyAngleNormalAttackEarth = 25.0f;
+    [HideInInspector] private float spellLifetimeNormalAttackEarth = 0.5f;
+    [HideInInspector] private int numberOfShardsNormalAttackEarth = 10;
+    [HideInInspector] private float inaccuracyAngleNormalAttackEarth = 25.0f;
 
     // Start is called before the first frame update
     void Start() {
@@ -94,7 +95,7 @@ public class Shooting : NetworkBehaviour {
             Quaternion.Euler(0, 0, rotZ));
 
         // If the left mouse button was pressed, shoot.
-        if (Input.GetMouseButtonDown(0) == true) {
+        if (Input.GetKey(KeyCode.Mouse0) == true) {
             Debug.Log("Shoot request.");
             // Give the request to the inventory. The inventory checks if there is a crystal ball
             // or not and also if the currently equipped crystal ball is still in cooldown.

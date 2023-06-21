@@ -35,22 +35,22 @@ public class PlayerInventory : NetworkBehaviour {
     // Keep track of the ammunition.
     private Dictionary<CrystalType, int> ammunitionCount = new();
     private Dictionary<CrystalType, int> maxAmmunitionCount = new();
-    public int numberOfUsagesNormalAttackFire = 12;
-    public int numberOfUsagesNormalAttackWater = 20;
-    public int numberOfUsagesNormalAttackEarth = 5;
-    public int numberOfUsagesNormalAttackAir = 3;
-    public int numberOfUsagesNormalAttackVoid = 15;
+    [HideInInspector] private int numberOfUsagesNormalAttackFire = 12;
+    [HideInInspector] private int numberOfUsagesNormalAttackWater = 20;
+    [HideInInspector] private int numberOfUsagesNormalAttackEarth = 5;
+    [HideInInspector] private int numberOfUsagesNormalAttackAir = 3;
+    [HideInInspector] private int numberOfUsagesNormalAttackVoid = 15;
     public CrystalType currentEquippedCrystalType = CrystalType._NONE;
     
     // This does not apply to the cooldown, since only the local player will shoot on the local machine so the information
     // about this is always here.
     private Dictionary<CrystalType, bool> isInCoolDownCrystals = new();
     private Dictionary<CrystalType, float> coolDownTime = new();
-    public float cooldownTimeNormalAttackFire = 0.5f;
-    public float cooldownTimeNormalAttackWater = 0.2f;
-    public float cooldownTimeNormalAttackEarth = 2.0f;
-    public float cooldownTimeNormalAttackAir = 3.0f;
-    public float cooldownTimeNormalAttackVoid = 0.2f;
+    [HideInInspector] float cooldownTimeNormalAttackFire = 0.3f;
+    [HideInInspector] private float cooldownTimeNormalAttackWater = 0.15f;
+    [HideInInspector] private float cooldownTimeNormalAttackEarth = 1.7f;
+    [HideInInspector] private float cooldownTimeNormalAttackAir = 2.0f;
+    [HideInInspector] private float cooldownTimeNormalAttackVoid = 0.15f;
 
     [SerializeField] public InventoryUI inventoryUI;
 
