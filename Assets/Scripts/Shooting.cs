@@ -95,7 +95,7 @@ public class Shooting : NetworkBehaviour {
             Quaternion.Euler(0, 0, rotZ));
 
         // If the left mouse button was pressed, shoot.
-        if (Input.GetMouseButtonDown(0) == true) {
+        if (Input.GetKey(KeyCode.Mouse0) == true) {
             Debug.Log("Shoot request.");
             // Give the request to the inventory. The inventory checks if there is a crystal ball
             // or not and also if the currently equipped crystal ball is still in cooldown.
