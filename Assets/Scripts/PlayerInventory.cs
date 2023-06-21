@@ -46,11 +46,11 @@ public class PlayerInventory : NetworkBehaviour {
     // about this is always here.
     private Dictionary<CrystalType, bool> isInCoolDownCrystals = new();
     private Dictionary<CrystalType, float> coolDownTime = new();
-    public float cooldownTimeNormalAttackFire = 0.5f;
-    public float cooldownTimeNormalAttackWater = 0.2f;
-    public float cooldownTimeNormalAttackEarth = 2.0f;
-    public float cooldownTimeNormalAttackAir = 3.0f;
-    public float cooldownTimeNormalAttackVoid = 0.2f;
+    public float cooldownTimeNormalAttackFire = 0.3f;
+    public float cooldownTimeNormalAttackWater = 0.15f;
+    public float cooldownTimeNormalAttackEarth = 1.7f;
+    public float cooldownTimeNormalAttackAir = 2.0f;
+    public float cooldownTimeNormalAttackVoid = 0.15f;
 
     [SerializeField] public InventoryUI inventoryUI;
 

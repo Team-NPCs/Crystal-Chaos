@@ -17,13 +17,14 @@ public class Shooting : NetworkBehaviour {
     // get destroyed after a specific time (e.g. the earth shards do not have the big reachability).
     // Set this here. This will then be initiated into a dictionary in the Start() function.
     // Damage on the body of the normal attack.
-    public int spellDamageNormalAttackBodyFire = 10;
-    public int spellDamageNormalAttackBodyWater = 5;
-    public int spellDamageNormalAttackBodyEarth = 10;
-    public int spellDamageNormalAttackBodyAir = 40;
-    public int spellDamageNormalAttackBodyVoid = 12;
+    public int spellDamageNormalAttackBodyFire = 20;
+    public int spellDamageNormalAttackBodyWater = 12;
+    public int spellDamageNormalAttackBodyEarth = 8;
+    public int spellDamageNormalAttackBodyAir = 80;
+    public int spellDamageNormalAttackBodyVoid = 17;
     private Dictionary<CrystalType, int> spellDamageNormalAttackBody = new();
     // Damage on the head of the normal attack.
+    // NOTE: These are not used currently so they are not updated.
     public int spellDamageNormalAttackHeadFire = 20;
     public int spellDamageNormalAttackHeadWater = 10;
     public int spellDamageNormalAttackHeadEarth = 10;
