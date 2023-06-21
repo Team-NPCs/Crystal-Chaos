@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -37,6 +38,7 @@ public class DemoManager : NetworkBehaviour {
 
     [SerializeField] public HealthBar playerHealthBar;
     [SerializeField] public GamePauseUI gamePauseUI;
+    [SerializeField] public TextMeshProUGUI deathMessage;
 
     private void Awake() {
         Instance = this;

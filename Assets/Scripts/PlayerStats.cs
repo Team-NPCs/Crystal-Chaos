@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -18,6 +19,7 @@ public class PlayerStats : NetworkBehaviour {
     // Health Bar and Pause Menu (kill count).
     private HealthBar localPlayerHealthBar;
     private GamePauseUI localGamePauseUI;
+    private TextMeshProUGUI localDeathMessage;
 
     // Find the sprite renderer for the visualization of different colors for the mages.
     [SerializeField] private SpriteRenderer mageRenderer;
@@ -29,8 +31,10 @@ public class PlayerStats : NetworkBehaviour {
         DemoManager demoManager = GameObject.FindWithTag("DemoManagerTag").GetComponent<DemoManager>();
         // Find and assign the local player's health bar and the game pause menu.
         localPlayerHealthBar = demoManager.playerHealthBar;
-        // Access the gamePauseMenuObject reference
+        // Access the gamePauseMenuObject reference.
         localGamePauseUI = demoManager.gamePauseUI;
+        // Access the death message.
+        localDeathMessage = demoManager.deathMessage;
         // Add the event listener to the healthbar.
         health.OnValueChanged += UpdateHealthBar;
         // Add the event listener to the deathcount.
@@ -115,6 +119,18 @@ public class PlayerStats : NetworkBehaviour {
         PlayerSpawn playerSpawn = GameObject.FindGameObjectWithTag("SpawnPointHandler").GetComponent<PlayerSpawn>();
         transform.position = playerSpawn.GetRespawnPosition();
         UpdateHealthBar(0, maxHealth);
+        if (IsLocalPlayer()) {
+            ShowDeathMessage();
+            Invoke(nameof(HideDeathMessage), 2.0f);
+        }
+    }
+
+    private void ShowDeathMessage () {
+        localDeathMessage.text = "you died!";
+    }
+
+    private void HideDeathMessage () {
+        localDeathMessage.text = "";
     }
 
     public void ActivateFastSpeed() {
