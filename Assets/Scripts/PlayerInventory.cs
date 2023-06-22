@@ -100,13 +100,18 @@ public class PlayerInventory : NetworkBehaviour {
         // Only the host can call a server rpc so the host will add the crystal ball at the start.
         if (IsLocalPlayer() == true) {
             // At start we assign a random crystal ball.
-            CrystalType crystalType = CrystalBallSpawn.GenerateCrystalType();
+            //CrystalType crystalType = CrystalBallSpawn.GenerateCrystalType();
             // Add it to the inventory. This will not happen directly but over the server.
             // The server will get the information that the number of crystal balls increases (so the server can modify
             // the networkvariables) and then the server will tell the client to add the crystal ball.
-            Debug.Log("Try to add " + crystalType.ToString());
+            //Debug.Log("Try to add " + crystalType.ToString());
             // The owner of this is the local player, so he can call the server RPC.
-            AddCrystalServerRpc(crystalType);
+            //AddCrystalServerRpc(crystalType);
+            AddCrystalServerRpc(CrystalType.Fire);
+            AddCrystalServerRpc(CrystalType.Water);
+            AddCrystalServerRpc(CrystalType.Earth);
+            AddCrystalServerRpc(CrystalType.Air);
+            AddCrystalServerRpc(CrystalType.Void);
         }
     }
 
@@ -202,7 +207,12 @@ public class PlayerInventory : NetworkBehaviour {
 
     // A function that adds a random crystal ball to the inventory.
     public void AddRandomCrystal() {
-        AddCrystal(CrystalBallSpawn.GenerateCrystalType());
+        //AddCrystal(CrystalBallSpawn.GenerateCrystalType());
+        AddCrystal(CrystalType.Fire);
+        AddCrystal(CrystalType.Water);
+        AddCrystal(CrystalType.Earth);
+        AddCrystal(CrystalType.Air);
+        AddCrystal(CrystalType.Void);
     }
 
 
