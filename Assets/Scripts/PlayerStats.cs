@@ -9,6 +9,7 @@ public class PlayerStats : NetworkBehaviour {
     public float fastSpeedFactor;
     private readonly float speedIncreaseDuration = 15.0f;
     private readonly int maxHealth = 100;
+    private readonly int numberOfRandomCrystalBallsDeath = 2;
 
     // Networked variables.
     [SerializeField] public NetworkVariable<float> speedFactor = new NetworkVariable<float>();
@@ -104,8 +105,10 @@ public class PlayerStats : NetworkBehaviour {
             // Reset the inventory. The player loses all when he dies.
             PlayerInventory targetPlayerInventory = targetPlayerNetworkObject.GetComponent<PlayerInventory>();
             targetPlayerInventory.ResetCrystal();
-            // Add a new random crystal ball to the inventory.
-            targetPlayerInventory.AddRandomCrystal();
+            // Add new random crystals ball to the inventory.
+            for (int i = 0; i < numberOfRandomCrystalBallsDeath; i++) {
+                targetPlayerInventory.AddRandomCrystal();
+            }
         }
     }
 

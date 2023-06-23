@@ -7,6 +7,7 @@ public class PlayerInventory : NetworkBehaviour {
     // Maximum number of crystal balls per type.
     public int maxCrystalBallsPerType = 3; 
     public float scrollSensitivity = 0.1f;
+    private readonly int numberOfRandomCrystalBallsStart = 2;
 
     // Just for the record if in the future problems arise and we discuss how to implement it.
     // The dictionaries beneath cannot be used as networked variables. So we cannot network them /
@@ -99,14 +100,16 @@ public class PlayerInventory : NetworkBehaviour {
 
         // Only the host can call a server rpc so the host will add the crystal ball at the start.
         if (IsLocalPlayer() == true) {
-            // At start we assign a random crystal ball.
-            CrystalType crystalType = CrystalBallSpawn.GenerateCrystalType();
-            // Add it to the inventory. This will not happen directly but over the server.
-            // The server will get the information that the number of crystal balls increases (so the server can modify
-            // the networkvariables) and then the server will tell the client to add the crystal ball.
-            Debug.Log("Try to add " + crystalType.ToString());
-            // The owner of this is the local player, so he can call the server RPC.
-            AddCrystalServerRpc(crystalType);
+            for (int i = 0; i < numberOfRandomCrystalBallsStart; i++) {
+                // At start we assign a random crystal ball.
+                CrystalType crystalType = CrystalBallSpawn.GenerateCrystalType();
+                // Add it to the inventory. This will not happen directly but over the server.
+                // The server will get the information that the number of crystal balls increases (so the server can modify
+                // the networkvariables) and then the server will tell the client to add the crystal ball.
+                Debug.Log("Try to add " + crystalType.ToString());
+                // The owner of this is the local player, so he can call the server RPC.
+                AddCrystalServerRpc(crystalType);
+            }
         }
     }
 
