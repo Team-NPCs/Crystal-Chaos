@@ -7,7 +7,7 @@ public class PlayerInventory : NetworkBehaviour {
     // Maximum number of crystal balls per type.
     public int maxCrystalBallsPerType = 3; 
     public float scrollSensitivity = 0.1f;
-    private readonly int numberOfRandomCrystalBallsStart = 2;
+    private readonly int numberOfRandomCrystalBallsStart = 3;
 
     // Just for the record if in the future problems arise and we discuss how to implement it.
     // The dictionaries beneath cannot be used as networked variables. So we cannot network them /

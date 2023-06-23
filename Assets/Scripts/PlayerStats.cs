@@ -9,7 +9,7 @@ public class PlayerStats : NetworkBehaviour {
     public float fastSpeedFactor;
     private readonly float speedIncreaseDuration = 15.0f;
     private readonly int maxHealth = 100;
-    private readonly int numberOfRandomCrystalBallsDeath = 2;
+    private readonly int numberOfRandomCrystalBallsDeath = 3;
 
     // Networked variables.
     [SerializeField] public NetworkVariable<float> speedFactor = new NetworkVariable<float>();
